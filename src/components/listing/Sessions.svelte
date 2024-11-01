@@ -55,17 +55,16 @@
 			>
 				<a
 					tabindex="0"
-					class="grid focus:overflow-clip focus:z-50 w-full grid-cols-3 p-4 hover:scale-105 transition-all h-20 rounded-lg place-items-center {completed
+					class="grid relative group hover:z-20 w-full grid-cols-3 p-4 hover:scale-105 transition-all h-20 rounded-lg place-items-center {completed
 						? ' bg-gray-500'
 						: 'bg-primary-500'}"
 					href={getSessionUrl(session)}
 				>
-					<h2 class="text-lg font-semibold text-nowrap capitalize justify-self-start">{session.name}</h2>
-					<div class="text-center w-full truncate">
+					<h2 class="text-lg font-semibold text-ellipsis capitalize justify-self-start">{session.name}</h2>
+					<div class="text-center w-full">
 						{$t('scenario.scenario')}:
 						<span
-							data-tip={scenario?.prologue}
-							class="italic underline text-pretty font-light cursor-default tooltip tooltip-bottom hover:underline"
+							class="italic underline text-pretty text-ellipsis font-light cursor-default hover:underline"
 							>{scenario?.title}</span
 						>
 					</div>
@@ -76,6 +75,25 @@
 							alt={session.image ?? graphe1}
 						/>
 					</figure>
+					<button
+						type={null}
+						onclick={(e) => {
+							e.stopImmediatePropagation();
+							e.preventDefault();
+						}}
+						class="absolute h-fit z-50 top-12 m-4 group-hover:block hidden cursor-text"
+					>
+						<div
+							class="p-2 w-fit text-balance text-white rounded bg-gray-900 bg-opacity-90 flex flex-col gap-2"
+						>
+							<div class="text-lg text-start">
+								{scenario?.title}
+							</div>
+							<div class=" text-sm text-gray-200">
+								{scenario?.prologue}
+							</div>
+						</div>
+					</button>
 				</a>
 				<div class="w-full flex justify-between h-full p-1 pl-2 bg-inherit rounded-b-lg">
 					{#if session.expand?.author}
@@ -84,7 +102,7 @@
 						</div>
 					{/if}
 					<div>
-						{$t('creationDate')} : {new Date(session.created).toISOString().split('T')[0]}
+						{new Date(session.created).toISOString().split('T')[0]}
 					</div>
 				</div>
 			</li>

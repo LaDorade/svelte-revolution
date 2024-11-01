@@ -179,6 +179,21 @@
 				></path>
 			</svg>
 			<p class="text-xl font-semibold">Babel Révolution | UTC</p>
+			<div class=" bg-black flex flex-col gap-2 bg-opacity-20 text-justify rounded-lg p-2">
+				<blockquote>
+					« Une expression qui, il y a un instant à peine, vivait encore et semblait même indéracinable,
+					pouvait brusquement s’évanouir : elle a disparu avec la situation qui l’avait engendrée et dont elle
+					témoignera un jour tel un fossile. »
+					<br />
+					<div class=" italic font-semibold">Klemperer, LTI, la langue du Troisième Reich, 1947</div>
+				</blockquote>
+				BⱯBEL RËVOLUㅏION est un récit dystopique interactif, collaboratif et plurilingue. Cette création cherche
+				à penser le lien entre la dégradation de la biodiversité et la dégradation de la diversité linguistique et
+				culturelle. Ce projet de recherche-création transdisciplinaire, en processus et sans cesse à renouveler,
+				à l’instar de toute révolution, implique des chercheuses et chercheurs de disciplines diverses (didactique
+				des langues, littérature, design, sciences de l'information et de la communication) et des élèves-ingénieur·es
+				en informatique. Mais BⱯBEL RËVOLUㅏION vous invite à entrer, vous aussi, dans l’œuvre pour en être l’auteur·rice.
+			</div>
 			<div>
 				<div class="text-lg font-semibold">Credits Project design and supervision</div>
 				<div class="text-primary-500">Serge Bouchardon, Isabelle Cros, Erika Fülöp, Simon Renaud.</div>
