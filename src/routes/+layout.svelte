@@ -3,19 +3,14 @@
 	import { onMount, type Snippet } from 'svelte';
 	import { navigating, page } from '$app/stores';
 	import { enhance } from '$app/forms';
-	import { Pane, Button, Text, Textarea, Separator } from 'svelte-tweakpane-ui';
 	import NProgress from 'nprogress';
-	import { Toaster, toast } from 'svelte-french-toast';
+	import { Toaster } from 'svelte-french-toast';
 	import { locale, locales, t } from 'svelte-i18n';
 	import 'nprogress/nprogress.css';
 	import graph1 from '$lib/assets/graphe1.png';
 	import { viewportStore } from '$stores/ui/index.svelte';
 	import { titleStore } from '$stores/titles/index.svelte';
 	import type { User } from '$types/pocketBase/TableTypes';
-	import { goto } from '$app/navigation';
-	import { linksStore, nodesStore, selectedNodeStore } from '$stores/graph';
-	import { pb } from '$lib/client/pocketbase';
-	import { ClientResponseError } from 'pocketbase';
 	import DebugPane from '$components/admin/DebugPane.svelte';
 
 	type Props = {
@@ -24,10 +19,7 @@
 	};
 	let { data, children }: Props = $props();
 
-	let confirmChange = $state(false);
-
 	NProgress.configure({
-		// Full list: https://github.com/rstacruz/nprogress#configuration
 		minimum: 0.16
 	});
 
@@ -58,7 +50,6 @@
 <Toaster />
 
 {#if $page.data.user?.role === 'superAdmin'}
-	<!--  && $page.url.searchParams.get('debug') === 'true'} -->
 	<DebugPane />
 {/if}
 
@@ -168,6 +159,10 @@
 	</div>
 </nav>
 
-<div class="inset-0 w-full text-gray-300 bg-black h-fit bg-dotted-gray bg-dotted-40">
+<div class="relative inset-0 w-full h-full text-gray-300">
 	{@render children()}
+	<div
+		class=" absolute top-0 left-0 -z-50 bg-red-950 opacity-90 h-full w-full bg-dotted-lightGray bg-dotted-40
+	[mask-image:radial-gradient(ellipse_60%_70%_at_50%_50%,#000_40%,transparent_100%)]"
+	></div>
 </div>

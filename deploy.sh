@@ -14,9 +14,12 @@ sudo systemctl enable docker
 sudo systemctl start docker
 sudo systemctl enable nginx
 sudo systemctl start nginx
+
 # Définition des variables de nom de domaine
 DOMAIN1="docker.canard.cc"
 DOMAIN2="docker-db.canard.cc"
+PORT1=8080
+PORT2=8090
 
 # Configuration de Nginx pour le premier domaine
 echo "Configuration de Nginx pour $DOMAIN1..."
@@ -26,7 +29,7 @@ server {
     server_name $DOMAIN1;
 
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:$PORT1;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -43,7 +46,7 @@ server {
     server_name $DOMAIN2;
 
     location / {
-        proxy_pass http://localhost:8090;
+        proxy_pass http://localhost:$PORT2;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -63,7 +66,8 @@ sudo apt install -y certbot python3-certbot-nginx
 
 # Obtention et installation des certificats SSL
 echo "Obtention et installation des certificats SSL pour $DOMAIN1 et $DOMAIN2..."
-sudo certbot --nginx -d $DOMAIN1 -d $DOMAIN2 --non-interactive --agree-tos -m mathisjung02@gmail.com
+sudo certbot --nginx -d $DOMAIN1 --non-interactive --agree-tos -m mathisjung02@gmail.com
+sudo certbot --nginx -d $DOMAIN2 --non-interactive --agree-tos -m mathisjung02@gmail.com
 
 # Lancement de l'application avec Docker Compose
 echo "Lancement de l'application avec Docker Compose..."

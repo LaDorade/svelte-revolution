@@ -47,7 +47,7 @@ export const load: ServerLoad = async ({ params, locals }) => {
 				iaConnected = true;
 			}
 		} catch (error) {
-			console.error('IA Server not reachable', error);
+			console.error('IA Server not reachable');
 		}
 	}
 
