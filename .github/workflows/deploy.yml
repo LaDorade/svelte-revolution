@@ -32,6 +32,9 @@ jobs:
               run: |
                   ssh -o StrictHostKeyChecking=no $USERNAME@$SERVER_IP << 'EOF'
                     cd ~/app
+                    echo "ENV_FILE=.env.production" > .env
+                    rm -rf .env.production
+                    echo "NODE_ENV=production DB_URL=http://pocketbase:8090 PUBLIC_DB_URL=https://svelte-db.babel-revolution.fr IA_SERVER_URL=http://iaserver:8000" > .env.production
                     git checkout staging
                     docker-compose down
                     docker-compose pull
