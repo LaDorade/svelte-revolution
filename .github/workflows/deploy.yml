@@ -23,7 +23,7 @@ jobs:
                   SERVER_IP: ${{ secrets.SERVER_IP }}
                   USERNAME: ${{ secrets.USERNAME }}
               run: |
-                  rsync -avz --exclude '.git' ./ $USERNAME@$SERVER_IP:~/app/
+                  rsync -avz -e "ssh -o StrictHostKeyChecking=no" --exclude '.git' ./ $USERNAME@$SERVER_IP:~/app/
 
             - name: Deploy on server
               env:
