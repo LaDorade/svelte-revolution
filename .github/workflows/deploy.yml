@@ -18,13 +18,19 @@ jobs:
               with:
                   ssh-private-key: ${{ secrets.SSH_KEY }}
 
-            - name: Copy files to server
+            - name: Copy project files to server
+              env:
+                  SERVER_IP: ${{ secrets.SERVER_IP }}
+                  USERNAME: ${{ secrets.USERNAME }}
               run: |
-                  scp -o StrictHostKeyChecking=no -r ./ ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }}:~/app/
+                  rsync -avz --exclude '.git' ./ $USERNAME@$SERVER_IP:~/app/
 
             - name: Deploy on server
+              env:
+                  SERVER_IP: ${{ secrets.SERVER_IP }}
+                  USERNAME: ${{ secrets.USERNAME }}
               run: |
-                  ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} << 'EOF'
+                  ssh -o StrictHostKeyChecking=no $USERNAME@$SERVER_IP << 'EOF'
                     cd ~/app
                     git checkout staging
                     docker-compose down
