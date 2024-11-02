@@ -38,8 +38,6 @@ jobs:
                     echo "DB_URL=http://pocketbase:8090" >> .env.production
                     echo "PUBLIC_DB_URL=https://svelte-db.babel-revolution.fr" >> .env.production
                     echo "IA_SERVER_URL=http://iaserver:8000" >> .env.production
-                    git checkout staging
                     docker-compose down
-                    docker-compose pull
                     docker-compose up -d --build
                   EOF
