@@ -12,10 +12,10 @@
 </script>
 
 <button
-	class="absolute z-50 cursor-pointer flex justify-center items-center p-2 border-b border-l top-0 right-0"
+	class="absolute z-50 m-4 cursor-pointer flex justify-center items-center p-2 border rounded-full top-0 right-0"
 	onclick={reload}
 >
-	<RefreshCcw color="white" />
+	<RefreshCcw strokeWidth={1.5} color="white" />
 </button>
 {#key key}
 	{@render children()}

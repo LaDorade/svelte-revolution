@@ -81,12 +81,14 @@
 	<meta content={$page.url.href} property="og:url" />
 </svelte:head>
 
-{#if admin && user}
-	<GraphUi {admin} session={sessionData} {user} {events} {ends} {sides} />
-	<Watermark watermarkText="Admin">
+<div class="relative">
+	{#if admin && user}
+		<GraphUi {admin} session={sessionData} {user} {events} {ends} {sides} />
+		<Watermark watermarkText="Admin">
+			<MainGraph sessionId={sessionData.id} />
+		</Watermark>
+	{:else}
+		<GraphUi session={sessionData} {sides} />
 		<MainGraph sessionId={sessionData.id} />
-	</Watermark>
-{:else}
-	<GraphUi session={sessionData} {sides} />
-	<MainGraph sessionId={sessionData.id} />
-{/if}
+	{/if}
+</div>

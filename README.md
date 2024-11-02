@@ -4,13 +4,13 @@
 
 ### Prérequis
 
--   [Git](https://git-scm.com/) : Gestionnaire de versions
--   [Docker](https://www.docker.com/) : Conteneurisation & Déploiement
-    -   [Docker Desktop](https://www.docker.com/products/docker-desktop) : Version Desktop
-    -   [Docker Compose](https://docs.docker.com/compose/) : Outil de gestion de conteneurs
--   [Bun](https://bun.sh/) : Gestionnaire de packet & Runtime \
+- [Git](https://git-scm.com/) : Gestionnaire de versions
+- [Docker](https://www.docker.com/) : Conteneurisation & Déploiement
+  - [Docker Desktop](https://www.docker.com/products/docker-desktop) : Version Desktop
+  - [Docker Compose](https://docs.docker.com/compose/) : Outil de gestion de conteneurs
+- [Bun](https://bun.sh/) : Gestionnaire de packet & Runtime \
     ou
--   [Node.js](https://nodejs.org/en/) Environnement d'exécution JavaScript (version > 20)
+- [Node.js](https://nodejs.org/en/) Environnement d'exécution JavaScript (version > 20)
 
 ### Installation des dépendances
 
@@ -43,35 +43,35 @@ bun run preview
 
 ## Structure du projet
 
--   `src/` : code source
-    -   `lib/` : fonctions utilitaires
-    -   `components/` : composants
-    -   `routes/` : Toutes les routes de l'application
-        -   `admin/` : pages d'administration
--   `public/` : fichiers statiques
--   `build/` : fichiers générés
--   `node_modules/` : dépendances
+- `src/` : code source
+  - `lib/` : fonctions utilitaires
+  - `components/` : composants
+  - `routes/` : Toutes les routes de l'application
+    - `admin/` : pages d'administration
+- `public/` : fichiers statiques
+- `build/` : fichiers générés
+- `node_modules/` : dépendances
 
 ## Technologies utilisées
 
 ### Frontend
 
--   [Svelte](https://svelte.dev/) : Framework JavaScript
--   [Tailwind CSS](https://tailwindcss.com/) : Framework CSS
-    -   [DaisyUI](https://daisyui.com/) : Composants Tailwind CSS
+- [Svelte](https://svelte.dev/) : Framework JavaScript
+- [Tailwind CSS](https://tailwindcss.com/) : Framework CSS
+  - [DaisyUI](https://daisyui.com/) : Composants Tailwind CSS
 
 ### Backend
 
--   [Vite](https://vitejs.dev/) : Bundler et Runner pour le développement
--   [SvelteKit](https://kit.svelte.dev/) : Meta-Framework pour Svelte
--   [Docker](https://www.docker.com/) : Conteneurisation & Déploiement
--   [PocketBase](https://pocketbase.io/) : Base de données et API auto-hébergée
+- [Vite](https://vitejs.dev/) : Bundler et Runner pour le développement
+- [SvelteKit](https://kit.svelte.dev/) : Meta-Framework pour Svelte
+- [Docker](https://www.docker.com/) : Conteneurisation & Déploiement
+- [PocketBase](https://pocketbase.io/) : Base de données et API auto-hébergée
 
 ### Outils
 
--   [TypeScript](https://www.typescriptlang.org/) : Langage de programmation apportant des types à JavaScript
--   [Prettier](https://prettier.io/) : Formateur de code
--   [ESLint](https://eslint.org/) : Linter de code
+- [TypeScript](https://www.typescriptlang.org/) : Langage de programmation apportant des types à JavaScript
+- [Prettier](https://prettier.io/) : Formateur de code
+- [ESLint](https://eslint.org/) : Linter de code
 
 ## Styler avec Tailwind CSS
 
@@ -84,26 +84,48 @@ La manière la plus simple est d'ajouter les classes directement dans le code HT
 
 ```html
 <button
-	class="px-4 py-2 font-bold text-white bg-blue-500
+ class="px-4 py-2 font-bold text-white bg-blue-500
  rounded hover:bg-blue-700"
 >
-	Button
+ Button
 </button>
 ```
 
 ## Déploiement
 
-#### Environnement
+### Dépoliment sur le serveur YUNOHOST
 
-##### Adapter
+Pour réussir à déployer le projet sur le serveur YUNOHOST, il faut suivre les étapes suivantes :
 
-Voir cette ligne dans ce fichier : [svelte.config.js:1](svelte.config.js:1)
+- Cloner le projet sur le serveur
+- Créer un fichier `.env` avec la viariable `ENV_FILE=.env.production` pour que le projet utilise les variables d'environnement de production
+- Modifier le fichier `.env.production` pour ajouter les variables d'environnement
+  - En utilisant cette méthode il faut seulement modifer la variable `PUBLIC_DB_URL` pour qu'elle pointe vers le serveur YUNOHOST vu de l'extérieur (ex: `https://svelte-db.babel-revolution.fr`)
+  - les autres variables sont déjà configurées
+- J'ai du modifier le fichier `/etc/nginx/conf.d/ssowat.conf` de YUNOHOST et supprimer la ligne `server_names_hash_bucket_size 128;` pour que la suite fonctionne
+- Ensuite renseigner les urls dans le ficheir `deploy.sh` pour qu'il pointe vers le bon serveur
+- Utiliser la commande `sudo chmod +x deploy.sh` pour rendre le script exécutable
+- Enfin, lancer le script `./deploy.sh` pour déployer le projet
 
-##### Variables d'environnement
+/!\ Si les domaines ne fonctionnent pas, il peut être nécessaire de faire la commande `sudo certbot --nginx -d svelte.babel-revolution.fr`
+
+#### Variables d'environnement
 
 Variable d'envrionnement dans le fichier [.env.production](.env.production)
 
-### Vercel
+### Adapter
+
+Voir cette ligne dans ce fichier : [svelte.config.js:1](./svelte.config.js)
+
+#### Docker
+
+Utiliser l'adapter Bun.
+
+```bash
+docker-compose up --build
+```
+
+#### Vercel
 
 Utiliser l'adapter auto (ou vercel).
 
@@ -112,18 +134,20 @@ Utiliser l'adapter auto (ou vercel).
 La branche de déploiement est `main`.\
 La branche de test est `staging`.
 
-### Docker
+## Redéploiement
 
-Utiliser l'adapter Bun.
+### Docker ou YUNOHOST
+
+pour cela, simplement pull le projet et relancer le serveur.
+
+```bash
+docker-compose down # si nécessaire
+```
 
 ```bash
 docker-compose up --build
 ```
 
-### Documentation
+### Déploiement sur Vercel
 
--   [Tailwind CSS](https://tailwindcss.com/docs)
--   [DaisyUI](https://daisyui.com/docs)
--   [Svelte](https://svelte.dev/docs)
--   [SvelteKit](https://kit.svelte.dev/docs)
--   [PocketBase](https://pocketbase.io/docs)
+Vercel redéploie automatiquement à chaque push.

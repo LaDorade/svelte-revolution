@@ -198,13 +198,17 @@
 				<div class="text-lg font-semibold">Credits Project design and supervision</div>
 				<div class="text-primary-500">Serge Bouchardon, Isabelle Cros, Erika Fülöp, Simon Renaud.</div>
 			</div>
-			<div class="text-lg font-semibold">Development & Integration</div>
-			<div class="text-primary-500 text-balance">
-				Mathis Jung, Eileen Lorenzo, Eva Guignabodet, Florestan Biaux, Benoît Chevillon, Lucas D'Aquaro, Solène
-				Desvaux de Marigny, Ismaïl Kadiri, Mathilde Lange, Claire Malgonne, Gabrielle Van de Vijver
+			<div>
+				<div class="text-lg font-semibold">Development & Integration</div>
+				<div class="text-primary-500 text-balance">
+					Mathis Jung, Eileen Lorenzo, Eva Guignabodet, Florestan Biaux, Benoît Chevillon, Lucas D'Aquaro,
+					Solène Desvaux de Marigny, Ismaïl Kadiri, Mathilde Lange, Claire Malgonne, Gabrielle Van de Vijver
+				</div>
 			</div>
-			<p class="text-lg font-semibold">Technologies utilisées</p>
-			<p class="text-primary-500">Svelte, SvelteKit, TailwindCSS, PocketBase, Lucide Icons, Docker</p>
+			<div>
+				<p class="text-lg font-semibold">Technologies utilisées</p>
+				<p class="text-primary-500">Svelte, SvelteKit, TailwindCSS, PocketBase, Lucide Icons, Docker</p>
+			</div>
 			<p class="text-sm">{new Date().getFullYear()}</p>
 		</div>
 	</footer>

@@ -54,7 +54,7 @@
 {/if}
 
 <!-- UI -->
-<nav class="sticky top-0 z-50 border-b border-gray-500 bg-gray-950 navbar opacity-90">
+<nav class="sticky top-0 z-50 border-b border-gray-500 bg-black navbar text-gray-200 bg-opacity-30">
 	<div class="navbar-start">
 		<div class="dropdown">
 			<button tabindex="0" aria-label="menu" class="btn btn-ghost">
