@@ -102,12 +102,7 @@ Pour réussir à déployer le projet sur le serveur YUNOHOST, il faut suivre les
 - Modifier le fichier `.env.production` pour ajouter les variables d'environnement
   - En utilisant cette méthode il faut seulement modifer la variable `PUBLIC_DB_URL` pour qu'elle pointe vers le serveur YUNOHOST vu de l'extérieur (ex: `https://svelte-db.babel-revolution.fr`)
   - les autres variables sont déjà configurées
-- J'ai du modifier le fichier `/etc/nginx/conf.d/ssowat.conf` de YUNOHOST et supprimer la ligne `server_names_hash_bucket_size 128;` pour que la suite fonctionne
-- Ensuite renseigner les urls dans le ficheir `deploy.sh` pour qu'il pointe vers le bon serveur
-- Utiliser la commande `sudo chmod +x deploy.sh` pour rendre le script exécutable
-- Enfin, lancer le script `./deploy.sh` pour déployer le projet
-
-/!\ Si les domaines ne fonctionnent pas, il peut être nécessaire de faire la commande `sudo certbot --nginx -d svelte.babel-revolution.fr`
+- Ensuite, simplement ajouter le reverse proxy sur le serveur YUNOHOST
 
 #### Variables d'environnement
 
@@ -138,7 +133,9 @@ La branche de test est `staging`.
 
 ### Docker ou YUNOHOST
 
-pour cela, simplement pull le projet et relancer le serveur.
+### Le redéploiement est automatique sur la branche staging
+
+Sinon, simplement pull le projet et relancer le serveur.
 
 ```bash
 docker-compose down # si nécessaire
