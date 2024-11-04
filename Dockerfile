@@ -18,4 +18,4 @@ RUN bun i
 # Can't use --production flag because of bun bug ?
 ENV PORT=8080
 EXPOSE 8080
-CMD ["ORIGIN=https://new.babel-revolution.fr", "bun" , "./build/index.js"]
+CMD ["bun", "run", "start"]
