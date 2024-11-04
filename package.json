@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"start": "ORIGIN=https://new.babel-revolution.fr bun ./build/index.js",
+		"start": "ORIGIN=https://babel-revolution.fr bun ./build/index.js",
 		"ia": "cd ./ia_server && cargo run",
 		"ia-watch": "cd ./ia_server && cargo-watch -x 'run'",
 		"dev": "vite dev",
