@@ -6,8 +6,6 @@ services:
         ports:
             - '8080:8080'
         container_name: sveltekit
-        environment:
-            - ORIGIN=https://new.babel-revolution.fr
         env_file:
             - ${ENV_FILE}
         depends_on:
