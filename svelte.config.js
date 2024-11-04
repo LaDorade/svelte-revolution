@@ -1,5 +1,5 @@
 import adapterAuto from '@sveltejs/adapter-auto';
-import adapterBun from 'svelte-adapter-bun';
+import adapterBun from '@sveltejs/adapter-node';
 import 'dotenv/config';
 
 const adapterType = process.env.ADAPTER || 'auto';

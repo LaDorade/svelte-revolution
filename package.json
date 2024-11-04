@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"start": "ORIGIN=https://new.babel-revolution.fr bun ./build/index.js",
+		"start": "ORIGIN=https://new.babel-revolution.fr node ./build/index.js",
 		"ia": "cd ./ia_server && cargo run",
 		"ia-watch": "cd ./ia_server && cargo-watch -x 'run'",
 		"dev": "vite dev",
@@ -16,6 +16,9 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"clear-b": "bunx clear-branches"
+	},
+	"peerDependencies": {
+		"svelte": "^5.1.9"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^9.1.0",
