@@ -6,7 +6,7 @@ COPY package.json ./
 COPY . .
 RUN bun i
 ENV ADAPTER=bun
-RUN ORIGIN=https://new.babel-revolution.fr bun run build
+RUN bun run build
 
 # Stage 2: Run
 FROM oven/bun:1 AS runner

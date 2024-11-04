@@ -9,7 +9,7 @@
 		"ia-watch": "cd ./ia_server && cargo-watch -x 'run'",
 		"dev": "vite dev",
 		"vercel-build": "ADAPTER=auto vite build",
-		"build": "vite build",
+		"build": "PROTOCOL_HEADER=x-forwarded-proto HOST_HEADER=x-forwarded-host ADAPTER=bun ORIGIN=https://new.babel-revolution.fr vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
