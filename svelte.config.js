@@ -31,6 +31,9 @@ const config = {
 			$components: './src/components',
 			$stores: './src/stores',
 			$types: './src/types'
+		},
+		csrf: {
+			checkOrigin: false
 		}
 	}
 };
