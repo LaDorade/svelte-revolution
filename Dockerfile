@@ -17,5 +17,6 @@ COPY --from=builder /app/package.json ./
 RUN bun i 
 # Can't use --production flag because of bun bug ?
 ENV PORT=8080
+ENV ORIGIN=https://new.babel-revolution.fr
 EXPOSE 8080
 CMD ["bun", "run", "start"]
