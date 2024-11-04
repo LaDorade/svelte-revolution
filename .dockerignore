@@ -8,9 +8,6 @@ dist
 # Ignore logs
 *.log
 
-# Ignore environment variables
-.env
-
 # Ignore Docker files
 Dockerfile
 docker-compose.yml
