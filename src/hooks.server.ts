@@ -2,11 +2,13 @@ import { dev } from '$app/environment';
 import { createPocketBase } from '$lib/server/pocketbase';
 import { redirect, type Handle } from '@sveltejs/kit';
 
-const corsHeaders = {
+export const corsHeaders = {
+	'Access-Control-Allow-Credentials': 'true',
 	'Access-Control-Allow-Origin': '*',
-	'Access-Control-Allow-Methods': 'OPTIONS,POST'
+	'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT,PATCH,DELETE',
+	'Access-Control-Allow-Headers':
+		'authorization, x-client-info, apikey, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
 };
-
 export const handle: Handle = async ({ event, resolve }) => {
 	if (event.request.method === 'OPTIONS') {
 		return new Response(null, {
