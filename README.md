@@ -102,6 +102,7 @@ Pour réussir à déployer le projet sur le serveur YUNOHOST, il faut suivre les
 - Modifier le fichier `.env.production` pour ajouter les variables d'environnement
   - En utilisant cette méthode il faut seulement modifer la variable `PUBLIC_DB_URL` pour qu'elle pointe vers le serveur YUNOHOST vu de l'extérieur (ex: `https://svelte-db.babel-revolution.fr`)
   - les autres variables sont déjà configurées
+  - [local preview uniquement] Modfier la variable `ORIGIN` et mettre `http://localhost:4173` sinon le serveur ne pourra pourra pas traiter les requêtes POST des formulaires
 - Ensuite, simplement ajouter le reverse proxy sur le serveur YUNOHOST
 
 #### Variables d'environnement
