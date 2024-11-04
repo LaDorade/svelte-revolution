@@ -2,7 +2,18 @@ import { dev } from '$app/environment';
 import { createPocketBase } from '$lib/server/pocketbase';
 import { redirect, type Handle } from '@sveltejs/kit';
 
+const corsHeaders = {
+	'Access-Control-Allow-Origin': '*',
+	'Access-Control-Allow-Methods': 'OPTIONS,POST'
+};
+
 export const handle: Handle = async ({ event, resolve }) => {
+	if (event.request.method === 'OPTIONS') {
+		return new Response(null, {
+			headers: corsHeaders
+		});
+	}
+
 	if (event.request.url.endsWith('__data.json')) {
 		redirect(300, event.request.url.replace(/__data.json$/, ''));
 	}
