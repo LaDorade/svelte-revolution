@@ -16,8 +16,8 @@ sudo systemctl enable nginx
 sudo systemctl start nginx
 
 # Définition des variables de nom de domaine
-DOMAIN1="docker.canard.cc"
-DOMAIN2="docker-db.canard.cc"
+DOMAIN1="new.babel-revolution.fr"
+DOMAIN2="new-db.babel-revolution.fr"
 PORT1=8080
 PORT2=8090
 
