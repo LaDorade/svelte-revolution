@@ -67,9 +67,9 @@
     },
     "home": {
         "home": "Inicio",
-        "intro": "BⱯBEL RËVOLUㅏION es un proyecto monumental, tan rico y diverso como los propios idiomas. Es tanto una obra en constante evolución, creaciones terminadas y una plataforma interactiva para crear historias colaborativas. Este sitio te invita a sumergirte en un espacio de escritura digital donde todos pueden contribuir y co-crear, a su propio estilo.",
-        "introHighlight": "Ven y reinventa historias, ",
-        "introHyperHighlight": "a tu manera.",
+        "intro": "BⱯBEL RËVOLUㅏION es una plataforma para crear narrativas participativas. Es tanto una obra en continua evolución como una interfaz para crear sesiones de escenarios participativos. Este sitio te invita a sumergirte en un espacio de escritura digital donde cada uno puede contribuir y co-crear a su manera.",
+        "introHighlight": "Venga y participe en una sesión actual o cree y dirija su propia sesión, su ",
+        "introHyperHighlight": "BⱯBEL RËVOLUㅏION.",
         "writeMessage": "Escribir un mensaje",
         "yourMessage": "Tu mensaje",
         "emptyMessage": "¡Vamos, intenta escribir algo!",
