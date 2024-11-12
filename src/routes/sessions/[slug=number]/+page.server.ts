@@ -3,7 +3,6 @@ import { createNode } from '$lib/server/sessions/create';
 import { type Actions, fail, type ServerLoad } from '@sveltejs/kit';
 import type { End, GraphEvent } from '$types/pocketBase/TableTypes';
 import type { GraphNode } from '$types/pocketBase/TableTypes';
-import { buildLinks } from '$lib/sessions';
 import { env } from '$env/dynamic/private';
 
 const iaserver = env.IA_SERVER_URL;
@@ -13,18 +12,12 @@ export const load: ServerLoad = async ({ params, locals }) => {
 	const pb = locals.pb;
 	const sessionData = await getSession(pb, Number(params.slug));
 
-	const nodes = await pb
-		.collection('Node')
-		.getFullList({ filter: pb.filter('session = {:session}', { session: sessionData.id }) });
-
-	const links = buildLinks(nodes);
-
 	// Admin only
 	let events: GraphEvent[] = [];
 	let ends: End[] = [];
 	if (sessionData.author === locals.pb.authStore.model?.id || locals.pb.authStore.model?.role === 'superAdmin') {
 		if (locals.pb.authStore.isValid) {
-			const scenario = sessionData.expand?.scenario?.id;
+			const scenario = sessionData.scenario;
 			events = await locals.pb.collection('Event').getFullList({
 				filter: locals.pb.filter('scenario = {:scenario}', { scenario })
 			});
@@ -46,17 +39,18 @@ export const load: ServerLoad = async ({ params, locals }) => {
 			if (response.ok) {
 				iaConnected = true;
 			}
-		} catch (error) {
+		} catch {
 			console.error('IA Server not reachable');
 		}
 	}
 
+	const nodes = pb
+		.collection('Node')
+		.getFullList({ filter: pb.filter('session = {:session}', { session: sessionData.id }) });
+
 	return {
 		sessionData,
-		nodesAndLinks: {
-			nodes,
-			links
-		},
+		nodesPromise: nodes,
 		events,
 		ends,
 		sides,
@@ -137,7 +131,7 @@ export const actions: Actions = {
 			return fail(500, { success: false, error: 'Not in a session' });
 		}
 		if (!eventId) {
-			return fail(422, { success: false, error: 'Missing required fields' });
+			return fail(422, { success: false, error: 'Missing event field' });
 		}
 
 		let createdEventNode: GraphNode | null = null;

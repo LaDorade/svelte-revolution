@@ -2,6 +2,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { replaceState } from '$app/navigation';
+	import { LoaderPinwheel } from 'lucide-svelte';
 	import { pb } from '$lib/client/pocketbase';
 	import { initStores } from './utils';
 	import GraphUi from '$components/graph/GraphUI.svelte';
@@ -13,12 +14,13 @@
 	import { titleStore } from '$stores/titles/index.svelte';
 	import { selectedNodeStore } from '$stores/graph';
 	import toast from 'svelte-french-toast';
+	import { buildLinks } from '$lib/sessions';
 
 	interface Props {
 		data: PageServerData & LayoutServerData;
 	}
 	let { data }: Props = $props();
-	let { events = [], user = null, nodesAndLinks, ends = [], sides = [], isAdmin = false, iaConnected = false } = data;
+	let { events = [], user = null, nodesPromise, ends = [], sides = [], isAdmin = false, iaConnected = false } = data;
 
 	let sessionData = $state(data.sessionData);
 
@@ -28,9 +30,10 @@
 		return (admin ? 'ADMIN - ' : '') + data.sessionData.name;
 	});
 
-	initStores(nodesAndLinks.nodes, nodesAndLinks.links);
-
 	onMount(async () => {
+		const nodes = await nodesPromise;
+		const links = buildLinks(nodes);
+		initStores(nodes, links);
 		// Listen for session completion
 		await pb.collection('Session').subscribe(data.sessionData.id, async (res) => {
 			if (!res.record || !res.record.completed) return;
@@ -80,6 +83,12 @@
 	<meta content="Babel Révolution" property="og:site_name" />
 	<meta content={$page.url.href} property="og:url" />
 </svelte:head>
+
+{#await data.nodesPromise}
+	<div class=" w-full h-screen flex justify-center items-center bg-black">
+		<LoaderPinwheel color="white" class="w-20 z-50 opacity-100 h-20 loader animate-spin" />
+	</div>
+{/await}
 
 <div class="relative">
 	{#if admin && user}

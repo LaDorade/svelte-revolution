@@ -9,8 +9,7 @@
 	import type { ActionResult } from '@sveltejs/kit';
 	import { blur, fade, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import { viewportStore } from '$stores/ui/index.svelte';
-	import { Ellipsis, Info, MessageCirclePlus, X } from 'lucide-svelte';
+	import { Codesandbox, Ellipsis, Info, MessageCirclePlus, X } from 'lucide-svelte';
 
 	interface Props {
 		session: Session;
@@ -41,12 +40,15 @@
 		return Object.values(states).some((state) => state);
 	});
 
-	function setCheck(type: 'addNode' | 'nodeInfo' | 'sessionEnd' | 'admin') {
-		if (!['lg', 'md'].includes(viewportStore.actualBreakpoint)) {
-			for (const key in states) {
-				if (key !== type) {
-					states[key as 'nodeInfo' | 'addNode' | 'sessionEnd' | 'admin'] = false;
-				}
+	/**
+	 * Set the state of the UI
+	 * Depending on the viewport, only one state can be active at a time
+	 * @param type - The type of the state to set
+	 */
+	function setCheck(type: 'addNode' | 'nodeInfo' | 'admin') {
+		for (const key in states) {
+			if (key !== type) {
+				states[key as 'nodeInfo' | 'addNode' | 'admin'] = false;
 			}
 		}
 
@@ -98,8 +100,9 @@
 	});
 </script>
 
+<!-- 
 <div class="z-50 border-t border-gray-500 divide-x divide-gray-500 bg-black bg-opacity-25 btm-nav">
-	<!-- Add Node Or Session Ended -->
+	<!-- Add Node Or Session Ended ->
 	{#if !session?.completed}
 		<div class="flex flex-col-reverse">
 			<button
@@ -112,7 +115,7 @@
 				<MessageCirclePlus strokeWidth={1.5} />
 				<span class="text-sm font-light">{$t('sessions.addNode')}</span>
 			</button>
-			<!-- Menu for Add Node -->
+			<!-- Menu for Add Node ->
 			{#if states.addNode}
 				<form
 					transition:slide={{
@@ -196,7 +199,7 @@
 		</div>
 	{:else}
 		<div class="flex flex-col-reverse">
-			<!-- Session End -->
+			<!-- Session End ->
 			<button
 				type="button"
 				class="z-20 flex flex-col items-center justify-center w-full h-full bg-gray-950"
@@ -238,7 +241,7 @@
 			{/if}
 		</div>
 	{/if}
-	<!-- Node Info button -->
+	<!-- Node Info button ->
 	<div class="flex flex-row-reverse">
 		<button
 			type="button"
@@ -291,7 +294,7 @@
 			</div>
 		{/if}
 	</div>
-	<!-- Admin button (visible only for admins) -->
+	<!-- Admin button (visible only for admins) ->
 	{#if admin && user && !session?.completed}
 		<div class="flex flex-col-reverse">
 			<button
@@ -326,7 +329,7 @@
 			{/if}
 		</div>
 	{/if}
-</div>
+</div> -->
 
 {#snippet formTemplate(
 	values: { id: string; title: string }[],
@@ -336,7 +339,7 @@
 	needDisabled: boolean = false
 )}
 	<form
-		method="post"
+		method="POST"
 		action="/sessions/{session.id}?/{action}"
 		onsubmit={(e) => e.preventDefault()}
 		use:enhance={() => {
@@ -352,7 +355,7 @@
 			<div class="label">
 				<span class="label-text text-inherit">{trad}</span>
 			</div>
-			<select {name} id={name} class="select select-accent select-sm bg-gray-950 text-gray-400">
+			<select {name} id={name} class="select select-accent appearance-none bg-black select-sm">
 				<option disabled selected>{trad}</option>
 				{#each values as value}
 					{@const alreadySelected =
@@ -370,137 +373,175 @@
 	</form>
 {/snippet}
 
-<button
-	onclick={() => (states.nodeInfo = !states.nodeInfo)}
-	type="button"
-	class="fixed m-4 border right-0 bottom-0 border-white rounded-full bg-black bg-opacity-25 p-2 z-50"
->
-	{#if stateActive}
-		<div class="relative h-full w-full" in:fade={{ duration: 200 }}>
-			<X strokeWidth={1.5} />
-			<div class="absolute border -m-2 p-2 top-0 -translate-x-[200%] rounded-full bg-black bg-opacity-25 z-50">
-				<Info strokeWidth={1.5} />
-			</div>
-			<div
-				class="absolute border -m-2 p-2 top-0 -translate-x-[140%] -translate-y-[140%] rounded-full bg-black bg-opacity-25 z-50"
+<!-- Buttons -->
+<div class="fixed m-4 right-0 bottom-0 z-50">
+	{#snippet menuButton(type: string)}
+		<button
+			class=" p-2 flex justify-center shadow-2xl items-center border z-50 rounded-full bg-black bg-opacity-90"
+			onclick={() => (states.nodeInfo = !states.nodeInfo)}
+		>
+			{#if type === 'dots'}
+				<Ellipsis strokeWidth={1.5} color="white" />
+			{:else if type === 'cross'}
+				<X strokeWidth={1.5} color="white" />
+			{/if}
+		</button>
+	{/snippet}
+	<div class="relative h-full w-full">
+		{#if stateActive}
+			{@render menuButton('cross')}
+			<button
+				onclick={() => {
+					setCheck('nodeInfo');
+				}}
+				class="absolute border transition-all p-2 top-0 -translate-x-[200%] rounded-full bg-black bg-opacity-90 z-50"
 			>
-				<Ellipsis strokeWidth={1.5} />
-			</div>
-			<div class="absolute border -m-2 p-2 top-0 -translate-y-[200%] rounded-full bg-black bg-opacity-25 z-50">
+				<Info strokeWidth={1.5} color="white" />
+			</button>
+			<button
+				onclick={() => {
+					setCheck('admin');
+				}}
+				class="absolute border p-2 top-0 -translate-x-[144%] -translate-y-[144%] rounded-full bg-black bg-opacity-90 z-50"
+			>
+				<Codesandbox strokeWidth={1.5} color="white" />
+			</button>
+			<button
+				onclick={() => {
+					setCheck('addNode');
+				}}
+				class="absolute border p-2 top-0 -translate-y-[200%] rounded-full bg-black bg-opacity-90 z-50"
+			>
 				<MessageCirclePlus color="white" strokeWidth={1.5} />
-			</div>
-		</div>
-	{:else}
-		<div in:fade={{ duration: 200 }}>
-			<Ellipsis strokeWidth={1.5} color="white" />
-		</div>
-	{/if}
-</button>
-
-<div
-	class="fixed border overflow-y-auto w-40 h-40 z-50 rounded-lg p-2 left-[50%] bg-black bg-opacity-35 bottom-20 -translate-x-[50%]"
->
-	{#if states.nodeInfo}
-		{#if $selectedNodeStore}
-			{#key $selectedNodeStore}
-				<div
-					in:blur={{
-						duration: 800,
-						easing: quintOut,
-						amount: 2,
-						opacity: 0.4
-					}}
-					class="flex flex-col items-center gap-2"
-				>
-					<div class="text-xl text-white font-semibold first-letter:capitalize">
-						{$selectedNodeStore.title}
-					</div>
-					<div>
-						{$t('from')}
-						<span class="text-white">{$selectedNodeStore.author}</span>
-					</div>
-					<div class="max-h-60 overflow-auto text-justify text-gray-300">
-						{$selectedNodeStore.text}
-					</div>
-				</div>
-			{/key}
+			</button>
 		{:else}
-			<div class="text-xl text-center font-semibold first-letter:capitalize">
-				{$t('noNodeSelected')}
+			{@render menuButton('dots')}
+		{/if}
+	</div>
+</div>
+
+<!-- Display -->
+{#if stateActive}
+	<div
+		class="fixed w-1/2 max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl
+			p-4 m-6 bottom-0 left-0 bg-black bg-opacity-65"
+		transition:fade={{ duration: 200 }}
+	>
+		{#if states.nodeInfo}
+			{#if $selectedNodeStore}
+				{#key $selectedNodeStore}
+					<div
+						in:blur={{
+							duration: 300,
+							easing: quintOut,
+							amount: 2,
+							opacity: 0.4
+						}}
+						class="flex flex-col items-center gap-2"
+					>
+						<div class="text-xl text-white font-semibold first-letter:capitalize">
+							{$selectedNodeStore.title}
+						</div>
+						<div>
+							{$t('from')}
+							<span class="text-white">{$selectedNodeStore.author}</span>
+						</div>
+						<div class="max-h-60 overflow-auto text-justify text-gray-300">
+							{$selectedNodeStore.text}
+						</div>
+					</div>
+				{/key}
+			{:else}
+				<div class="text-xl text-center font-semibold first-letter:capitalize">
+					{$t('noNodeSelected')}
+				</div>
+			{/if}
+		{:else if states.addNode}
+			<form
+				method="post"
+				action="/sessions/{session.id}?/addNode"
+				class="flex flex-col items-center gap-2 cursor-default p-2 z-10 w-full"
+				onsubmit={(e) => {
+					e.preventDefault();
+					if (theForm) {
+						validForm = theForm.checkValidity();
+						if (validForm) {
+							theForm.requestSubmit();
+						}
+					}
+				}}
+				use:enhance={() => {
+					nProgress.start();
+					return async ({ update, result }) => {
+						await update({ reset: false });
+						handleActionResult(result);
+						nProgress.done();
+					};
+				}}
+			>
+				<label class="form-control w-full max-w-xs">
+					<div class="label p-0">
+						<span class="label-text text-inherit">{$t('messageTitle')}</span>
+					</div>
+					<input
+						name="title"
+						type="text"
+						bind:value={nodeTitle}
+						placeholder="Youhouhou"
+						class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label p-0">
+						<span class="label-text text-inherit">{$t('yourName')}</span>
+					</div>
+					<input
+						name="author"
+						type="text"
+						bind:value={nodeAuthor}
+						placeholder="Snoup"
+						class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label p-0">
+						<span class="label-text text-inherit">{$t('side.yourSide')}</span>
+					</div>
+					<select
+						name="side"
+						class="select select-accent text-primary-500 bg-gray-950 select-sm select-bordered"
+					>
+						{#each sides as side}
+							<option value={side.id}>{side.name}</option>
+						{/each}
+					</select>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label p-0">
+						<span class="label-text text-inherit">{$t('home.yourMessage')}</span>
+					</div>
+					<textarea
+						name="text"
+						bind:value={nodeText}
+						class="textarea textarea-accent text-primary-500 bg-gray-950"
+						placeholder="Ton message"
+					></textarea>
+				</label>
+				<input type="hidden" name="session" value={session.id} />
+				<input type="hidden" name="parent" value={$selectedNodeStore?.id ?? null} />
+				<button class="btn w-fit btn-accent btn-sm self-center" type="submit">{$t('form.submit')}</button>
+			</form>
+		{:else if states.admin}
+			<div
+				transition:slide={{
+					duration: 200,
+					easing: quintOut
+				}}
+				class="flex flex-col items-center gap-2 p-2 text-primary-500 z-10"
+			>
+				{@render formTemplate(events, 'addEvent', 'eventId', $t('sessions.addEvent'), true)}
+				{@render formTemplate(ends, 'endSession', 'endId', $t('sessions.endSession'))}
 			</div>
 		{/if}
-	{/if}
-	{#if states.addNode}
-		<form
-			method="post"
-			action="/sessions/{session.id}?/addNode"
-			class="flex flex-col items-center gap-2 cursor-default p-2 z-10 w-full bg-gray-950 opacity-90"
-			onsubmit={(e) => {
-				e.preventDefault();
-				if (theForm) {
-					validForm = theForm.checkValidity();
-					if (validForm) {
-						theForm.requestSubmit();
-					}
-				}
-			}}
-			use:enhance={() => {
-				nProgress.start();
-				return async ({ update, result }) => {
-					await update({ reset: false });
-					handleActionResult(result);
-					nProgress.done();
-				};
-			}}
-		>
-			<label class="form-control w-full max-w-xs">
-				<div class="label p-0">
-					<span class="label-text text-inherit">{$t('messageTitle')}</span>
-				</div>
-				<input
-					name="title"
-					type="text"
-					bind:value={nodeTitle}
-					placeholder="Youhouhou"
-					class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
-				/>
-			</label>
-			<label class="form-control w-full max-w-xs">
-				<div class="label p-0">
-					<span class="label-text text-inherit">{$t('yourName')}</span>
-				</div>
-				<input
-					name="author"
-					type="text"
-					bind:value={nodeAuthor}
-					placeholder="Snoup"
-					class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
-				/>
-			</label>
-			<label class="form-control w-full max-w-xs">
-				<div class="label p-0">
-					<span class="label-text text-inherit">{$t('side.yourSide')}</span>
-				</div>
-				<select name="side" class="select select-accent text-primary-500 bg-gray-950 select-sm select-bordered">
-					{#each sides as side}
-						<option value={side.id}>{side.name}</option>
-					{/each}
-				</select>
-			</label>
-			<label class="form-control w-full max-w-xs">
-				<div class="label p-0">
-					<span class="label-text text-inherit">{$t('home.yourMessage')}</span>
-				</div>
-				<textarea
-					name="text"
-					bind:value={nodeText}
-					class="textarea textarea-accent text-primary-500 bg-gray-950"
-					placeholder="Ton message"
-				></textarea>
-			</label>
-			<input type="hidden" name="session" value={session.id} />
-			<input type="hidden" name="parent" value={$selectedNodeStore?.id ?? null} />
-			<button class="btn w-fit btn-accent btn-sm self-center" type="submit">{$t('form.submit')}</button>
-		</form>
-	{/if}
-</div>
+	</div>
+{/if}

@@ -62,13 +62,11 @@
 				<span class="invisible">BABEL REVOLUTION</span>
 			{/if}
 		</h1>
-		<div class="text-lg text-pretty text-gray-300">
+		<div class="text-lg text-pretty text-gray-100">
 			{$t('home.intro')}
 			<p class="text-white">
 				{$t('home.introHighlight')}
-				<span class="underline text-primary-500 text-nowrap underline-offset-4"
-					>{$t('home.introHyperHighlight')}</span
-				>
+				<span class="text-primary-500 text-nowrap">{$t('home.introHyperHighlight')}</span>
 			</p>
 		</div>
 		<div id="intro" class="flex gap-4">
@@ -76,12 +74,6 @@
 			<a class="text-white bg-gray-800 btn w-fit hover:bg-gray-900" href="/sessions">{$t('home.joinSession')}</a>
 		</div>
 	</section>
-	<!-- <div class="form-control">
-		<label class="flex flex-col gap-2 cursor-pointer label">
-			<span class="text-white label-text">{graphIntro ? 'Graph' : 'Carousel'}</span>
-			<input type="checkbox" class="bg-black toggle toggle-success" bind:checked={graphIntro} />
-		</label>
-	</div> -->
 	<div
 		class="flex flex-col-reverse items-center w-full gap-0 px-12 lg:h-80 md:px-40 xl:px-64 lg:flex-row-reverse md:justify-center"
 	>
@@ -99,9 +91,9 @@
 						in:fade={{
 							duration: 400
 						}}
-						class="flex flex-col w-full"
+						class="flex flex-col w-full text-gray-200"
 					>
-						<div class="text-xl font-semibold first-letter:capitalize">
+						<div class="text-xl font-semibold first-letter:capitalize text-gray-100">
 							{$t(homeStore.selectedNode?.title ?? 'oupsi')}
 						</div>
 						<div class="">{$t(homeStore.selectedNode?.text ?? 'oupsi')}</div>
@@ -119,7 +111,7 @@
 							<div class="mt-2 chat chat-end">
 								<div class="rounded-full chat-image avatar ring-primary-500 ring-1">
 									<div class="w-10 rounded-full">
-										<img alt="Tailwind CSS chat bubble component" src={graph1} />
+										<img alt="avatar" src={graph1} />
 									</div>
 								</div>
 								<div class="mr-2 text-black chat-bubble bg-primary-500">
@@ -148,7 +140,7 @@
 					class="self-center p-4 text-center border w-96 sm:justify-self-center carousel rounded-box bg-gray-950"
 				>
 					{#each homeStore.nodes as node, i (node.id)}
-						<div id="item{i}" class="flex flex-col w-full gap-2 p-4 carousel-item text-wrap">
+						<div id="item{i}" class="flex text-gray-100 flex-col w-full gap-2 p-4 carousel-item text-wrap">
 							<h3 class="text-xl font-bold">{$t(node.title)}</h3>
 							<div>{$t(node.text)}</div>
 						</div>
@@ -157,7 +149,7 @@
 			</div>
 		{/if}
 	</div>
-	<div class="flex flex-col w-full gap-4 items-center">
+	<div class="flex flex-col w-full text-gray-50 gap-4 items-center">
 		<h2>Sessions Ouvertes</h2>
 		<Sessions sessions={data.sessions.filter((session) => !session.completed)} />
 		<h2>Sessions Terminées</h2>
