@@ -6,7 +6,7 @@
 	import ExampleGraph from '$components/graph/ExampleGraph.svelte';
 	import { typewriter } from '$lib/animations';
 	import { t, locale } from 'svelte-i18n';
-	import { homeStore } from '$stores/home/index.svelte';
+	import { homeStore } from '$stores/graph/home/index.svelte.js';
 	import { titleStore } from '$stores/titles/index.svelte';
 	import toast from 'svelte-french-toast';
 
@@ -28,7 +28,7 @@
 			const id = homeStore.nodes.length + 1;
 			const node = homeStore.addNode({
 				id,
-				title: 'home.yourMessage',
+				title: $t('home.yourMessage'),
 				text: userMessage
 			});
 			homeStore.addLink({ source: Number(id), target: Number(homeStore.selectedNode?.id) ?? 3 });
@@ -94,7 +94,7 @@
 						class="flex flex-col w-full text-gray-200"
 					>
 						<div class="text-xl font-semibold first-letter:capitalize text-gray-100">
-							{$t(homeStore.selectedNode?.title ?? 'oupsi')}
+							{homeStore.selectedNode?.title ?? 'oupsi'}
 						</div>
 						<div class="">{$t(homeStore.selectedNode?.text ?? 'oupsi')}</div>
 						{#if homeStore.selectedNode?.id === 3}

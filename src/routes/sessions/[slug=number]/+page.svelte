@@ -6,8 +6,7 @@
 	import { pb } from '$lib/client/pocketbase';
 	import { initStores } from './utils';
 	import GraphUi from '$components/graph/GraphUI.svelte';
-	import MainGraph from '$components/graph/MainGraph.svelte';
-	import Watermark from '$components/admin/Watermark.svelte';
+	import MainGraph from '$components/graph/mainGraph/MainGraph.svelte';
 	import graph1 from '$lib/assets/graphe1.png';
 	import type { PageServerData } from './$types';
 	import type { LayoutServerData } from '../../$types';
@@ -88,16 +87,13 @@
 	<div class=" w-full h-screen flex justify-center items-center bg-black">
 		<LoaderPinwheel color="white" class="w-20 z-50 opacity-100 h-20 loader animate-spin" />
 	</div>
-{/await}
-
+{:then}
 <div class="relative">
 	{#if admin && user}
 		<GraphUi {admin} session={sessionData} {user} {events} {ends} {sides} />
-		<Watermark watermarkText="Admin">
-			<MainGraph sessionId={sessionData.id} />
-		</Watermark>
 	{:else}
 		<GraphUi session={sessionData} {sides} />
+		{/if}
 		<MainGraph sessionId={sessionData.id} />
-	{/if}
 </div>
+{/await}
