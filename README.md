@@ -1,43 +1,73 @@
 # Mise en place du projet
 
-## Installation
+## Dev
 
 ### Prérequis
 
+- [Bun](https://bun.sh/) : Gestionnaire de packet & Runtime \
+- [Node.js](https://nodejs.org/en/) Environnement d'exécution JavaScript (version > 20)
 - [Git](https://git-scm.com/) : Gestionnaire de versions
+
+### Optionnel
+
 - [Docker](https://www.docker.com/) : Conteneurisation & Déploiement
   - [Docker Desktop](https://www.docker.com/products/docker-desktop) : Version Desktop
   - [Docker Compose](https://docs.docker.com/compose/) : Outil de gestion de conteneurs
-- [Bun](https://bun.sh/) : Gestionnaire de packet & Runtime \
-    ou
-- [Node.js](https://nodejs.org/en/) Environnement d'exécution JavaScript (version > 20)
 
-### Installation des dépendances
-
-Windows : `powershell -c "irm bun.sh/install.ps1 | iex"`
-Mac & Linux : `curl -fsSL https://bun.sh/install | bash`
+### Installation
 
 Clone du projet :
 `git clone https://github.com/KoroSensei10/svelte-revolution.git`
 
-```bash
+```sh
 bun install
 ```
 
-### Lancer le projet en mode développement
+### Variables d'environnement
+
+Créer un fichier `.env` à la racine du projet avec les variables d'environnement suivantes :
+
+```env
+ENV_FILE=.env.local
+```
+
+Dans le fichier `.env.local` vous pouvez changer les variables `PUBLIC_DB_URL` et `DB_URL` pour qu'elle pointe vers votre (ou n'importe laquelle) base de données PocketBase.
+
+```env
+PUBLIC_DB_URL=http://localhost:8090
+DB_URL=http://localhost:8090
+```
+
+#### Partie IA
+
+Pour la partie IA, il faut ajouter les variables suivantes dans le fichier `.env.local` pour qu'il puisse communiquer avec votre serveur IA.
+
+```env
+IA_SERVER_URL=http://localhost:8000
+```
+
+### Lancer le projet
 
 Lancer le serveur de développement :
 
-```bash
+```sh
 bun dev
 ```
 
-### Tester la production
+#### Lancer l'ia
+
+Pour lancer le serveur IA, il faut se rendre dans le dossier `ia_server/` et lancer le serveur avec la commande suivante :
+
+```sh  
+XXX # Cela dépend de votre IA
+```
+
+## Tester la production
 
 Lancer le serveur de production :
 
-```bash
-bun run build
+```sh
+bun run build &&
 bun run preview
 ```
 
@@ -93,7 +123,9 @@ La manière la plus simple est d'ajouter les classes directement dans le code HT
 
 ## Déploiement
 
-### Dépoliment sur le serveur YUNOHOST
+Déploiement automatique sur le serveur YUNOHOST à chaque push.
+
+### OLD! Déploiment sur le serveur YUNOHOST
 
 Pour réussir à déployer le projet sur le serveur YUNOHOST, il faut suivre les étapes suivantes :
 
@@ -104,10 +136,6 @@ Pour réussir à déployer le projet sur le serveur YUNOHOST, il faut suivre les
   - les autres variables sont déjà configurées
   - [local preview uniquement] Modfier la variable `ORIGIN` et mettre `http://localhost:4173` sinon le serveur ne pourra pourra pas traiter les requêtes POST des formulaires
 - Ensuite, simplement ajouter le reverse proxy sur le serveur YUNOHOST
-
-#### Variables d'environnement
-
-Variable d'envrionnement dans le fichier [.env.production](.env.production)
 
 ### Adapter
 

@@ -1,6 +1,6 @@
 import { fail, type Actions } from '@sveltejs/kit';
-import { createEventsAndEnds, createScenario } from '$lib/server/scenario/create';
 import type { MyPocketBase } from '$types/pocketBase';
+import { createEventsAndEnds, createScenario } from '$lib/server/scenario';
 
 export const actions = {
 	createScenario: async ({ request, locals }) => {

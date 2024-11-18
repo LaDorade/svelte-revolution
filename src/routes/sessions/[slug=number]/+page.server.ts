@@ -1,12 +1,9 @@
 import { getSession } from '$lib/server/sessions';
-import { createNode } from '$lib/server/sessions/create';
+import { createNode } from '$lib/server/nodes';
 import { type Actions, fail, type ServerLoad } from '@sveltejs/kit';
 import type { End, GraphEvent } from '$types/pocketBase/TableTypes';
 import type { GraphNode } from '$types/pocketBase/TableTypes';
-import { env } from '$env/dynamic/private';
-
-const iaserver = env.IA_SERVER_URL;
-const checkMsgURL = iaserver ? `${iaserver}/api/checkMsg` : '';
+import { apiHealthy, censorNode } from '$lib/server/ia';
 
 export const load: ServerLoad = async ({ params, locals }) => {
 	const pb = locals.pb;
@@ -32,17 +29,8 @@ export const load: ServerLoad = async ({ params, locals }) => {
 		filter: locals.pb.filter('scenario = {:scenario}', { scenario: sessionData?.expand?.scenario?.id })
 	});
 
-	let iaConnected = false;
-	if (iaserver) {
-		try {
-			const response = await fetch(`${iaserver}/api/health`);
-			if (response.ok) {
-				iaConnected = true;
-			}
-		} catch {
-			console.error('IA Server not reachable');
-		}
-	}
+	// ? Check if IA server is connected
+	const iaConnected = apiHealthy();
 
 	const nodes = pb
 		.collection('Node')
@@ -82,25 +70,10 @@ export const actions: Actions = {
 			return fail(422, { success: false, error: 'Missing required fields' });
 		}
 
-		const nodeData = { title, text, author, parent, session, side };
+		let nodeData = { title, text, author, parent, session, side };
 
-		// TODO: ajouter ici le check ia si besoin
-		if (iaserver) {
-			try {
-				const response = await fetch(checkMsgURL, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(nodeData)
-				});
-				if (response.ok) {
-					const result = await response.json();
-					nodeData.text = result.text;
-					nodeData.title = result.title;
-				}
-			} catch (error) {
-				console.error('IA Server not reachable', error);
-			}
-		}
+		// TODO: ajouter ici le check ia session
+		nodeData = await censorNode(nodeData);
 
 		const node = await locals.pb.collection('Node').create({
 			...nodeData,
