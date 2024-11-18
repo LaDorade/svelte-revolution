@@ -10,7 +10,7 @@ export const colors = {
 	selectedNode: 'red',
 	eventNode: '#f7b32b',
 	defaultNode: '#86efac',
-	defaultLink: '#999',
+	defaultLink: '#fff',
 	hoverLink: 'red',
 	connectedNode: 'purple'
 };

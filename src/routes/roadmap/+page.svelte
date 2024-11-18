@@ -1,67 +1,14 @@
 <script lang="ts">
 	import { sumTaskDuration, tasks } from '$lib/taskProgress';
-	import { onMount } from 'svelte';
 	import { t } from 'svelte-i18n';
 
 	tasks.sort((a, b) => Number(a.order) - Number(b.order));
 
 	let [completed, total] = sumTaskDuration(tasks);
-
-	let days = $state(0),
-		hours = $state(0),
-		minutes = $state(0),
-		seconds = $state(0);
-
-	function updateCountdown() {
-		const targetDate = new Date('2024-10-07T09:00:00');
-		const now = new Date();
-		const timeDifference = targetDate.getTime() - now.getTime();
-
-		days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-		hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-		minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-		seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-	}
-
-	onMount(() => {
-		updateCountdown();
-		const interval = setInterval(updateCountdown, 1000);
-		return () => clearInterval(interval);
-	});
 </script>
 
 <div class="flex flex-col items-center w-full gap-4 py-4">
-	{#if days < 0 && hours < 0 && minutes < 0 && seconds < 0}
-		<div>{$t('revolution')}</div>
-	{:else}
-		<h1 class="text-4xl font-thin text-center text-white first-letter:capitalize">Svelte Révolution Roadmap</h1>
-		<div class="grid grid-flow-col gap-5 text-center text-green-300 auto-cols-max">
-			<div class="flex flex-col">
-				<span class="justify-center font-mono text-5xl countdown">
-					<span style="--value:{days};"></span>
-				</span>
-				{$t('days')}
-			</div>
-			<div class="flex flex-col">
-				<span class="justify-center font-mono text-5xl countdown">
-					<span style="--value:{hours};"></span>
-				</span>
-				{$t('hours')}
-			</div>
-			<div class="flex flex-col">
-				<span class="justify-center font-mono text-5xl countdown">
-					<span style="--value:{minutes};"></span>
-				</span>
-				{$t('minutes')}
-			</div>
-			<div class="flex flex-col">
-				<span class="justify-center font-mono text-5xl countdown">
-					<span style="--value:{seconds};"></span>
-				</span>
-				{$t('seconds')}
-			</div>
-		</div>
-	{/if}
+	<h1 class="text-4xl font-thin text-center text-white first-letter:capitalize">Svelte Révolution Roadmap</h1>
 	<div class="flex flex-col items-center gap-2">
 		<progress class="w-56 border progress progress-accent" value={completed} max={total}></progress>
 		<span class="text-white">

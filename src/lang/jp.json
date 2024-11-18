@@ -74,7 +74,8 @@
 		"joinSession": "セッションに参加",
 		"yourMessage": "あなたのメッセージ",
 		"emptyMessage": "さあ、何か書いてみてください！",
-		"tryDragGraph": "グラフをドラッグしてみてください"
+		"tryDragGraph": "グラフをドラッグしてみてください",
+		"animateYourSession": "あなたのセッションをアニメーション化"
 	},
 	"exampleGraph": {
 		"title1": "ネットワークを考察する",

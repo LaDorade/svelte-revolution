@@ -74,7 +74,8 @@
 		"joinSession": "Rejoindre une session",
 		"yourMessage": "Ton message",
 		"emptyMessage": "Allez, essaye d'écire quelque chose !",
-		"tryDragGraph": "Essaye de déplacer le graphe !"
+		"tryDragGraph": "Essaye de déplacer le graphe !",
+		"animateYourSession": "Animer votre session"
 	},
 	"exampleGraph": {
 		"title1": "Contemple le réseau",

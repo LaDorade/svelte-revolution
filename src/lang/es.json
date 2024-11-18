@@ -76,7 +76,8 @@
         "send": "Enviar",
         "discoverBabel": "Descubre BⱯBEL",
         "joinSession": "Unirse a una Sesión",
-        "tryDragGraph": "¡Intenta arrastrar el gráfico!"
+        "tryDragGraph": "¡Intenta arrastrar el gráfico!",
+        "animateYourSession": "Animar tu Sesión"
     },
     "exampleGraph": {
         "title1": "Contempla la Red",

@@ -69,91 +69,90 @@
 				<span class="text-primary-500 text-nowrap">{$t('home.introHyperHighlight')}</span>
 			</p>
 		</div>
-		<div id="intro" class="flex gap-4">
+		<div id="intro" class="grid grid-cols-2 grid-rows-2 gap-4">
 			<a class="btn dark:bg-white dark:text-black hover:bg-gray-300" href="#intro">{$t('home.discoverBabel')}</a>
 			<a class="text-white bg-gray-800 btn w-fit hover:bg-gray-900" href="/sessions">{$t('home.joinSession')}</a>
+			<a class="btn col-span-2 bg-primary-500 text-black border-none" href="#animer"
+				>{$t('home.animateYourSession')}</a
+			>
 		</div>
 	</section>
 	<div
 		class="flex flex-col-reverse items-center w-full gap-0 px-12 lg:h-80 md:px-40 xl:px-64 lg:flex-row-reverse md:justify-center"
 	>
-		{#if graphIntro}
-			<div
-				in:scale={{
-					delay: 50,
-					duration: 400,
-					easing: quintOut
-				}}
-				class="flex flex-col w-full h-full gap-4 text-balance item md:py-12"
-			>
-				{#key homeStore.selectedNode}
-					<div
-						in:fade={{
-							duration: 400
-						}}
-						class="flex flex-col w-full text-gray-200"
-					>
-						<div class="text-xl font-semibold first-letter:capitalize text-gray-100">
-							{homeStore.selectedNode?.title ?? 'oupsi'}
-						</div>
-						<div class="">{$t(homeStore.selectedNode?.text ?? 'oupsi')}</div>
-						{#if homeStore.selectedNode?.id === 3}
-							<form class="flex justify-between mt-2" onsubmit={submitUserMessage}>
-								<input
-									type="text"
-									bind:value={userMessage}
-									placeholder={$t('home.writeMessage')}
-									class="max-w-xs input border-primary-500"
-								/>
-								<button type="submit" class=" btn btn-accent">{$t('home.send')}</button>
-							</form>
-						{:else if homeStore.selectedNode?.id === 5}
-							<div class="mt-2 chat chat-end">
-								<div class="rounded-full chat-image avatar ring-primary-500 ring-1">
-									<div class="w-10 rounded-full">
-										<img alt="avatar" src={graph1} />
-									</div>
-								</div>
-								<div class="mr-2 text-black chat-bubble bg-primary-500">
-									{$t('home.tryDragGraph')}
+		<div
+			in:scale={{
+				delay: 50,
+				duration: 400,
+				easing: quintOut
+			}}
+			class="flex flex-col w-full h-full gap-4 text-balance item md:py-12"
+		>
+			{#key homeStore.selectedNode}
+				<div
+					in:fade={{
+						duration: 400
+					}}
+					class="flex flex-col w-full text-gray-200"
+				>
+					<div class="text-xl font-semibold first-letter:capitalize text-gray-100">
+						{$t(homeStore.selectedNode?.title ?? 'oupsi')}
+					</div>
+					<div class="">{$t(homeStore.selectedNode?.text ?? 'oupsi')}</div>
+					{#if homeStore.selectedNode?.id === 3}
+						<form class="flex justify-between mt-2 items-center" onsubmit={submitUserMessage}>
+							<input
+								type="text"
+								bind:value={userMessage}
+								placeholder={$t('home.writeMessage')}
+								class="max-w-xs input border-primary-500 appearance-none bg-black"
+							/>
+							<button type="submit" class=" btn btn-accent">{$t('home.send')}</button>
+						</form>
+					{:else if homeStore.selectedNode?.id === 5}
+						<div class="mt-2 chat chat-end">
+							<div class="rounded-full chat-image avatar ring-primary-500 ring-1">
+								<div class="w-10 rounded-full">
+									<img alt="avatar" src={graph1} />
 								</div>
 							</div>
-						{/if}
-					</div>
-				{/key}
-			</div>
-			<div class="w-full text-left sm:flex sm:justify-center">
-				{#key reloadGraph}
-					<ExampleGraph />
-				{/key}
-			</div>
-		{:else}
-			<div
-				class="flex justify-center w-screen"
-				in:scale={{
-					delay: 50,
-					duration: 400,
-					easing: quintOut
-				}}
-			>
-				<div
-					class="self-center p-4 text-center border w-96 sm:justify-self-center carousel rounded-box bg-gray-950"
-				>
-					{#each homeStore.nodes as node, i (node.id)}
-						<div id="item{i}" class="flex text-gray-100 flex-col w-full gap-2 p-4 carousel-item text-wrap">
-							<h3 class="text-xl font-bold">{$t(node.title)}</h3>
-							<div>{$t(node.text)}</div>
+							<div class="mr-2 text-black chat-bubble bg-primary-500">
+								{$t('home.tryDragGraph')}
+							</div>
 						</div>
-					{/each}
+					{/if}
 				</div>
-			</div>
-		{/if}
+			{/key}
+		</div>
+		<div class="w-full text-left sm:flex sm:justify-center">
+			{#key reloadGraph}
+				<ExampleGraph />
+			{/key}
+		</div>
 	</div>
 	<div class="flex flex-col w-full text-gray-50 gap-4 items-center">
 		<h2>Sessions Ouvertes</h2>
 		<Sessions sessions={data.sessions.filter((session) => !session.completed)} />
 		<h2>Sessions Terminées</h2>
 		<Sessions sessions={data.sessions.filter((session) => session.completed)} />
+	</div>
+	<div class="flex flex-col w-full text-gray-200 gap-4 items-cente">
+		<h2 id="animer" class="text-3xl text-gray-100 font-bold">Animer votre Session</h2>
+		<div class="text-pretty p-8 bg-black bg-opacity-30 mx-24 rounded">
+			Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis ipsam ex illo mollitia eius cumque obcaecati
+			cupiditate! Culpa amet, reprehenderit, deleniti unde harum ad dolorem cupiditate fugiat magnam, commodi
+			dolorum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque architecto obcaecati adipisci nulla
+			maxime dolore dicta reprehenderit quo quidem dolorem? Nulla atque, quidem totam id sint autem similique
+			facilis magnam!Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis ipsam ex illo mollitia eius
+			cumque obcaecati cupiditate! Culpa amet, reprehenderit, deleniti unde harum ad dolorem cupiditate fugiat
+			magnam, commodi dolorum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque architecto
+			obcaecati adipisci nulla maxime dolore dicta reprehenderit quo quidem dolorem? Nulla atque, quidem totam id
+			sint autem similique facilis magnam!Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis ipsam ex
+			illo mollitia eius cumque obcaecati cupiditate! Culpa amet, reprehenderit, deleniti unde harum ad dolorem
+			cupiditate fugiat magnam, commodi dolorum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque
+			architecto obcaecati adipisci nulla maxime dolore dicta reprehenderit quo quidem dolorem? Nulla atque,
+			quidem totam id sint autem similique facilis magnam!
+		</div>
 	</div>
 	<footer class=" text-gray-300 backdrop-blur-[2px] -mx-4 p-4 border-primary-500 border-t">
 		<div class="text-center flex items-center flex-col gap-2 antialiased">

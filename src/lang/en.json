@@ -76,7 +76,8 @@
 		"send": "Send",
 		"discoverBabel": "Discover BⱯBEL",
 		"joinSession": "Join a Session",
-		"tryDragGraph": "Let's try to drag the graph!"
+		"tryDragGraph": "Let's try to drag the graph!",
+		"animateYourSession": "Animate your Session"
 	},
 	"exampleGraph": {
 		"title1": "Contemplate the Network",

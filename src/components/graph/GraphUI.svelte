@@ -98,6 +98,8 @@
 	onDestroy(() => {
 		selectedNodeUnsubscribe();
 	});
+
+	$inspect($selectedNodeStore);
 </script>
 
 {#snippet formTemplate(
@@ -233,6 +235,9 @@
 						>
 							<div class="text-xl text-white font-semibold first-letter:capitalize">
 								{$selectedNodeStore.title}
+							</div>
+							<div>
+								{$selectedNodeStore.side}
 							</div>
 							<div>
 								{$t('from')}

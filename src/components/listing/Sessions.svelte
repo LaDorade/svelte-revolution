@@ -6,6 +6,7 @@
 	import graphe1 from '$lib/assets/graphe1.png';
 
 	import type { Session } from '$types/pocketBase/TableTypes';
+	import Hover from '$components/Hover.svelte';
 
 	interface Props {
 		showFilter?: boolean;
@@ -18,6 +19,10 @@
 
 	function getSessionUrl(session: Session) {
 		return `/sessions/${session.slug}?${admin ? 'admin=true' : ''}`;
+	}
+
+	function getSessionImage(session: Session) {
+		return session.image ? pb.files.getUrl(session, session.image) : graphe1;
 	}
 
 	onMount(async () => {
@@ -46,7 +51,7 @@
 		{#each sessions as session (session.id)}
 			{@const completed = session.completed}
 			{@const scenario = session.expand?.scenario}
-			{@const imageUrl = pb.files.getUrl(session, session.image)}
+			{@const imageUrl = getSessionImage(session)}
 			<li
 				animate:flip={{ duration: 300 }}
 				class="w-full h-fit flex flex-col items-center rounded-lg {completed
@@ -68,13 +73,13 @@
 							>{scenario?.title}</span
 						>
 					</div>
-					<figure class="w-12 h-12 p-0 flex justify-center justify-self-end">
+					<div class="w-12 h-12 p-0 flex justify-center justify-self-end">
 						<img
 							class="rounded-lg p-0 h-12 w-12 object-cover"
 							src={session.image ? imageUrl : graphe1}
 							alt={session.image ?? graphe1}
 						/>
-					</figure>
+					</div>
 					<button
 						type={null}
 						onclick={(e) => {
@@ -83,16 +88,18 @@
 						}}
 						class="absolute h-fit z-50 top-12 m-4 group-hover:block hidden cursor-text"
 					>
-						<div
-							class="p-2 w-fit text-balance text-white rounded bg-gray-900 bg-opacity-90 flex flex-col gap-2"
-						>
-							<div class="text-lg text-start">
-								{scenario?.title}
+						<Hover>
+							<div
+								class="p-2 w-fit text-balance text-white rounded bg-gray-900 bg-opacity-90 flex flex-col gap-2"
+							>
+								<div class="text-lg text-start">
+									{scenario?.title}
+								</div>
+								<div class=" text-sm text-gray-200 line-clamp-3">
+									{scenario?.prologue}
+								</div>
 							</div>
-							<div class=" text-sm text-gray-200">
-								{scenario?.prologue}
-							</div>
-						</div>
+						</Hover>
 					</button>
 				</a>
 				<div class="w-full flex justify-between h-full p-1 pl-2 bg-inherit rounded-b-lg">

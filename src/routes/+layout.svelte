@@ -91,7 +91,6 @@
 						</ul>
 					</li>
 				{/if}
-				<li><a href="/roadmap">Roadmap</a></li>
 				{#if viewportStore.actualBreakpoint === 'sm'}
 					<select bind:value={$locale} class="select select-ghost">
 						{#each $locales as loc}
