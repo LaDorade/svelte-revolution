@@ -1,3 +1,4 @@
+import sanitizeHtml from 'sanitize-html';
 import type { MyPocketBase } from '$types/pocketBase';
 import type { GraphNode, NodeType, Scenario } from '$types/pocketBase/TableTypes';
 
@@ -10,6 +11,9 @@ export async function createNode(
 	firstNode: GraphNode,
 	type: NodeType = 'contribution'
 ) {
+	title = sanitizeHtml(title);
+	text = sanitizeHtml(text);
+	author = sanitizeHtml(author);
 	return await pb.collection('Node').create({
 		title,
 		text,
@@ -17,29 +21,6 @@ export async function createNode(
 		session,
 		type,
 		parent: firstNode.id
-	});
-}
-
-export async function createSession(
-	pb: MyPocketBase,
-	name: FormDataEntryValue,
-	scenarioId: string,
-	author: FormDataEntryValue,
-	image: File
-) {
-	if (image.size !== 0) {
-		image = new File([image as Blob], `${name}.png`, { type: 'image/png' });
-	}
-	const sessions = await pb.collection('Session').getFullList({ fields: 'id' });
-	return await pb.collection('Session').create({
-		name,
-		scenario: scenarioId,
-		author,
-		slug: sessions.length + 1,
-		public: true,
-		visible: true,
-		completed: false,
-		image
 	});
 }
 

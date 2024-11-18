@@ -1,4 +1,5 @@
-import { createSession, createStartNode } from '$lib/server/sessions/create';
+import { createSession } from '$lib/server/sessions';
+import { createStartNode } from '$lib/server/nodes';
 import { getScenario } from '$lib/server/scenario';
 import { type Actions, fail } from '@sveltejs/kit';
 import type { MyPocketBase } from '$types/pocketBase';
