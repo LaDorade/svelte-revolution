@@ -77,7 +77,16 @@
         "discoverBabel": "Descubre BⱯBEL",
         "joinSession": "Unirse a una Sesión",
         "tryDragGraph": "¡Intenta arrastrar el gráfico!",
-        "animateYourSession": "Animar tu Sesión"
+        "animateYourSession": "Animar tu Sesión",
+        "animateSession": "Animar Sesión",
+        "footer": {
+            "citation": "",
+            "ciationInfos": "",
+            "mainText": "",
+            "techUsed": "Tecnologías utilizadas",
+            "devAndDesign": "Desarrollo y Diseño",
+            "credits": "Créditos"
+        }
     },
     "exampleGraph": {
         "title1": "Contempla la Red",

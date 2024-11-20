@@ -30,7 +30,7 @@ export const load: ServerLoad = async ({ params, locals }) => {
 	});
 
 	// ? Check if IA server is connected
-	const iaConnected = apiHealthy();
+	const iaConnected = await apiHealthy();
 
 	const nodes = pb
 		.collection('Node')

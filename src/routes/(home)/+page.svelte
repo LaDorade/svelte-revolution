@@ -139,19 +139,7 @@
 	<div class="flex flex-col w-full text-gray-200 gap-4 items-cente">
 		<h2 id="animer" class="text-3xl text-gray-100 font-bold">Animer votre Session</h2>
 		<div class="text-pretty p-8 bg-black bg-opacity-30 mx-24 rounded">
-			Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis ipsam ex illo mollitia eius cumque obcaecati
-			cupiditate! Culpa amet, reprehenderit, deleniti unde harum ad dolorem cupiditate fugiat magnam, commodi
-			dolorum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque architecto obcaecati adipisci nulla
-			maxime dolore dicta reprehenderit quo quidem dolorem? Nulla atque, quidem totam id sint autem similique
-			facilis magnam!Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis ipsam ex illo mollitia eius
-			cumque obcaecati cupiditate! Culpa amet, reprehenderit, deleniti unde harum ad dolorem cupiditate fugiat
-			magnam, commodi dolorum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque architecto
-			obcaecati adipisci nulla maxime dolore dicta reprehenderit quo quidem dolorem? Nulla atque, quidem totam id
-			sint autem similique facilis magnam!Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis ipsam ex
-			illo mollitia eius cumque obcaecati cupiditate! Culpa amet, reprehenderit, deleniti unde harum ad dolorem
-			cupiditate fugiat magnam, commodi dolorum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque
-			architecto obcaecati adipisci nulla maxime dolore dicta reprehenderit quo quidem dolorem? Nulla atque,
-			quidem totam id sint autem similique facilis magnam!
+			{$t('home.animateSession')}
 		</div>
 	</div>
 	<footer class=" text-gray-300 backdrop-blur-[2px] -mx-4 p-4 border-primary-500 border-t">
@@ -172,32 +160,25 @@
 			<p class="text-xl font-semibold">Babel Révolution | UTC</p>
 			<div class=" bg-black flex flex-col gap-2 bg-opacity-20 text-justify rounded-lg p-2">
 				<blockquote>
-					« Une expression qui, il y a un instant à peine, vivait encore et semblait même indéracinable,
-					pouvait brusquement s’évanouir : elle a disparu avec la situation qui l’avait engendrée et dont elle
-					témoignera un jour tel un fossile. »
+					« {$t('home.footer.citation')} »
 					<br />
 					<div class=" italic font-semibold">Klemperer, LTI, la langue du Troisième Reich, 1947</div>
 				</blockquote>
-				BⱯBEL RËVOLUㅏION est un récit dystopique interactif, collaboratif et plurilingue. Cette création cherche
-				à penser le lien entre la dégradation de la biodiversité et la dégradation de la diversité linguistique et
-				culturelle. Ce projet de recherche-création transdisciplinaire, en processus et sans cesse à renouveler,
-				à l’instar de toute révolution, implique des chercheuses et chercheurs de disciplines diverses (didactique
-				des langues, littérature, design, sciences de l'information et de la communication) et des élèves-ingénieur·es
-				en informatique. Mais BⱯBEL RËVOLUㅏION vous invite à entrer, vous aussi, dans l’œuvre pour en être l’auteur·rice.
+				{$t('home.footer.mainText')}
 			</div>
 			<div>
-				<div class="text-lg font-semibold">Credits Project design and supervision</div>
+				<div class="text-lg font-semibold">{$t('home.footer.credits')}</div>
 				<div class="text-primary-500">Serge Bouchardon, Isabelle Cros, Erika Fülöp, Simon Renaud.</div>
 			</div>
 			<div>
-				<div class="text-lg font-semibold">Development & Integration</div>
+				<div class="text-lg font-semibold">{$t('home.footer.devAndDesign')}</div>
 				<div class="text-primary-500 text-balance">
 					Mathis Jung, Eileen Lorenzo, Eva Guignabodet, Florestan Biaux, Benoît Chevillon, Lucas D'Aquaro,
 					Solène Desvaux de Marigny, Ismaïl Kadiri, Mathilde Lange, Claire Malgonne, Gabrielle Van de Vijver
 				</div>
 			</div>
 			<div>
-				<p class="text-lg font-semibold">Technologies utilisées</p>
+				<p class="text-lg font-semibold">{$t('home.footer.techUsed')}</p>
 				<p class="text-primary-500">Svelte, SvelteKit, TailwindCSS, PocketBase, Lucide Icons, Docker</p>
 			</div>
 			<p class="text-sm">{new Date().getFullYear()}</p>

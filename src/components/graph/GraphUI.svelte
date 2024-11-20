@@ -2,14 +2,23 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { t } from 'svelte-i18n';
 	import type { End, GraphEvent, Session, Side, User } from '$types/pocketBase/TableTypes';
-	import { selectedNodeStore } from '$stores/graph';
+	import { nodesStore, selectedNodeStore } from '$stores/graph';
 	import { enhance } from '$app/forms';
 	import nProgress from 'nprogress';
 	import toast from 'svelte-french-toast';
 	import type { ActionResult } from '@sveltejs/kit';
 	import { blur, fade, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import { Codesandbox, Ellipsis, Info, MessageCirclePlus, MessageCircleWarning, X } from 'lucide-svelte';
+	import {
+		Codesandbox,
+		Ellipsis,
+		GitPullRequest,
+		Info,
+		MessageCirclePlus,
+		MessageCircleWarning,
+		X
+	} from 'lucide-svelte';
+	import GraphTree from './GraphTree.svelte';
 
 	interface Props {
 		session: Session;
@@ -40,12 +49,20 @@
 		return Object.values(states).some((state) => state);
 	});
 
+	let treeView = $state(false);
+
 	/**
 	 * Set the state of the UI
 	 * Depending on the viewport, only one state can be active at a time
 	 * @param type - The type of the state to set
 	 */
-	function setCheck(type: 'addNode' | 'nodeInfo' | 'admin' | 'sessionEnd') {
+	function setCheck(type: 'addNode' | 'nodeInfo' | 'admin' | 'sessionEnd' | 'close') {
+		if (type === 'close') {
+			for (const key in states) {
+				states[key as 'nodeInfo' | 'addNode' | 'admin' | 'sessionEnd'] = false;
+			}
+			return;
+		}
 		for (const key in states) {
 			if (key !== type) {
 				states[key as 'nodeInfo' | 'addNode' | 'admin' | 'sessionEnd'] = false;
@@ -98,8 +115,6 @@
 	onDestroy(() => {
 		selectedNodeUnsubscribe();
 	});
-
-	$inspect($selectedNodeStore);
 </script>
 
 {#snippet formTemplate(
@@ -149,7 +164,7 @@
 	{#snippet menuButton(type: string)}
 		<button
 			class=" p-2 flex justify-center shadow-2xl items-center border z-50 rounded-full bg-black bg-opacity-90"
-			onclick={() => (states.nodeInfo = !states.nodeInfo)}
+			onclick={() => (stateActive ? setCheck('close') : setCheck('nodeInfo'))}
 		>
 			{#if type === 'dots'}
 				<Ellipsis strokeWidth={1.5} color="white" />
@@ -359,3 +374,16 @@
 		{/if}
 	</div>
 {/if}
+
+<!-- Graph Tree -->
+<div class=" fixed m-4 left-0 top-16 z-50">
+	<button
+		class=" p-2 flex justify-center shadow-2xl items-center border border-white z-50 rounded-full bg-black bg-opacity-90"
+		onclick={() => (treeView = !treeView)}
+	>
+		<GitPullRequest strokeWidth={1.5} color="white" />
+	</button>
+	{#if treeView}
+		<GraphTree />
+	{/if}
+</div>

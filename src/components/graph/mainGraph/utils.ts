@@ -78,7 +78,7 @@ export const updateLinksInGraph = (linkLayer: d3.Selection<SVGGElement, NodeMess
 		.selectAll('line')
 		.data(get(linksStore))
 		.join('line')
-		.attr('stroke', '#999')
+		.attr('stroke', colors.defaultLink)
 		.attr('stroke-opacity', 1)
 		.attr('stroke-width', 1)
 		.attr('stroke-linecap', 'round')

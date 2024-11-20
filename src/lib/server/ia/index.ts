@@ -11,6 +11,7 @@ function getURL(url: keyof typeof URLs) {
 }
 
 export async function apiHealthy() {
+	if (!iaServerUrl) return false;
 	const url = getURL('health');
 	if (!url) return false;
 
