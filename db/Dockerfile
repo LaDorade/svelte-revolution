@@ -1,1 +1,1 @@
-FROM spectado/pocketbase:latest
+FROM ghcr.io/muchobien/pocketbase:latest
