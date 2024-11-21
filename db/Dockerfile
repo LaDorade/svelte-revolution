@@ -1,1 +1,1 @@
-FROM ghcr.io/muchobien/pocketbase:latest
+FROM elestio/pocketbase:latest
