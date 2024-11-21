@@ -1,1 +1,1 @@
-FROM elestio/pocketbase:latest
+FROM spectado/pocketbase:latest
