@@ -35,8 +35,8 @@ export const scenarioSchema = z.object({
 
 export const fullScenarioSchema = z.object({
 	...scenarioSchema.shape,
-	sides: z.array(sideSchema).min(2),
 	firstNode: nodeSchema,
+	sides: z.array(sideSchema).min(2),
 	events: z.array(eventSchema).min(1),
 	ends: z.array(endSchema).min(1)
 });

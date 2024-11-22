@@ -9,7 +9,7 @@
 	import type { ActionData } from './$types';
 	import type { z } from 'zod';
 	import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
-	import { Pane } from 'svelte-tweakpane-ui';
+	import { Sparkles, TriangleAlert } from 'lucide-svelte';
 
 	interface Props {
 		form: ActionData;
@@ -20,16 +20,19 @@
 		title: '',
 		prologue: '',
 		lang: 'fr',
-		sides: [
-			{
-				title: ''
-			}
-		],
 		firstNode: {
 			title: '',
 			text: '',
 			author: ''
 		},
+		sides: [
+			{
+				title: ''
+			},
+			{
+				title: ''
+			}
+		],
 		events: [
 			{
 				title: '',
@@ -260,6 +263,7 @@
 				{$t('scenario.add')}
 			</button>
 		</div>
+		<!-- Ends -->
 		<div class="standardLabel flex flex-col items-center gap-4 justify-center">
 			<div class="flex flex-wrap gap-4 justify-center items-center">
 				{#each formData.ends as end, i (end)}
@@ -314,16 +318,33 @@
 		>
 			{$t('scenario.createYourScenario')}
 		</button>
-		{#if issues.length > 0}
-			<div class=" bg-black p-4 grid grid-cols-2 grid-flow-row w-full gap-2 justify-center items-center">
-				{#each issues as issue (issue)}
-					<div class="bg-red-500 grow p-2 rounded-md flex flex-col items-center gap-2">
-						<div>{issue.path.map((p) => $t('scenario.' + String(p))).join('.')}</div>
-						<div>{$t(issue.message)}</div>
+		<div class="sticky bottom-0 h-36 p-4 rounded-md">
+			{#if issues.length > 0}
+				<div class="bg-black flex flex-col items-center gap-4">
+					<h3 class=" font-semibold text-xl flex items-center gap-2 k">
+						<TriangleAlert class="w-8 h-8" />
+						{$t('scenario.scenarioIsNotValide')}
+						<TriangleAlert class="w-8 h-8" />
+					</h3>
+					<div class=" grid grid-cols-2 grid-flow-row w-full gap-4 justify-center items-center">
+						{#each issues as issue (issue)}
+							<div class="bg-red-500 grow p-2 rounded-md flex flex-col items-center gap-2">
+								<div>{issue.path.map((p) => $t('scenario.' + String(p))).join('.')}</div>
+								<div>{$t(issue.message)}</div>
+							</div>
+						{/each}
 					</div>
-				{/each}
-			</div>
-		{/if}
+				</div>
+			{:else}
+				<div class="bg-green-500 h-full w-full p-4 rounded-md flex flex-col justify-center items-center">
+					<h3 class=" font-semibold text-xl flex items-center gap-2">
+						<Sparkles class="w-8 h-8" />
+						<div>{$t('scenario.scenarioIsValide')}</div>
+						<Sparkles class="w-8 h-8" />
+					</h3>
+				</div>
+			{/if}
+		</div>
 	</form>
 </div>
 

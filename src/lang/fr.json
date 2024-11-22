@@ -44,7 +44,9 @@
     "end": "Fin",
     "side": "Côté",
     "sides": "Côtés",
-    "success": "Scénario créé avec succès"
+    "success": "Scénario créé avec succès",
+    "scenarioIsValide": "Le scénario est valide !",
+    "scenarioIsNotValide": "Le scénario n'est pas valide"
   },
   "side": {
     "side": "Camp",
