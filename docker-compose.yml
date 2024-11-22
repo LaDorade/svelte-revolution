@@ -20,7 +20,6 @@ services:
         restart: unless-stopped
         ports:
             - 8090:8090
-            - 8587:8587
         volumes:
             - pocketbase-data:/pb_data
         networks:

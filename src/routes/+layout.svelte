@@ -13,6 +13,7 @@
 	import type { User } from '$types/pocketBase/TableTypes';
 	import DebugPane from '$components/admin/DebugPane.svelte';
 	import BackToTop from '$components/BackToTop.svelte';
+	import { pb } from '$lib/client/pocketbase';
 
 	type Props = {
 		data: { user: User; isAdmin: boolean };
@@ -31,6 +32,10 @@
 			NProgress.done();
 		}
 	});
+
+	function getUserAvatar(user: User) {
+		return user.avatar ? pb.files.getUrl(user, user.avatar) : graph1;
+	}
 
 	onMount(() => {
 		viewportStore.updateViewport(window);
@@ -117,7 +122,7 @@
 				<div class="z-50 dropdown dropdown-end">
 					<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
 						<div class="w-10 rounded-full">
-							<img alt="Tailwind CSS Navbar component" src={graph1} />
+							<img alt="avatar" src={data.user ? getUserAvatar(data.user) : graph1} />
 						</div>
 					</div>
 					<ul

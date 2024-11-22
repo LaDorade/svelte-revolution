@@ -77,7 +77,7 @@
 						<img
 							class="rounded-lg p-0 h-12 w-12 object-cover"
 							src={session.image ? imageUrl : graphe1}
-							alt={session.image ?? graphe1}
+							alt='session'
 						/>
 					</div>
 					<button
