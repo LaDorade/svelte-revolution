@@ -12,6 +12,7 @@
 	import { titleStore } from '$stores/titles/index.svelte';
 	import type { User } from '$types/pocketBase/TableTypes';
 	import DebugPane from '$components/admin/DebugPane.svelte';
+	import BackToTop from '$components/BackToTop.svelte';
 
 	type Props = {
 		data: { user: User; isAdmin: boolean };
@@ -47,13 +48,14 @@
 </svelte:head>
 <svelte:window on:resize={() => viewportStore.updateViewport(window)} />
 
+<!-- Utilities -->
 <Toaster />
-
+<BackToTop />
 {#if $page.data.user?.role === 'superAdmin'}
 	<DebugPane />
 {/if}
 
-<!-- UI -->
+<!-- NAV -->
 <nav class="sticky top-0 z-50 border-b border-gray-500 bg-black navbar text-gray-200 bg-opacity-30">
 	<div class="navbar-start">
 		<div class="dropdown">
@@ -158,6 +160,7 @@
 	</div>
 </nav>
 
+<!-- MAIN -->
 <div class="relative inset-0 w-full h-full text-gray-300">
 	{@render children()}
 	<div
