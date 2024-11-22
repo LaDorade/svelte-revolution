@@ -1,6 +1,8 @@
 import { fail, type Actions } from '@sveltejs/kit';
-import type { MyPocketBase } from '$types/pocketBase';
 import { createEventsAndEnds, createScenario } from '$lib/server/scenario';
+import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
+import type { MyPocketBase } from '$types/pocketBase';
+import type { z } from 'zod';
 
 export const actions = {
 	createScenario: async ({ request, locals }) => {
@@ -13,71 +15,91 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const title = data.get('title');
-		const prologue = data.get('prologue');
-		const lang = data.get('lang');
-		const firstNodeTitle = data.get('firstNodeTitle');
-		const firstNodeText = data.get('firstNodeText');
-		const firstNodeAuthor = data.get('firstNodeAuthor');
-		const events = data.getAll('event');
-		const eventTexts = data.getAll('event-text');
-		const eventAuthors = data.getAll('event-author');
-		const ends = data.getAll('end');
-		const endTexts = data.getAll('end-text');
-		const sides = data.getAll('sides');
-
-		if (
-			!title ||
-			!prologue ||
-			!lang ||
-			!firstNodeTitle ||
-			!firstNodeText ||
-			!firstNodeAuthor ||
-			!events.length ||
-			!ends.length ||
-			!sides.length
-		) {
-			return fail(400, { error: 'Missing required fields' });
-		}
+		const { scnearioData, firstNode, sides, events, ends } = parseFormData(data);
 
 		try {
-			const scenario = await createScenario(pb, {
-				title,
-				prologue,
-				lang,
-				firstNodeTitle,
-				firstNodeText,
-				firstNodeAuthor
+			const parsed = fullScenarioSchema.parse({
+				...scnearioData,
+				firstNode,
+				sides,
+				events,
+				ends
 			});
-
 			try {
-				await createEventsAndEnds(pb, scenario.id, events, eventTexts, eventAuthors, ends, endTexts);
-				try {
-					sides.forEach(async (side) => {
-						await pb.collection('Side').create({ scenario: scenario.id, name: side }, { requestKey: null });
-					});
-				} catch (error) {
-					pb.collection('scenario').delete(scenario.id);
-					return fail(500, { error: String(error) });
-				}
-			} catch (error) {
-				pb.collection('scenario').delete(scenario.id);
-				return fail(500, { error: String(error) });
-			}
+				const scenarioInDb = {
+					title: parsed.title,
+					prologue: parsed.prologue,
+					lang: parsed.lang
+				};
+				const firstNodeInDb = {
+					title: parsed.firstNode.title,
+					text: parsed.firstNode.text,
+					author: parsed.firstNode.author
+				};
+				const scenario = await createScenario(pb, scenarioInDb, firstNodeInDb);
 
-			return {
-				success: true,
-				status: 201,
-				body: scenario
-			};
+				try {
+					await createEventsAndEnds(pb, scenario.id, events, ends);
+					try {
+						parsed.sides.forEach(async (side) => {
+							await pb
+								.collection('Side')
+								.create({ scenario: scenario.id, name: side.title }, { requestKey: null });
+						});
+					} catch {
+						pb.collection('scenario').delete(scenario.id);
+						return fail(500, { error: 'Fail creating sides' });
+					}
+				} catch {
+					pb.collection('scenario').delete(scenario.id);
+					return fail(500, { error: 'Fail creating events and ends' });
+				}
+
+				return {
+					success: true,
+					status: 201,
+					body: scenario
+				};
+			} catch {
+				return fail(500, { error: 'Fail creating scenario' });
+			}
 		} catch (error) {
-			return fail(500, { error: String(error) });
+			const err = error as z.ZodError;
+			const { message, path } = err.issues[0];
+			console.log(err.format());
+			return fail(400, { error: message, path });
 		}
 	}
 } satisfies Actions;
 
-export function load() {
-	return {
-		lang: ['en', 'fr', 'jp']
+function parseFormData(data: FormData) {
+	const scnearioData = {
+		title: data.get('title')?.toString(),
+		prologue: data.get('prologue')?.toString(),
+		lang: data.get('lang')?.toString()
 	};
+	const events: z.infer<typeof fullScenarioSchema>['events'] = data.getAll('endTitle').map((endTitle, index) => {
+		return {
+			title: endTitle.toString(),
+			text: data.getAll('eventText')[index].toString(),
+			author: data.getAll('eventAuthor')[index].toString()
+		};
+	});
+	const sides: z.infer<typeof fullScenarioSchema>['sides'] = data.getAll('side').map((side) => {
+		return {
+			title: side.toString()
+		};
+	});
+	const ends: z.infer<typeof fullScenarioSchema>['ends'] = data.getAll('endTitle').map((endTitle, index) => {
+		return {
+			title: endTitle.toString(),
+			text: data.getAll('endText')[index].toString()
+		};
+	});
+	const firstNode = {
+		title: data.get('firstNodeTitle')?.toString(),
+		text: data.get('firstNodeText')?.toString(),
+		author: data.get('firstNodeAuthor')?.toString()
+	};
+	return { scnearioData, firstNode, sides, events, ends };
 }

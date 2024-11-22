@@ -1,4 +1,6 @@
+import { scenarioSchema, fullScenarioSchema, nodeSchema } from '$lib/zschemas/scenario.schema';
 import type { MyPocketBase } from '$types/pocketBase';
+import type { z } from 'zod';
 
 export async function getScenario(pb: MyPocketBase, scenarioId: string) {
 	return await pb.collection('Scenario').getOne(scenarioId);
@@ -6,44 +8,37 @@ export async function getScenario(pb: MyPocketBase, scenarioId: string) {
 
 export async function createScenario(
 	pb: MyPocketBase,
-	data: {
-		title: FormDataEntryValue;
-		prologue: FormDataEntryValue;
-		lang: FormDataEntryValue;
-		firstNodeTitle: FormDataEntryValue;
-		firstNodeText: FormDataEntryValue;
-		firstNodeAuthor: FormDataEntryValue;
-	}
+	scenarioData: z.infer<typeof scenarioSchema>,
+	firstNodeData: z.infer<typeof nodeSchema>
 ) {
-	return pb.collection('scenario').create(data);
+	const firstNode = {
+		firstNodeTitle: firstNodeData.title,
+		firstNodeText: firstNodeData.text,
+		firstNodeAuthor: firstNodeData.author
+	};
+	return await pb.collection('scenario').create({ ...scenarioData, ...firstNode });
 }
 
 export async function createEventsAndEnds(
 	pb: MyPocketBase,
 	scenarioId: string,
-	events: FormDataEntryValue[],
-	eventTexts: FormDataEntryValue[],
-	eventAuthors: FormDataEntryValue[],
-	ends: FormDataEntryValue[],
-	endTexts: FormDataEntryValue[]
+	events: z.infer<typeof fullScenarioSchema>['events'],
+	ends: z.infer<typeof fullScenarioSchema>['ends']
 ) {
-	const eventPromises = events.map((event, i) =>
+	const eventPromises = events.map((event) =>
 		pb.collection('event').create(
 			{
-				title: event,
-				text: eventTexts[i],
-				author: eventAuthors[i],
+				...event,
 				scenario: scenarioId
 			},
 			{ requestKey: null } // Auto cancel See https://github.com/pocketbase/js-sdk#auto-cancellation
 		)
 	);
 
-	const endPromises = ends.map((end, i) =>
+	const endPromises = ends.map((end) =>
 		pb.collection('end').create(
 			{
-				title: end,
-				text: endTexts[i],
+				...end,
 				scenario: scenarioId
 			},
 			{ requestKey: null }

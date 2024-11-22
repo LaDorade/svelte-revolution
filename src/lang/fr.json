@@ -18,6 +18,7 @@
     "scenarios": "Scénarios",
     "yourScenarios": "Vos scénarios",
     "createScenario": "Créer un scénario",
+    "createYourScenario": "Creez votre scénario",
     "newScenario": "Nouveau scénario",
     "editScenario": "Modifier le scénario",
     "deleteScenario": "Supprimer le scénario",
@@ -37,10 +38,15 @@
     "firstNodeText": "Texte du premier nœud",
     "firstNodeAuthor": "Auteur du premier nœud",
     "events": "Événements",
+    "event": "Événement",
     "author": "Auteur",
     "ends": "Fins",
+    "end": "Fin",
     "side": "Côté",
-    "sides": "Côtés"
+    "sides": "Côtés",
+    "success": "Scénario créé avec succès",
+    "scenarioIsValide": "Le scénario est valide !",
+    "scenarioIsNotValide": "Le scénario n'est pas valide"
   },
   "side": {
     "side": "Camp",
@@ -133,5 +139,11 @@
   "yourMessage": "Votre message",
   "yourName": "Votre nom",
   "publish": "Publier",
-  "messageTitle": "Titre du message"
+  "messageTitle": "Titre du message",
+  "validation": {
+    "min_length": "La longueur minimale est de {min} caractères.",
+    "max_length": "La longueur maximale est de {max} caractères.",
+    "invalid_locale": "La langue sélectionnée n'est pas valide.",
+    "min_items": "Le nombre minimum d'éléments est de 2."
+  }
 }
