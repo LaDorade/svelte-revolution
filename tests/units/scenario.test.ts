@@ -6,7 +6,7 @@ describe('Scenario Creation', () => {
 		const validScenario = {
 			title: 'A valid title',
 			prologue: 'A valid prologue',
-			lang: 'en-US',
+			lang: 'en',
 			sides: [{ title: 'Side 1' }, { title: 'Side 2' }],
 			firstNode: {
 				title: 'First Node Title',
