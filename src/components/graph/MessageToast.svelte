@@ -1,7 +1,8 @@
 <script lang="ts">
 	import toast_, { type Toast } from 'svelte-french-toast';
-	import { selectedNodeStore } from '$stores/graph';
 	import type { GraphNode } from '$types/pocketBase/TableTypes';
+	import { mainGraphStore } from '$stores/graph/main/store.svelte';
+	import { t } from 'svelte-i18n';
 
 	type MyToast = Toast & { props: { record: GraphNode; author: string } };
 
@@ -13,7 +14,8 @@
 </script>
 
 <span class="flex flex-col items-center">
-	<!-- TODO: translate -->
-	<button onclick={() => selectedNodeStore.set(toast.props.record)}>New message by: {toast.props.author}</button>
+	<button onclick={() => (mainGraphStore.selectedNode = toast.props.record)}
+		>{$t('toast.newMessageBy') + toast.props.author}</button
+	>
 	<button onclick={() => toast_.dismiss(toast.id)}>Dismiss</button>
 </span>

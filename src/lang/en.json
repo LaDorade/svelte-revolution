@@ -40,7 +40,10 @@
     "author": "Author",
     "ends": "Ends",
     "side": "Side",
-    "sides": "Sides"
+    "sides": "Sides",
+    "scenarioIsValide": "The scenario is valid!",
+    "scenarioIsNotValide": "The scenario is not valid",
+    "success": "Scenario created successfully"
   },
   "side": {
     "side": "Side",
@@ -80,13 +83,13 @@
     "animateYourSession": "Animate your Session",
     "animateSession": "Animate a session",
     "footer": {
-            "citation": "",
-            "ciationInfos": "",
-            "mainText": "",
-            "techUsed": "Technologies used",
-            "devAndDesign": "Development and Design",
-            "credits": "Credits"
-        }
+      "citation": "",
+      "ciationInfos": "",
+      "mainText": "",
+      "techUsed": "Technologies used",
+      "devAndDesign": "Development and Design",
+      "credits": "Credits"
+    }
   },
   "exampleGraph": {
     "title1": "Contemplate the Network",

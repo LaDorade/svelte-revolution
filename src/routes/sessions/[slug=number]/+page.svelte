@@ -5,50 +5,33 @@
 	import { LoaderPinwheel } from 'lucide-svelte';
 	import { pb } from '$lib/client/pocketbase';
 	import { initStores } from './utils';
+	import { titleStore } from '$stores/titles/index.svelte';
+	import { buildLinks } from '$lib/sessions';
+	import { mainGraphStore } from '$stores/graph/main/store.svelte';
+	import toast from 'svelte-french-toast';
 	import GraphUi from '$components/graph/GraphUI.svelte';
-	import MainGraph from '$components/graph/mainGraph/MainGraph.svelte';
+	import MainGraph from '$components/graph/MainGraph.svelte';
 	import graph1 from '$lib/assets/graphe1.png';
 	import type { PageServerData } from './$types';
 	import type { LayoutServerData } from '../../$types';
-	import { titleStore } from '$stores/titles/index.svelte';
-	import { selectedNodeStore } from '$stores/graph';
-	import toast from 'svelte-french-toast';
-	import { buildLinks } from '$lib/sessions';
+	import type { Side } from '$types/pocketBase/TableTypes';
 
 	interface Props {
 		data: PageServerData & LayoutServerData;
 	}
 	let { data }: Props = $props();
-	let { events = [], user = null, nodesPromise, ends = [], sides = [], isAdmin = false, iaConnected = false } = data;
+	let { events = [], user = null, nodesPromise, ends = [], sides, iaConnected = false } = data;
 
 	let sessionData = $state(data.sessionData);
 
+	// ? wierd hack to make the admin reactive on page reload
 	let admin = $derived($page.data.isAdmin as boolean);
 
 	let title = $derived.by(() => {
 		return (admin ? 'ADMIN - ' : '') + data.sessionData.name;
 	});
 
-	onMount(async () => {
-		const nodes = await nodesPromise;
-		const links = buildLinks(nodes);
-		initStores(nodes, links);
-		// Listen for session completion
-		await pb.collection('Session').subscribe(data.sessionData.id, async (res) => {
-			if (!res.record || !res.record.completed) return;
-			try {
-				sessionData.completed = res.record.completed;
-				const end = await pb.collection('End').getOne(res.record.end ?? '');
-				sessionData.expand = sessionData.expand
-					? {
-							...sessionData.expand,
-							...end
-						}
-					: {};
-			} catch (e) {
-				console.error(e);
-			}
-		});
+	function manageUrl() {
 		// update query params with admin status
 		const url = new URL(location.href);
 		if (admin) {
@@ -58,7 +41,18 @@
 			url.searchParams.delete('admin');
 			replaceState(url.toString(), '');
 		}
+	}
 
+	async function init() {
+		const nodes = (await nodesPromise).map((n) => {
+			return {
+				...n,
+				sideNumber: sides.find((s: Side) => s.id === n.side)?.number ?? 0
+			};
+		});
+		const links = buildLinks(nodes);
+		initStores(nodes, links);
+		manageUrl();
 		titleStore.setNavTitle(title);
 
 		if (iaConnected) {
@@ -66,10 +60,14 @@
 				position: 'top-left'
 			});
 		}
+	}
+
+	onMount(async () => {
+		await init();
 	});
 
 	onDestroy(() => {
-		selectedNodeStore.set(null);
+		mainGraphStore.selectedNode = null;
 	});
 </script>
 
@@ -88,12 +86,8 @@
 		<LoaderPinwheel color="white" class="w-20 z-50 opacity-100 h-20 loader animate-spin" />
 	</div>
 {:then}
-<div class="relative">
-	{#if admin && user}
+	<div class="relative">
 		<GraphUi {admin} session={sessionData} {user} {events} {ends} {sides} />
-	{:else}
-		<GraphUi session={sessionData} {sides} />
-		{/if}
-		<MainGraph sessionId={sessionData.id} />
-</div>
+		<MainGraph sessionId={sessionData.id} {sides} />
+	</div>
 {/await}

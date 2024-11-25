@@ -30,7 +30,8 @@ export const nodeSchema = z.object({
 export const scenarioSchema = z.object({
 	title: z.string().min(3).max(50),
 	prologue: z.string().min(3).max(500),
-	lang: z.enum([...availableLocales])
+	lang: z.enum([...availableLocales]),
+	ai: z.boolean().optional()
 });
 
 export const fullScenarioSchema = z.object({

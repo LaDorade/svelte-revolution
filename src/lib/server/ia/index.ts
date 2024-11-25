@@ -25,7 +25,7 @@ export async function apiHealthy() {
 
 export async function censorNode<T extends { title: string; text: string }>(node: T): Promise<T> {
 	const url = getURL('checkMsg');
-	if (!url) return node;
+	if (!(await apiHealthy()) || !url) return node;
 
 	const response = await fetch(url, {
 		method: 'POST',

@@ -1,38 +1,31 @@
-// TODO: change for the new Store system
-import { linksStore, nodesStore, selectedNodeStore } from '$stores/graph';
-import { get } from 'svelte/store';
-import type { LinkMessage, NodeMessage } from '$types/graph';
-import type { BaseType } from 'd3';
+import values from '$lib/mainGraph/values';
 import * as d3 from 'd3';
-
-export const colors = {
-	startNode: '#1b3022',
-	selectedNode: 'red',
-	eventNode: '#f7b32b',
-	defaultNode: '#86efac',
-	defaultLink: '#fff',
-	hoverLink: 'red',
-	connectedNode: 'purple'
-};
-
-export const strokeDashArray = {
-	default: '5, 15',
-	hover: 'none'
-};
-
-export const nodeRadius = {
-	default: 10,
-	selected: 15,
-	start: 30,
-	event: 20
-};
+import type { LinkMessage, NodeMessage } from '$types/graph';
+import { get } from 'svelte/store';
+import { mainGraphStore } from '$stores/graph/main/store.svelte';
+// TODO: change for the new Store system
+import { linksStore, nodesStore } from '$stores/graph';
+import type { BaseType } from 'd3';
 
 function selectNode(node: NodeMessage) {
-	if (get(selectedNodeStore)?.id === node.id) {
-		selectedNodeStore.set(null);
+	if (mainGraphStore.selectedNode?.id === node.id) {
+		mainGraphStore.selectedNode = null;
 		return;
 	}
-	selectedNodeStore.set(node);
+	mainGraphStore.selectedNode = node;
+}
+
+function getNodeFill(node: NodeMessage) {
+	const selectedNode = mainGraphStore.selectedNode;
+	if (node.type === 'startNode') {
+		return values.graphColors.nodes.start;
+	} else if (node.type === 'event') {
+		return values.graphColors.nodes.event;
+	} else if (selectedNode && selectedNode.id === node.id) {
+		return values.graphColors.nodes.selected;
+	} else {
+		return values.graphColors.nodes.sides[node.sideNumber];
+	}
 }
 
 export const updateLabelsInGraph = (
@@ -42,7 +35,7 @@ export const updateLabelsInGraph = (
 	simulation: d3.Simulation<NodeMessage, LinkMessage>
 ) => {
 	const links = get(linksStore);
-	const selectedNode = get(selectedNodeStore);
+	const selectedNode = mainGraphStore.selectedNode;
 	return (
 		labelLayer
 			.selectAll('text')
@@ -50,10 +43,14 @@ export const updateLabelsInGraph = (
 			.join('text')
 			.attr('text-anchor', 'middle')
 			.attr('dy', (d) => {
-				return d.type !== 'startNode' ? -13 : 5;
+				return -getNodeRadius(d, selectedNode) - 5;
 			})
-			.classed('fill-white', true)
-			.style('font-size', '18px') // TODO personalize font size
+			.style('fill', () => {
+				return 'white';
+			})
+			.style('font-size', (d) => {
+				return getNodeRadius(d, selectedNode) + 'px';
+			}) // TODO personalize font size
 			.text((d) => d.title)
 			.on('click', (_, d) => selectNode(d))
 			.style('cursor', 'pointer')
@@ -78,13 +75,13 @@ export const updateLinksInGraph = (linkLayer: d3.Selection<SVGGElement, NodeMess
 		.selectAll('line')
 		.data(get(linksStore))
 		.join('line')
-		.attr('stroke', colors.defaultLink)
+		.attr('stroke', values.colors.defaultLink)
 		.attr('stroke-opacity', 1)
 		.attr('stroke-width', 1)
 		.attr('stroke-linecap', 'round')
 		.attr('stroke-linejoin', 'round')
 		.attr('stroke-dashoffset', 0)
-		.attr('stroke-dasharray', strokeDashArray.default);
+		.attr('stroke-dasharray', values.strokeDashArray.default);
 };
 
 export const updateNodesInGraph = (
@@ -93,7 +90,7 @@ export const updateNodesInGraph = (
 	simulation: d3.Simulation<NodeMessage, LinkMessage>
 ) => {
 	const nodes = get(nodesStore);
-	const selectedNode = get(selectedNodeStore);
+	const selectedNode = mainGraphStore.selectedNode;
 	const links = get(linksStore);
 
 	const updatedNodes = nodeLayer
@@ -103,7 +100,17 @@ export const updateNodesInGraph = (
 		.attr('draggable', true)
 		.attr('r', (d) => getNodeRadius(d, selectedNode))
 		.style('cursor', 'pointer')
-		.attr('fill', (d) => getNodeColor(d, selectedNode))
+		.style('fill', (d) => {
+			return getNodeFill(d);
+		})
+		.attr('stroke', (d) => {
+			if (d.id === selectedNode?.id) {
+				return values.graphColors.nodes.sides[d.sideNumber];
+			}
+			return null;
+		})
+		.attr('stroke-width', 4)
+		// end colors
 		.on('mouseover', (_, d) => handleMouseOver(d, linksInGraph, updatedNodes, links))
 		.on('mouseout', () => handleMouseOut(linksInGraph, updatedNodes, selectedNode))
 		.call(
@@ -121,25 +128,14 @@ export const updateNodesInGraph = (
 
 const getNodeRadius = (d: NodeMessage, selectedNode: NodeMessage | null) => {
 	if (d.type === 'startNode') {
-		return nodeRadius.start;
+		return values.nodeRadius.start;
 	} else if (d.type === 'event') {
-		return nodeRadius.event;
+		return values.nodeRadius.event;
 	} else if (selectedNode && selectedNode.id === d.id) {
-		return nodeRadius.selected;
+		return values.nodeRadius.selected;
 	} else {
-		return nodeRadius.default;
+		return values.nodeRadius.default;
 	}
-};
-
-const getNodeColor = (d: NodeMessage, selectedNode: NodeMessage | null) => {
-	if (selectedNode && selectedNode.id === d.id) {
-		return colors.selectedNode;
-	} else if (d.type === 'event') {
-		return colors.eventNode;
-	} else if (d.type === 'startNode') {
-		return colors.startNode;
-	}
-	return colors.defaultNode;
 };
 
 const handleMouseOver = (
@@ -150,19 +146,19 @@ const handleMouseOver = (
 ) => {
 	linksInGraph
 		.attr('stroke-dasharray', (l) =>
-			l.source === d || l.target === d ? strokeDashArray.hover : strokeDashArray.default
+			l.source === d || l.target === d ? values.strokeDashArray.hover : values.strokeDashArray.default
 		)
-		.attr('stroke', (l) => (l.source === d || l.target === d ? colors.hoverLink : colors.defaultLink))
+		.attr('stroke', (l) => (l.source === d || l.target === d ? values.colors.hoverLink : values.colors.defaultLink))
 		.attr('stroke-width', (l) => (l.source === d || l.target === d ? 2 : 1));
 
-	updatedNodes.attr('fill', (n) => {
-		if (n === d) return colors.selectedNode;
-		if (links.some((l) => (l.source === d && l.target === n) || (l.target === d && l.source === n))) {
-			return colors.connectedNode;
-		} else if (n.type === 'startNode') {
-			return colors.startNode;
+	updatedNodes.style('fill', (n) => {
+		if (n === d) {
+			return values.graphColors.nodes.selected;
+		} else if (links.some((l) => (l.source === d && l.target === n) || (l.target === d && l.source === n))) {
+			return values.graphColors.nodes.connected;
+		} else {
+			return getNodeFill(n);
 		}
-		return colors.defaultNode;
 	});
 };
 
@@ -172,10 +168,17 @@ const handleMouseOut = (
 	selectedNode: NodeMessage | null
 ) => {
 	linksInGraph
-		.attr('stroke-dasharray', strokeDashArray.default)
-		.attr('stroke', colors.defaultLink)
+		.attr('stroke-dasharray', values.strokeDashArray.default)
+		.attr('stroke', values.colors.defaultLink)
 		.attr('stroke-width', 1);
-	updatedNodes.attr('fill', (d) => getNodeColor(d, selectedNode));
+
+	updatedNodes.style('fill', (n) => {
+		if (n === selectedNode) {
+			return values.graphColors.nodes.selected;
+		} else {
+			return getNodeFill(n);
+		}
+	});
 };
 
 const handleDragStart = (
