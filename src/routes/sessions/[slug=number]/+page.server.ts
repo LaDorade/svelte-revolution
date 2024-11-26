@@ -1,51 +1,34 @@
+import { type Actions, fail, type ServerLoad } from '@sveltejs/kit';
 import { getSession } from '$lib/server/sessions';
 import { createNode } from '$lib/server/nodes';
-import { type Actions, fail, type ServerLoad } from '@sveltejs/kit';
-import type { End, GraphEvent } from '$types/pocketBase/TableTypes';
-import type { GraphNode } from '$types/pocketBase/TableTypes';
 import { apiHealthy, censorNode } from '$lib/server/ia';
+import type { End, GraphEvent, GraphNode, Session } from '$types/pocketBase/TableTypes';
+import type { MyPocketBase } from '$types/pocketBase';
 
 export const load: ServerLoad = async ({ params, locals }) => {
 	const pb = locals.pb;
 	const sessionData = await getSession(pb, Number(params.slug));
 
-	// Admin only
-	let events: GraphEvent[] = [];
-	let ends: End[] = [];
-	if (sessionData.author === locals.pb.authStore.model?.id || locals.pb.authStore.model?.role === 'superAdmin') {
-		if (locals.pb.authStore.isValid) {
-			const scenario = sessionData.scenario;
-			events = await locals.pb.collection('Event').getFullList({
-				filter: locals.pb.filter('scenario = {:scenario}', { scenario })
-			});
-			ends = await locals.pb.collection('End').getFullList({
-				filter: locals.pb.filter('scenario = {:scenario}', { scenario })
-			});
-		}
-	}
-	// ---
+	const { events, ends } = await adminCheck(pb, sessionData);
 
-	const sides = await locals.pb.collection('Side').getFullList({
-		filter: locals.pb.filter('scenario = {:scenario}', { scenario: sessionData?.expand?.scenario?.id })
-	});
+	const sides = await getSides(sessionData.scenario, pb);
 
-	// ? Check if IA server is connected
-	const iaConnected = await apiHealthy();
+	// ? Check if IA server is connected and if the scenario has IA
+	const iaConnected = (await apiHealthy()) && sessionData.expand?.scenario?.ai;
 
 	const nodes = pb
 		.collection('Node')
-		.getFullList({ filter: pb.filter('session = {:session}', { session: sessionData.id }) });
+		.getFullList({ filter: pb.filter('session = {:session}', { session: sessionData.id }), expand: 'side' });
 
 	return {
+		iaConnected,
 		sessionData,
 		nodesPromise: nodes,
 		events,
 		ends,
 		sides,
-		// Admin onlys
 		isAdmin:
-			sessionData.author === locals.pb.authStore.model?.id || locals.pb.authStore.model?.role === 'superAdmin',
-		iaConnected
+			sessionData.author === locals.pb.authStore.model?.id || locals.pb.authStore.model?.role === 'superAdmin'
 	};
 };
 
@@ -53,26 +36,25 @@ export const actions: Actions = {
 	addNode: async ({ request, locals }) => {
 		const data = await request.formData();
 
-		const title = data.get('title') as string;
-		const text = data.get('text') as string;
-		const author = data.get('author') as string;
-		const parent = data.get('parent') as string;
-		const session = data.get('session') as string;
-		const side = data.get('side') as string;
+		let nodeData = {
+			title: data.get('title') as string,
+			text: data.get('text') as string,
+			author: data.get('author') as string,
+			parent: data.get('parent') as string,
+			session: data.get('session') as string,
+			side: data.get('side') as string
+		};
 
-		if (!parent) {
+		if (!nodeData.parent) {
 			return fail(422, { success: false, error: 'No selected node' });
 		}
-		if (!session) {
+		if (!nodeData.session) {
 			return fail(500, { success: false, error: 'Not in a session' });
 		}
-		if (!title || !text || !author || !side) {
+		if (!nodeData.title || !nodeData.text || !nodeData.author || !nodeData.side) {
 			return fail(422, { success: false, error: 'Missing required fields' });
 		}
 
-		let nodeData = { title, text, author, parent, session, side };
-
-		// TODO: ajouter ici le check ia session
 		nodeData = await censorNode(nodeData);
 
 		const node = await locals.pb.collection('Node').create({
@@ -169,3 +151,34 @@ export const actions: Actions = {
 		};
 	}
 };
+
+async function adminCheck(pb: MyPocketBase, sessionData: Session) {
+	let events: GraphEvent[] = [];
+	let ends: End[] = [];
+	if (sessionData.author === pb.authStore.model?.id || pb.authStore.model?.role === 'superAdmin') {
+		if (pb.authStore.isValid) {
+			const scenario = sessionData.scenario;
+			events = await pb.collection('Event').getFullList({
+				filter: pb.filter('scenario = {:scenario}', { scenario })
+			});
+			ends = await pb.collection('End').getFullList({
+				filter: pb.filter('scenario = {:scenario}', { scenario })
+			});
+		}
+	}
+	return { events, ends };
+}
+
+async function getSides(scenarioId: string, pb: MyPocketBase) {
+	const sidesFromDb = await pb.collection('Side').getFullList({
+		filter: pb.filter('scenario = {:scenario}', { scenario: scenarioId })
+	});
+	const sides = sidesFromDb.map((side, i) => {
+		return {
+			id: side.id,
+			name: side.name,
+			number: i
+		};
+	});
+	return sides;
+}

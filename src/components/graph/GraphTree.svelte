@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { nodesStore, selectedNodeStore } from '$stores/graph';
+	import { nodesStore } from '$stores/graph';
+	import { mainGraphStore } from '$stores/graph/main/store.svelte';
 	import type { NodeMessage } from '$types/graph';
 	import { fade } from 'svelte/transition';
 
@@ -32,8 +33,8 @@
 					{/each}
 				</div>
 				<button
-					onclick={() => ($selectedNodeStore = node)}
-					class="border rounded p-1 border-white + {node.id === $selectedNodeStore?.id
+					onclick={() => (mainGraphStore.selectedNode = node)}
+					class="border rounded p-1 border-white + {node.id === mainGraphStore.selectedNode?.id
 						? 'bg-gray-500'
 						: 'bg-gray-800'}"
 				>

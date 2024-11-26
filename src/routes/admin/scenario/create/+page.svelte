@@ -25,6 +25,7 @@
 			text: '',
 			author: ''
 		},
+		ai: false,
 		sides: [
 			{
 				title: ''
@@ -109,6 +110,13 @@
 					bind:value={formData.prologue}
 					name="prologue"
 				></textarea>
+			</label>
+		</div>
+		<!-- AI -->
+		<div class="flex">
+			<label class="standardLabel flex gap-4">
+				{$t('scenario.useAi')}
+				<input class="rounded p-2" type="checkbox" bind:checked={formData.ai} name="useAi" />
 			</label>
 		</div>
 		<!-- Lang -->

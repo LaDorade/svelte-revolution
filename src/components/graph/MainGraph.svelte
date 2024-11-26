@@ -14,20 +14,28 @@
 		zoom as d3Zoom,
 		zoomIdentity
 	} from 'd3';
-	import type { LinkMessage, NodeMessage } from '$types/graph';
 	import { pb } from '$lib/client/pocketbase';
-	// TODO: change for the new Store system
-	import { linksStore, nodesStore, selectedNodeStore } from '$stores/graph';
-	import { updateLabelsInGraph, updateLinksInGraph, updateNodesInGraph } from './utils';
-	import toast from 'svelte-french-toast';
-	import MessageToast from '$components/graph/MessageToast.svelte';
-	import { type GraphNode } from '$types/pocketBase/TableTypes';
+	import { watch } from '$lib/runes/watch.svelte';
 	import { buildLinks } from '$lib/sessions';
+	import { linksStore, nodesStore } from '$stores/graph';
+	import { mainGraphStore } from '$stores/graph/main/store.svelte';
+	import type { LinkMessage, NodeMessage } from '$types/graph';
+	import { type GraphNode, type Side } from '$types/pocketBase/TableTypes';
+	import { updateLabelsInGraph, updateLinksInGraph, updateNodesInGraph } from './mainGraph';
+
+	// Dev Feature to reinstanciate the component when the file is changed
+	// ? It's because the hot reload is not working well with the d3 library
+	if (import.meta.hot) {
+		import.meta.hot.accept(() => {
+			import.meta.hot?.invalidate();
+		});
+	}
 
 	interface Props {
 		sessionId: string;
+		sides: Side[];
 	}
-	let { sessionId }: Props = $props();
+	let { sessionId, sides }: Props = $props();
 
 	let svg: SVGElement;
 	let svgElement: Selection<SVGElement, NodeMessage, null, undefined>;
@@ -48,6 +56,9 @@
 	});
 
 	function renderGraph() {
+		if (!svgElement) {
+			return;
+		}
 		const currentWidth = window?.innerWidth || 500;
 		const currentHeight = window?.innerHeight || 500;
 		svgElement.attr('width', currentWidth).attr('height', currentHeight);
@@ -72,7 +83,6 @@
 			labelsInGraph.attr('x', (d) => String(d.x)).attr('y', (d) => String(d.y));
 		});
 
-		// simulation.force('center', forceCenter(currentWidth / 2, currentHeight / 2).strength(0.8))
 		simulation
 			.force('centerNode', forceRadial(100, currentWidth / 2, currentHeight / 2).strength(0.02))
 			.force(
@@ -90,6 +100,8 @@
 	 */
 	function addNodeToGraph(node: NodeMessage | null) {
 		if (node) {
+			// handle this in db
+			node.sideNumber = sides.find((s: Side) => s.id === node.side)?.number ?? 0;
 			nodesStore.set([...$nodesStore, node]);
 		}
 		linksStore.set(buildLinks($nodesStore));
@@ -119,9 +131,9 @@
 				forceLink<NodeMessage, LinkMessage>($linksStore)
 					.id((d) => d.id)
 					.distance((d) => {
-						if (typeof d.source !== 'object' || typeof d.target !== 'object') {
-							return 100;
-						}
+						// if (typeof d.source !== 'object' || typeof d.target !== 'object') {
+						// 	return 100;
+						// }
 						if (d.source.type === 'startNode' || d.target.type === 'startNode') {
 							return 80;
 						} else if (d.source.type === 'event' || d.target.type === 'event') {
@@ -129,79 +141,68 @@
 						}
 						return 100;
 					})
-					.strength(1)
+					.strength(2)
 			)
-			.force('charge', forceManyBody().strength(-300));
+			.force('charge', forceManyBody().strength(-500));
 
 		renderGraph();
 	}
 
-	onMount(async () => {
+	const realTimeActions = {
+		create: (record: NodeMessage) => {
+			addNodeToGraph(record);
+		},
+		update: (record: NodeMessage) => {
+			nodesStore.set(
+				$nodesStore.map((node) => {
+					if (node.id === record.id) {
+						node.text = record.text;
+						node.title = record.title;
+					}
+					return node;
+				})
+			);
+			renderGraph();
+		},
+		delete: async () => {
+			const newNodes = await pb.collection('Node').getFullList({ filter: `session="${sessionId}"` });
+			nodesStore.set(newNodes);
+			linksStore.set(buildLinks(newNodes));
+			mainGraphStore.selectedNode =
+				newNodes.find((node) => node.id === mainGraphStore.selectedNode?.parent) || null;
+			restartSimulation();
+		}
+	};
+
+	async function realTimeNodeUpdate() {
 		// Real-time connection to the database
 		await pb.collection('Node').subscribe(
 			'*',
 			async ({ action, record }) => {
-				//action: 'create', 'update', 'delete'
-				if (action === 'create') {
-					const currentUser = localStorage.getItem('author');
-					if (record.author !== currentUser) {
-						// @ts-expect-error Svelte 5 problem I guess
-						toast(MessageToast, {
-							props: {
-								author: record.author,
-								record
-							},
-							duration: 4000,
-							position: 'bottom-left',
-							style: "{backgroundColor: 'rgba(0, 0, 0, 0.8)', color: 'white'}",
-							icon: '📩'
-						});
-					}
-					addNodeToGraph(record);
-				} else if (action === 'update') {
-					nodesStore.set(
-						$nodesStore.map((node) => {
-							if (node.id === record.id) {
-								node.text = record.text;
-								node.title = record.title;
-							}
-							return node;
-						})
-					);
-					renderGraph();
-				} else if (action === 'delete') {
-					const newNodes = await pb.collection('Node').getFullList({ filter: `session="${sessionId}"` });
-					nodesStore.set(newNodes);
-					linksStore.set(buildLinks(newNodes));
-					$selectedNodeStore = newNodes.find((node) => node.id === $selectedNodeStore?.parent) || null;
-					restartSimulation();
-				}
+				if (action !== 'delete' && action !== 'create' && action !== 'update') return;
+				await realTimeActions[action](record);
 			},
 			{
 				filter: `session="${sessionId}"`
 			}
 		);
+	}
 
+	onMount(async () => {
+		await realTimeNodeUpdate();
 		initSimulation();
 	});
 
-	// Update the graph when a node is added
-	const unsubscribe = selectedNodeStore.subscribe(() => {
-		// hack to avoid the error "Cannot read property 'innerWidth' of undefined" on first render
-		try {
-			// eslint-disable-next-line
-			window.innerWidth;
+	$effect(() => {
+		watch(() => {
 			renderGraph();
-		} catch (error) {
-			return error;
-		}
+		}, [mainGraphStore.selectedNode]);
 	});
 
 	onDestroy(() => {
-		unsubscribe();
 		simulation?.stop();
 		pb.collection('Node').unsubscribe();
-		selectedNodeStore.set(null);
+		mainGraphStore.selectedNode = null;
 		nodesStore.set([]);
 		linksStore.set([]);
 	});
@@ -211,7 +212,7 @@
 
 <svg
 	bind:this={svg}
-	class="fixed top-0 left-0 w-screen h-screen z-10 cursor-grab bg-red-950 bg-opacity-40 bg-dotted-40 bg-dotted-gray
+	class="mainGraph fixed top-0 left-0 w-screen h-screen z-10 cursor-grab bg-opacity-40 bg-dotted-40 bg-dotted-gray
 	[mask-image:radial-gradient(ellipse_80%_70%_at_50%_50%,#000_50%,transparent_100%)]"
 >
 </svg>

@@ -76,7 +76,8 @@ function parseFormData(data: FormData) {
 	const scnearioData = {
 		title: data.get('title')?.toString(),
 		prologue: data.get('prologue')?.toString(),
-		lang: data.get('lang')?.toString()
+		lang: data.get('lang')?.toString(),
+		ai: data.get('useAi')?.toString()
 	};
 	const events: z.infer<typeof fullScenarioSchema>['events'] = data.getAll('endTitle').map((endTitle, index) => {
 		return {

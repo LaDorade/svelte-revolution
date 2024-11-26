@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { t } from 'svelte-i18n';
 	import type { End, GraphEvent, Session, Side, User } from '$types/pocketBase/TableTypes';
-	import { nodesStore, selectedNodeStore } from '$stores/graph';
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import nProgress from 'nprogress';
 	import toast from 'svelte-french-toast';
 	import type { ActionResult } from '@sveltejs/kit';
@@ -19,6 +18,10 @@
 		X
 	} from 'lucide-svelte';
 	import GraphTree from './GraphTree.svelte';
+	import { mainGraphStore } from '$stores/graph/main/store.svelte';
+	import { watch } from '$lib/runes/watch.svelte';
+	import { pb } from '$lib/client/pocketbase';
+	import values from '$lib/mainGraph/values';
 
 	interface Props {
 		session: Session;
@@ -26,17 +29,14 @@
 		admin?: boolean;
 		events?: GraphEvent[];
 		ends?: End[];
-		sides?: Side[];
+		sides: Side[];
 	}
 
-	let { user = null, session, admin = false, events = [], ends = [], sides = [] }: Props = $props();
+	let { user = null, session = $bindable(), admin = false, events = [], ends = [], sides }: Props = $props();
 
 	let nodeTitle = $state('');
 	let nodeText = $state('');
 	let nodeAuthor = $state('');
-
-	let theForm: HTMLFormElement | undefined = $state();
-	let validForm = $state(false);
 
 	const states = $state({
 		nodeInfo: false,
@@ -97,23 +97,46 @@
 		nProgress.done();
 	}
 
-	const selectedNodeUnsubscribe = selectedNodeStore.subscribe((value) => {
-		if (!value) {
-			states.nodeInfo = false;
-			return;
-		}
-		if (states.nodeInfo) return;
-		setCheck('nodeInfo');
+	$effect(() => {
+		watch(() => {
+			if (!mainGraphStore.selectedNode) {
+				states.nodeInfo = false;
+				return;
+			}
+			if (states.nodeInfo) return;
+			setCheck('nodeInfo');
+		}, [mainGraphStore.selectedNode]);
 	});
 
-	onMount(() => {
+	async function handleSessionEnd() {
+		// Listen for session completion
+		await pb.collection('Session').subscribe(session.id, async (res) => {
+			if (!res.record || !res.record.completed) return;
+			try {
+				const end = await pb.collection('End').getOne(res.record.end ?? '');
+				session.completed = res.record.completed;
+				session.end = res.record.end;
+				setCheck('sessionEnd');
+				session.expand = session.expand
+					? {
+							...session.expand,
+							...end
+						}
+					: {};
+				toast.success($t('sessions.sessionIsOver'), {
+					position: 'top-left'
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		});
+	}
+
+	onMount(async () => {
+		await handleSessionEnd();
 		nodeAuthor = localStorage.getItem('author') || '';
-		selectedNodeStore.set(null);
+		mainGraphStore.selectedNode = null;
 		states.nodeInfo = false;
-	});
-
-	onDestroy(() => {
-		selectedNodeUnsubscribe();
 	});
 </script>
 
@@ -127,11 +150,12 @@
 	<form
 		method="POST"
 		action="/sessions/{session.id}?/{action}"
-		onsubmit={(e) => e.preventDefault()}
+		onsubmit={(e) => {
+			e.preventDefault();
+		}}
 		use:enhance={() => {
 			nProgress.start();
-			return async ({ update, result }) => {
-				await update();
+			return async ({ result }) => {
 				handleActionResult(result);
 			};
 		}}
@@ -237,8 +261,8 @@
 	>
 		{#if states.nodeInfo}
 			<div in:fade={{ duration: 200, easing: quintOut }}>
-				{#if $selectedNodeStore}
-					{#key $selectedNodeStore}
+				{#if mainGraphStore.selectedNode}
+					{#key mainGraphStore.selectedNode}
 						<div
 							in:blur={{
 								duration: 300,
@@ -249,17 +273,17 @@
 							class="flex flex-col items-center gap-2"
 						>
 							<div class="text-xl text-white font-semibold first-letter:capitalize">
-								{$selectedNodeStore.title}
+								{mainGraphStore.selectedNode.title}
 							</div>
-							<div>
-								{$selectedNodeStore.side}
+							<div class=" text-green-400">
+								{sides.find((side) => side.id === mainGraphStore.selectedNode?.side)?.name}
 							</div>
 							<div>
 								{$t('from')}
-								<span class="text-white">{$selectedNodeStore.author}</span>
+								<span class="text-white">{mainGraphStore.selectedNode.author}</span>
 							</div>
 							<div class="max-h-60 overflow-auto text-justify text-gray-300">
-								{$selectedNodeStore.text}
+								{mainGraphStore.selectedNode.text}
 							</div>
 						</div>
 					{/key}
@@ -269,25 +293,19 @@
 					</div>
 				{/if}
 			</div>
-		{:else if states.addNode}
+		{:else if states.addNode && !session.completed}
 			<form
 				in:fade={{ duration: 200 }}
-				method="post"
-				action="/sessions/{session.id}?/addNode"
+				method="POST"
+				action="/sessions/{session.slug}?/addNode"
 				class="flex flex-col items-center gap-2 cursor-default p-2 z-10 w-full"
 				onsubmit={(e) => {
 					e.preventDefault();
-					if (theForm) {
-						validForm = theForm.checkValidity();
-						if (validForm) {
-							theForm.requestSubmit();
-						}
-					}
 				}}
 				use:enhance={() => {
 					nProgress.start();
-					return async ({ update, result }) => {
-						await update({ reset: false });
+					return async ({ result }) => {
+						applyAction(result);
 						handleActionResult(result);
 						nProgress.done();
 					};
@@ -342,7 +360,7 @@
 					></textarea>
 				</label>
 				<input type="hidden" name="session" value={session.id} />
-				<input type="hidden" name="parent" value={$selectedNodeStore?.id ?? null} />
+				<input type="hidden" name="parent" value={mainGraphStore.selectedNode?.id ?? null} />
 				<button class="btn w-fit btn-accent btn-sm self-center" type="submit">{$t('form.submit')}</button>
 			</form>
 		{:else if states.admin}

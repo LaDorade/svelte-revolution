@@ -10,6 +10,7 @@ export interface GraphNode extends BaseNode {
 	type: NodeType;
 	parent: string;
 	side: string;
+	sideNumber: number;
 	expand?: {
 		side?: Side;
 	};
@@ -20,6 +21,7 @@ export interface Scenario {
 	title: string;
 	prologue: string;
 	lang: Lang;
+	ai?: boolean;
 	firstNodeTitle: string;
 	firstNodeText: string;
 	firstNodeAuthor: string;
@@ -62,6 +64,7 @@ export interface Session {
 export interface Side {
 	id: string;
 	name: string;
+	number: number;
 }
 
 export interface User {

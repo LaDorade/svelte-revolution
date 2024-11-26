@@ -11,7 +11,8 @@
     "sessionEnded": "Session terminée",
     "sortByNotCompleted": "Trier par non terminé",
     "noSessions": "Aucune session",
-    "otherSessions": "Autres sessions"
+    "otherSessions": "Autres sessions",
+    "sessionIsOver": "La sessions est terminée !"
   },
   "scenario": {
     "scenario": "Scénario",
@@ -46,7 +47,8 @@
     "sides": "Côtés",
     "success": "Scénario créé avec succès",
     "scenarioIsValide": "Le scénario est valide !",
-    "scenarioIsNotValide": "Le scénario n'est pas valide"
+    "scenarioIsNotValide": "Le scénario n'est pas valide",
+    "useAi": "Utiliser l'IA"
   },
   "side": {
     "side": "Camp",
@@ -145,5 +147,8 @@
     "max_length": "La longueur maximale est de {max} caractères.",
     "invalid_locale": "La langue sélectionnée n'est pas valide.",
     "min_items": "Le nombre minimum d'éléments est de 2."
+  },
+  "toast": {
+    "newMessageBy": "Nouveau message de :"
   }
 }
