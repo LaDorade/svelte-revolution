@@ -112,6 +112,7 @@
 				></textarea>
 			</label>
 		</div>
+		<!-- AI -->
 		<div class="flex">
 			<label class="standardLabel flex gap-4">
 				{$t('scenario.useAi')}
