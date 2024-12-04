@@ -354,13 +354,18 @@
 					<div class="label p-0">
 						<span class="label-text text-inherit">{$t('side.yourSide')}</span>
 					</div>
+					{#if iaConnected && !!userSide}
+						<div class="text-gray-300 p-2 text-sm">{$t('side.cantChange')}</div>
+					{/if}
 					<select
 						bind:value={userSide}
 						name="side"
 						class="select select-accent text-primary-500 bg-gray-950 select-sm select-bordered"
 					>
 						{#each sides as side}
-							<option disabled={iaConnected && side.id !== userSide} value={side.id}>{side.name}</option>
+							<option disabled={iaConnected && !!userSide && side.id !== userSide} value={side.id}
+								>{side.name}</option
+							>
 						{/each}
 					</select>
 				</label>
