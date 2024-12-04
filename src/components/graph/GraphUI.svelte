@@ -21,7 +21,6 @@
 	import { mainGraphStore } from '$stores/graph/main/store.svelte';
 	import { watch } from '$lib/runes/watch.svelte';
 	import { pb } from '$lib/client/pocketbase';
-	import values from '$lib/mainGraph/values';
 
 	interface Props {
 		session: Session;
@@ -30,13 +29,23 @@
 		events?: GraphEvent[];
 		ends?: End[];
 		sides: Side[];
+		iaConnected?: boolean;
 	}
 
-	let { user = null, session = $bindable(), admin = false, events = [], ends = [], sides }: Props = $props();
+	let {
+		user = null,
+		session = $bindable(),
+		admin = false,
+		events = [],
+		ends = [],
+		sides,
+		iaConnected
+	}: Props = $props();
 
 	let nodeTitle = $state('');
 	let nodeText = $state('');
 	let nodeAuthor = $state('');
+	let userSide = $state('');
 
 	const states = $state({
 		nodeInfo: false,
@@ -74,7 +83,7 @@
 		}
 	}
 
-	function handleActionResult(result: ActionResult) {
+	function handleSubmit(result: ActionResult) {
 		switch (result.type) {
 			case 'failure':
 				toast.error(result.data?.error, { duration: 3000, position: 'bottom-center' });
@@ -84,7 +93,12 @@
 				states.addNode = false;
 				nodeTitle = '';
 				nodeText = '';
-				localStorage.setItem('author', nodeAuthor);
+				localStorage.setItem('author_' + session.id, nodeAuthor);
+
+				// ? IA Related
+				if (iaConnected && userSide) {
+					localStorage.setItem('side_' + session.id, userSide);
+				}
 
 				// Add the new event to the list of events
 				if (result.data?.body?.event && session.expand?.events) {
@@ -134,7 +148,8 @@
 
 	onMount(async () => {
 		await handleSessionEnd();
-		nodeAuthor = localStorage.getItem('author') || '';
+		nodeAuthor = localStorage.getItem('author_' + session.id) || '';
+		userSide = localStorage.getItem('side_' + session.id) || '';
 		mainGraphStore.selectedNode = null;
 		states.nodeInfo = false;
 	});
@@ -156,7 +171,7 @@
 		use:enhance={() => {
 			nProgress.start();
 			return async ({ result }) => {
-				handleActionResult(result);
+				handleSubmit(result);
 			};
 		}}
 		class="flex flex-col gap-4 p-x-4 cursor-default text-primary-500 w-full items-center"
@@ -306,7 +321,7 @@
 					nProgress.start();
 					return async ({ result }) => {
 						applyAction(result);
-						handleActionResult(result);
+						handleSubmit(result);
 						nProgress.done();
 					};
 				}}
@@ -340,11 +355,12 @@
 						<span class="label-text text-inherit">{$t('side.yourSide')}</span>
 					</div>
 					<select
+						bind:value={userSide}
 						name="side"
 						class="select select-accent text-primary-500 bg-gray-950 select-sm select-bordered"
 					>
 						{#each sides as side}
-							<option value={side.id}>{side.name}</option>
+							<option disabled={iaConnected && side.id !== userSide} value={side.id}>{side.name}</option>
 						{/each}
 					</select>
 				</label>

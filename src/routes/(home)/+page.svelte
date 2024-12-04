@@ -14,7 +14,6 @@
 	import Sessions from '$components/listing/Sessions.svelte';
 
 	let visible = $state(false);
-	let graphIntro = $state(true);
 	let userMessage = $state('');
 
 	let { data } = $props();
@@ -132,9 +131,9 @@
 	</div>
 	<div class="flex flex-col w-full text-gray-50 gap-4 items-center">
 		<h2>Sessions Ouvertes</h2>
-		<Sessions sessions={data.sessions.filter((session) => !session.completed)} />
+		<Sessions sessions={data.sessions?.filter((session) => !session.completed)} />
 		<h2>Sessions Terminées</h2>
-		<Sessions sessions={data.sessions.filter((session) => session.completed)} />
+		<Sessions sessions={data.sessions?.filter((session) => session.completed)} />
 	</div>
 	<div class="flex flex-col w-full text-gray-200 gap-4 items-cente">
 		<h2 id="animer" class="text-3xl text-gray-100 font-bold">Animer votre Session</h2>

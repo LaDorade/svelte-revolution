@@ -32,6 +32,10 @@ export const actions = {
 			const session = await createSession(pb, name, scenario.id, pb.authStore.model.id, image);
 			await createStartNode(pb, scenario, session.id);
 
+			if (scenario.ai) {
+				// TODO Create AI session
+			}
+
 			return {
 				status: 201,
 				success: true,

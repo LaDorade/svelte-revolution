@@ -1,5 +1,6 @@
 import { availableLocales } from '../i18n';
 import { z } from 'zod';
+import { eventSchema } from './event.schema';
 
 // test file : tests/units/scenario.test.ts
 export const sideSchema = z.object({
@@ -8,12 +9,6 @@ export const sideSchema = z.object({
 		.string()
 		.regex(/^#[0-9A-F]{6}$/)
 		.optional()
-});
-
-export const eventSchema = z.object({
-	title: z.string().min(3).max(50),
-	text: z.string().min(3).max(500),
-	author: z.string().min(1).max(50)
 });
 
 export const endSchema = z.object({

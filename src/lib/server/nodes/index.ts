@@ -1,6 +1,6 @@
 import sanitizeHtml from 'sanitize-html';
 import type { MyPocketBase } from '$types/pocketBase';
-import type { GraphNode, NodeType, Scenario } from '$types/pocketBase/TableTypes';
+import type { NodeType, Scenario } from '$types/pocketBase/TableTypes';
 
 export async function createNode(
 	pb: MyPocketBase,
@@ -8,7 +8,7 @@ export async function createNode(
 	text: string,
 	author: string,
 	session: string,
-	firstNode: GraphNode,
+	parent: string,
 	type: NodeType = 'contribution'
 ) {
 	title = sanitizeHtml(title);
@@ -20,7 +20,7 @@ export async function createNode(
 		author,
 		session,
 		type,
-		parent: firstNode.id
+		parent
 	});
 }
 

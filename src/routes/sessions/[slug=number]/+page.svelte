@@ -87,7 +87,7 @@
 	</div>
 {:then}
 	<div class="relative">
-		<GraphUi {admin} session={sessionData} {user} {events} {ends} {sides} />
-		<MainGraph sessionId={sessionData.id} {sides} />
+		<GraphUi bind:session={sessionData} {admin} {user} {events} {ends} {sides} {iaConnected} />
+		<MainGraph sessionId={sessionData.id} {sides} {iaConnected} />
 	</div>
 {/await}

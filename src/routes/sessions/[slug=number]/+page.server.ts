@@ -1,7 +1,8 @@
-import { type Actions, fail, type ServerLoad } from '@sveltejs/kit';
 import { getSession } from '$lib/server/sessions';
 import { createNode } from '$lib/server/nodes';
 import { apiHealthy, censorNode } from '$lib/server/ia';
+import { createNewEvents } from '$lib/server/ia/event';
+import { type Actions, fail, type ServerLoad } from '@sveltejs/kit';
 import type { End, GraphEvent, GraphNode, Session } from '$types/pocketBase/TableTypes';
 import type { MyPocketBase } from '$types/pocketBase';
 
@@ -55,12 +56,26 @@ export const actions: Actions = {
 			return fail(422, { success: false, error: 'Missing required fields' });
 		}
 
-		nodeData = await censorNode(nodeData);
+		const censorResponse = await censorNode(nodeData);
+		nodeData = censorResponse.node;
 
-		const node = await locals.pb.collection('Node').create({
-			...nodeData,
-			type: 'contribution'
-		});
+		const node = await createNode(
+			locals.pb,
+			nodeData.title,
+			nodeData.text,
+			nodeData.author,
+			nodeData.session,
+			nodeData.parent,
+			'contribution'
+		);
+
+		if (censorResponse.triggerEvent && censorResponse.events) {
+			try {
+				await createNewEvents(nodeData.session, censorResponse.events);
+			} catch {
+				// TODO: Handle error
+			}
+		}
 
 		return {
 			status: 200,
@@ -98,7 +113,15 @@ export const actions: Actions = {
 					type: 'startNode'
 				})
 			);
-			createdEventNode = await createNode(locals.pb, title, text, author, sessionId, firstNode, 'event');
+			createdEventNode = await createNode(
+				locals.pb,
+				title,
+				text,
+				author,
+				sessionId,
+				String(firstNode.id),
+				'event'
+			);
 			await locals.pb.collection('Session').update(sessionId, { events: eventId });
 		} catch (error) {
 			console.error('Error creating event:', JSON.stringify(error));

@@ -12,7 +12,8 @@
 		type Simulation,
 		type SimulationLinkDatum,
 		zoom as d3Zoom,
-		zoomIdentity
+		zoomIdentity,
+		local
 	} from 'd3';
 	import { pb } from '$lib/client/pocketbase';
 	import { watch } from '$lib/runes/watch.svelte';
@@ -34,8 +35,9 @@
 	interface Props {
 		sessionId: string;
 		sides: Side[];
+		iaConnected?: boolean;
 	}
-	let { sessionId, sides }: Props = $props();
+	let { sessionId, sides, iaConnected }: Props = $props();
 
 	let svg: SVGElement;
 	let svgElement: Selection<SVGElement, NodeMessage, null, undefined>;
@@ -99,6 +101,12 @@
 	 * Append a new node and his links to the graph, then restart the simulation
 	 */
 	function addNodeToGraph(node: NodeMessage | null) {
+		if (iaConnected && node?.type === 'event') {
+			const userSide = localStorage.getItem('side_' + sessionId);
+			if (userSide !== node.side) {
+				return;
+			}
+		}
 		if (node) {
 			// handle this in db
 			node.sideNumber = sides.find((s: Side) => s.id === node.side)?.number ?? 0;

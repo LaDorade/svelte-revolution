@@ -29,7 +29,8 @@ export const actions = {
 				const scenarioInDb = {
 					title: parsed.title,
 					prologue: parsed.prologue,
-					lang: parsed.lang
+					lang: parsed.lang,
+					ai: parsed.ai
 				};
 				const firstNodeInDb = {
 					title: parsed.firstNode.title,
@@ -77,7 +78,8 @@ function parseFormData(data: FormData) {
 		title: data.get('title')?.toString(),
 		prologue: data.get('prologue')?.toString(),
 		lang: data.get('lang')?.toString(),
-		ai: data.get('useAi')?.toString()
+		ai: data.get('useAi')?.toString(),
+		bannedWords: data.getAll('bannedWords').map((word) => word.toString())
 	};
 	const events: z.infer<typeof fullScenarioSchema>['events'] = data.getAll('endTitle').map((endTitle, index) => {
 		return {
