@@ -43,14 +43,15 @@ export async function censorNode<T extends { title: string; text: string; sessio
 	if (!response.ok) return returnValue;
 
 	const data = (await response.json()) as AICensorResponse;
+	const newNode = node;
 	if (data.isCensored) {
-		node.title = data.title;
-		node.text = data.text;
+		newNode.title = data.title;
+		newNode.text = data.text;
 	}
-	return { node: node, triggerEvent: data.triggerNewEvent, events: data.events };
+	return { node: newNode, triggerEvent: data.triggerNewEvent, events: data.events };
 }
 
-export async function createAIAssociateSession(sessionId: string, bannedWords: string[]) {
+export async function createAIAssociateSession(sessionId: string) {
 	const url = getURL('associate');
 	if (!(await apiHealthy()) || !url) return false;
 
@@ -59,7 +60,7 @@ export async function createAIAssociateSession(sessionId: string, bannedWords: s
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ session: sessionId, bannedWords })
+		body: JSON.stringify({ session: sessionId })
 	});
 
 	return response.ok;

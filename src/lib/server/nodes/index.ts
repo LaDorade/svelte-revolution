@@ -9,6 +9,7 @@ export async function createNode(
 	author: string,
 	session: string,
 	parent: string,
+	sideId: string,
 	type: NodeType = 'contribution'
 ) {
 	title = sanitizeHtml(title);
@@ -20,6 +21,7 @@ export async function createNode(
 		author,
 		session,
 		type,
+		side: sideId,
 		parent
 	});
 }

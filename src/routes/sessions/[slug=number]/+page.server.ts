@@ -66,14 +66,16 @@ export const actions: Actions = {
 			nodeData.author,
 			nodeData.session,
 			nodeData.parent,
+			nodeData.side,
 			'contribution'
 		);
 
 		if (censorResponse.triggerEvent && censorResponse.events) {
 			try {
 				await createNewEvents(nodeData.session, censorResponse.events);
-			} catch {
+			} catch (e) {
 				// TODO: Handle error
+				console.log(e);
 			}
 		}
 

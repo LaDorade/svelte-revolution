@@ -2,6 +2,7 @@ import { error } from '@sveltejs/kit';
 import { ClientResponseError } from 'pocketbase';
 import type { Session } from '$types/pocketBase/TableTypes';
 import { type MyPocketBase } from '../../../types/pocketBase/index';
+import { createAIAssociateSession } from '../ia';
 
 export async function getSession(pb: MyPocketBase, sessionId: number) {
 	let session: Session;
@@ -38,6 +39,10 @@ export async function createSession(
 		image = new File([image as Blob], `${name}.png`, { type: 'image/png' });
 	}
 	const sessions = await pb.collection('Session').getFullList({ fields: 'id' });
+	const scenario = await pb.collection('Scenario').getOne(scenarioId);
+	if (scenario.ai) {
+		createAIAssociateSession(scenarioId);
+	}
 	return await pb.collection('Session').create({
 		name,
 		scenario: scenarioId,

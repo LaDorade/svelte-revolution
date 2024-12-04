@@ -1,4 +1,5 @@
 import type { AICensorResponse } from '$types/ai';
+import { createNode } from '../nodes';
 import { authIA } from './auth';
 
 export async function createNewEvents(sessionId: string, event: AICensorResponse['events']) {
@@ -6,6 +7,11 @@ export async function createNewEvents(sessionId: string, event: AICensorResponse
 	if (!event || !pb) return;
 
 	const scenario = await pb.collection('Scenario').getOne(sessionId);
+	const parent = await pb
+		.collection('Node')
+		.getFirstListItem(
+			pb.filter('type = {:type} && session = {:session}', { session: sessionId, type: 'startNode' })
+		);
 	const sides = await pb
 		.collection('Side')
 		.getFullList({ filter: pb.filter('scenario = {:scenario}', { scenario: scenario.id }) });
@@ -13,21 +19,25 @@ export async function createNewEvents(sessionId: string, event: AICensorResponse
 	const qgSide = sides.find((side) => side.name === 'QG');
 	const terrainSide = sides.find((side) => side.name === 'Terrain');
 
-	const side1 = pb.collection('Node').create({
-		title: event.qg.title,
-		text: event.qg.text,
-		author: event.qg.author,
-		session: sessionId,
-		type: 'event',
-		side: qgSide?.id || ''
-	});
-	const side2 = pb.collection('Node').create({
-		title: event.terrain.title,
-		text: event.terrain.text,
-		author: event.terrain.author,
-		session: sessionId,
-		type: 'event',
-		side: terrainSide?.id || ''
-	});
-	return Promise.all([side1, side2]);
+	const qg = createNode(
+		pb,
+		event.qg.title,
+		event.qg.text,
+		event.qg.author,
+		sessionId,
+		String(parent?.id) || '',
+		qgSide ? qgSide.id : '',
+		'event'
+	);
+	const terrain = createNode(
+		pb,
+		event.terrain.title,
+		event.terrain.text,
+		event.terrain.author,
+		sessionId,
+		String(parent?.id) || '',
+		terrainSide ? terrainSide.id : '',
+		'event'
+	);
+	return Promise.all([qg, terrain]);
 }
