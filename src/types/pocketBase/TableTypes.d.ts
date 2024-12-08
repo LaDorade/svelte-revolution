@@ -1,6 +1,6 @@
 import type { BaseNode } from '$types/graph';
 
-export type NodeType = 'contribution' | 'event' | 'startNode';
+export type NodeType = 'contribution' | 'event' | 'startNode' | 'hidden'; // hidden is not in the database
 export type Lang = 'fr' | 'en' | 'jp';
 export type Role = 'admin' | 'user' | 'superAdmin'; // see in the database
 

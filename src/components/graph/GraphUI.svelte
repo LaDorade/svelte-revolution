@@ -45,7 +45,7 @@
 	let nodeTitle = $state('');
 	let nodeText = $state('');
 	let nodeAuthor = $state('');
-	let userSide = $state('');
+	let userSideId = $state('');
 
 	const states = $state({
 		nodeInfo: false,
@@ -94,11 +94,6 @@
 				nodeTitle = '';
 				nodeText = '';
 				localStorage.setItem('author_' + session.id, nodeAuthor);
-
-				// ? IA Related
-				if (iaConnected && userSide) {
-					localStorage.setItem('side_' + session.id, userSide);
-				}
 
 				// Add the new event to the list of events
 				if (result.data?.body?.event && session.expand?.events) {
@@ -149,7 +144,7 @@
 	onMount(async () => {
 		await handleSessionEnd();
 		nodeAuthor = localStorage.getItem('author_' + session.id) || '';
-		userSide = localStorage.getItem('side_' + session.id) || '';
+		userSideId = localStorage.getItem('side_' + session.id) || '';
 		mainGraphStore.selectedNode = null;
 		states.nodeInfo = false;
 	});
@@ -190,7 +185,6 @@
 				{/each}
 			</select>
 		</label>
-
 		<input type="hidden" name="session" value={session.id} />
 		<button type="submit" class="self-center btn btn-sm btn-accent">
 			{trad}
@@ -354,17 +348,18 @@
 					<div class="label p-0">
 						<span class="label-text text-inherit">{$t('side.yourSide')}</span>
 					</div>
-					{#if iaConnected && !!userSide}
-						<div class="text-gray-300 p-2 text-sm">{$t('side.cantChange')}</div>
-					{/if}
 					<select
-						bind:value={userSide}
+						bind:value={userSideId}
 						name="side"
 						class="select select-accent text-primary-500 bg-gray-950 select-sm select-bordered"
 					>
 						{#each sides as side}
-							<option disabled={iaConnected && !!userSide && side.id !== userSide} value={side.id}
-								>{side.name}</option
+							<option
+								disabled={iaConnected &&
+									session?.expand?.scenario?.ai &&
+									!!userSideId &&
+									side.id !== userSideId}
+								value={side.id}>{side.name}</option
 							>
 						{/each}
 					</select>

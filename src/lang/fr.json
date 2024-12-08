@@ -48,7 +48,11 @@
     "success": "Scénario créé avec succès",
     "scenarioIsValide": "Le scénario est valide !",
     "scenarioIsNotValide": "Le scénario n'est pas valide",
-    "useAi": "Utiliser l'IA"
+    "useAi": "Utiliser l'IA",
+    "start": "Commencer",
+    "chooseSide": "Choisir un camp",
+    "sideChosen": "Vous avez choisi votre camp",
+    "choose": "Choisissez votre camp"
   },
   "side": {
     "side": "Camp",
@@ -150,5 +154,14 @@
   },
   "toast": {
     "newMessageBy": "Nouveau message de :"
+  },
+  "ia": {
+    "iaIsConnected": "L'IA est connectée"
+  },
+  "prologue": {
+    "sideSaved": "Camp Sauvegardé"
+  },
+  "event": {
+    "eventHidden": "Événement Caché"
   }
 }

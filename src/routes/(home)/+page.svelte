@@ -71,7 +71,7 @@
 		<div id="intro" class="grid grid-cols-2 grid-rows-2 gap-4">
 			<a class="btn dark:bg-white dark:text-black hover:bg-gray-300" href="#intro">{$t('home.discoverBabel')}</a>
 			<a class="text-white bg-gray-800 btn w-fit hover:bg-gray-900" href="/sessions">{$t('home.joinSession')}</a>
-			<a class="btn col-span-2 bg-primary-500 text-black border-none" href="#animer"
+			<a class="btn col-span-2 bg-primary-500 hover:bg-primary-600 text-black border-none" href="#animer"
 				>{$t('home.animateYourSession')}</a
 			>
 		</div>

@@ -1,12 +1,12 @@
-<svelte:options runes={true} />
-
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { RefreshCcw } from 'lucide-svelte';
 
 	let { children } = $props();
 	let key = $state(0);
 
-	function reload() {
+	async function reload() {
+		await invalidateAll();
 		key += 1;
 	}
 </script>

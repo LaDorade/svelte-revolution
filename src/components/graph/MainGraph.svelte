@@ -101,6 +101,7 @@
 	 * Append a new node and his links to the graph, then restart the simulation
 	 */
 	function addNodeToGraph(node: NodeMessage | null) {
+		// ? IA related
 		if (iaConnected && node?.type === 'event' && node.side) {
 			const userSide = localStorage.getItem('side_' + sessionId);
 			if (userSide !== node.side) {

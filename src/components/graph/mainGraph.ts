@@ -23,9 +23,30 @@ function getNodeFill(node: NodeMessage) {
 		return values.graphColors.nodes.event;
 	} else if (selectedNode && selectedNode.id === node.id) {
 		return values.graphColors.nodes.selected;
+	} else if (node.type === 'hidden') {
+		return values.graphColors.nodes.hidden;
 	} else {
 		return values.graphColors.nodes.sides[node.sideNumber];
 	}
+}
+
+function getNodeRadius(d: NodeMessage, selectedNode: NodeMessage | null) {
+	if (d.type === 'startNode') {
+		return values.nodeRadius.start;
+	} else if (d.type === 'event') {
+		return values.nodeRadius.event;
+	} else if (selectedNode && selectedNode.id === d.id) {
+		return values.nodeRadius.selected;
+	} else {
+		return values.nodeRadius.default;
+	}
+}
+
+function getLinkStroke(l: LinkMessage) {
+	if (l.target.type === 'hidden') {
+		return values.graphColors.links.toHide;
+	}
+	return values.graphColors.links.default;
 }
 
 export const updateLabelsInGraph = (
@@ -45,8 +66,11 @@ export const updateLabelsInGraph = (
 			.attr('dy', (d) => {
 				return -getNodeRadius(d, selectedNode) - 5;
 			})
-			.style('fill', () => {
-				return 'white';
+			.style('fill', (n) => {
+				if (n.type === 'hidden') {
+					return values.labels.hidden;
+				}
+				return values.labels.default;
 			})
 			.style('font-size', (d) => {
 				return getNodeRadius(d, selectedNode) + 'px';
@@ -75,7 +99,9 @@ export const updateLinksInGraph = (linkLayer: d3.Selection<SVGGElement, NodeMess
 		.selectAll('line')
 		.data(get(linksStore))
 		.join('line')
-		.attr('stroke', values.colors.defaultLink)
+		.attr('stroke', (d) => {
+			return getLinkStroke(d);
+		})
 		.attr('stroke-opacity', 1)
 		.attr('stroke-width', 1)
 		.attr('stroke-linecap', 'round')
@@ -126,18 +152,6 @@ export const updateNodesInGraph = (
 	return updatedNodes;
 };
 
-const getNodeRadius = (d: NodeMessage, selectedNode: NodeMessage | null) => {
-	if (d.type === 'startNode') {
-		return values.nodeRadius.start;
-	} else if (d.type === 'event') {
-		return values.nodeRadius.event;
-	} else if (selectedNode && selectedNode.id === d.id) {
-		return values.nodeRadius.selected;
-	} else {
-		return values.nodeRadius.default;
-	}
-};
-
 const handleMouseOver = (
 	d: NodeMessage,
 	linksInGraph: d3.Selection<SVGGElement, LinkMessage, SVGElement, unknown>,
@@ -145,10 +159,15 @@ const handleMouseOver = (
 	links: LinkMessage[]
 ) => {
 	linksInGraph
+		.attr('stroke', (l) => {
+			if (l.source === d || l.target === d) {
+				return values.graphColors.links.hover;
+			}
+			return getLinkStroke(l);
+		})
 		.attr('stroke-dasharray', (l) =>
 			l.source === d || l.target === d ? values.strokeDashArray.hover : values.strokeDashArray.default
 		)
-		.attr('stroke', (l) => (l.source === d || l.target === d ? values.colors.hoverLink : values.colors.defaultLink))
 		.attr('stroke-width', (l) => (l.source === d || l.target === d ? 2 : 1));
 
 	updatedNodes.style('fill', (n) => {
@@ -168,8 +187,10 @@ const handleMouseOut = (
 	selectedNode: NodeMessage | null
 ) => {
 	linksInGraph
+		.attr('stroke', (l) => {
+			return getLinkStroke(l);
+		})
 		.attr('stroke-dasharray', values.strokeDashArray.default)
-		.attr('stroke', values.colors.defaultLink)
 		.attr('stroke-width', 1);
 
 	updatedNodes.style('fill', (n) => {

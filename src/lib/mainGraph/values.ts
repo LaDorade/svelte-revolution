@@ -7,17 +7,19 @@ const graphColors = {
 		selected: 'white',
 		start: '#FFF0FF',
 		event: '#0FF0F0',
-		connected: '#FF00FF'
+		connected: '#FF00FF',
+		hidden: 'black'
 	},
 	links: {
-		default: '#000000',
-		hover: '#FF0000'
+		default: 'white',
+		hover: '#FF0000',
+		toHide: 'gray'
 	}
 };
 
-const colors = {
-	defaultLink: '#fff',
-	hoverLink: 'red'
+const labels = {
+	default: 'white',
+	hidden: 'transparent'
 };
 
 const strokeDashArray = {
@@ -35,7 +37,7 @@ const nodeRadius = {
 export default {
 	graphColors,
 	cssSidePrefix,
-	colors,
+	labels,
 	strokeDashArray,
 	nodeRadius
 };

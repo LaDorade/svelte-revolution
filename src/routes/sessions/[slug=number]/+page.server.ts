@@ -14,7 +14,7 @@ export const load: ServerLoad = async ({ params, locals }) => {
 
 	const sides = await getSides(sessionData.scenario, pb);
 
-	// ? Check if IA server is connected and if the scenario has IA
+	// ? Check if AI server is connected and if the scenario has IA
 	const iaConnected = (await apiHealthy()) && sessionData.expand?.scenario?.ai;
 
 	const nodes = pb
@@ -24,6 +24,7 @@ export const load: ServerLoad = async ({ params, locals }) => {
 	return {
 		iaConnected,
 		sessionData,
+		scenario: sessionData.expand?.scenario,
 		nodesPromise: nodes,
 		events,
 		ends,
