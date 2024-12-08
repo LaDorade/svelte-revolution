@@ -31,12 +31,26 @@ jobs:
                   USERNAME: ${{ secrets.USERNAME }}
               run: |
                   ssh -o StrictHostKeyChecking=no $USERNAME@$SERVER_IP << 'EOF'
-                    cd ./app
-                    echo "ENV_FILE=.env.production" >> .env
-                    rm -rf .env.production
-                    echo "DB_URL=http://pocketbase:8090" >> .env.production
-                    echo "PUBLIC_DB_URL=https://new-db.babel-revolution.fr" >> .env.production
-                    echo "IA_SERVER_URL=http://iaserver:8000" >> .env.production
-                    docker-compose down
-                    docker-compose up -d --build
+                  cd ./app
+                  echo "ENV_FILE=.env.production" >> .env
+                  rm -rf .env.production
+                  echo "DB_URL=http://pocketbase:8090" >> .env.production
+                  echo "PUBLIC_DB_URL=https://new-db.babel-revolution.fr" >> .env.production
+                  echo "IA_SERVER_URL=http://iaserver:8000" >> .env.production
+                  docker-compose down
+                  docker-compose up -d --build
                   EOF
+
+            - name: Notify on Discord Webhook (Success)
+              if: success()
+              env:
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+              run: |
+                  curl -X POST -H 'Content-type: application/json' --data '{"content": "Deployment to staging server is successful!"}' $DISCORD_WEBHOOK_URL
+
+            - name: Notify on Discord Webhook (Failure)
+              if: failure()
+              env:
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+              run: |
+                  curl -X POST -H 'Content-type: application/json' --data '{"content": "Deployment to staging server has failed!"}' $DISCORD_WEBHOOK_URL
