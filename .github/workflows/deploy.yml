@@ -53,4 +53,5 @@ jobs:
               env:
                   DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
               run: |
-                  curl -X POST -H 'Content-type: application/json' --data '{"content": "Deployment to staging server has failed!"}' $DISCORD_WEBHOOK_URL
+                  ERROR_MESSAGE=$(cat $GITHUB_WORKSPACE/deploy.log)
+                  curl -X POST -H 'Content-type: application/json' --data "{\"embeds\": [{\"title\": \"Deployment Failed\", \"description\": \"\`\`\`${ERROR_MESSAGE}\`\`\`\", \"color\": 15158332}]}" $DISCORD_WEBHOOK_URL
