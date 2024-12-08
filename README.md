@@ -1,4 +1,4 @@
-# Mise en place du projet
+# New Babel Revolution
 
 ## Dev
 
@@ -10,6 +10,8 @@
 
 ### Optionnel
 
+Outils qui permettent de tester le projet en local dans des conditions similaires à la production (YUNOSHOST).
+
 - [Docker](https://www.docker.com/) : Conteneurisation & Déploiement
   - [Docker Desktop](https://www.docker.com/products/docker-desktop) : Version Desktop
   - [Docker Compose](https://docs.docker.com/compose/) : Outil de gestion de conteneurs
@@ -20,7 +22,7 @@ Clone du projet :
 `git clone https://github.com/KoroSensei10/svelte-revolution.git`
 
 ```sh
-bun install
+bun install # ou bun i # Installe les dépendances du projet
 ```
 
 ### Variables d'environnement
@@ -40,11 +42,7 @@ DB_URL=http://localhost:8090
 
 #### Partie IA
 
-Pour la partie IA, il faut ajouter les variables suivantes dans le fichier `.env.local` pour qu'il puisse communiquer avec votre serveur IA.
-
-```env
-IA_SERVER_URL=http://localhost:8000
-```
+Voir [AI_README#setup](./README.ai.md#mise-en-place)
 
 ### Lancer le projet
 
@@ -56,11 +54,7 @@ bun dev
 
 #### Lancer l'ia
 
-Pour lancer le serveur IA, il faut se rendre dans le dossier `ia_server/` et lancer le serveur avec la commande suivante :
-
-```sh  
-XXX # Cela dépend de votre IA
-```
+voir le [AI_README#launch](./README.ai.md#lancer-lia)
 
 ## Tester la production
 
@@ -82,50 +76,32 @@ bun run preview
 - `build/` : fichiers générés
 - `node_modules/` : dépendances
 
-## Technologies utilisées
+## (Re)Déploiement
 
-### Frontend
+Pour les curieux, un fichier [`deploy.old.sh`](./deploy.old.sh) est présent à la racine du projet. Il permettait de déployer le projet sur le serveur YUNOHOST, mais maintenant tout est automatisé.  
+Cela "explique", les noms de domaines, les manips à faire et plein d'autres choses
 
-- [Svelte](https://svelte.dev/) : Framework JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) : Framework CSS
-  - [DaisyUI](https://daisyui.com/) : Composants Tailwind CSS
+### Actions Automatiques
 
-### Backend
+#### *YUNOHOST*
 
-- [Vite](https://vitejs.dev/) : Bundler et Runner pour le développement
-- [SvelteKit](https://kit.svelte.dev/) : Meta-Framework pour Svelte
-- [Docker](https://www.docker.com/) : Conteneurisation & Déploiement
-- [PocketBase](https://pocketbase.io/) : Base de données et API auto-hébergée
+J'ai configurer des actions github pour que le projet se déploie automatiquement sur le serveur YUNOHOST à chaque push sur la branche `staging`.  
+Cela se fait aussi au redémarrage du serveur YUNOHOST, cela grâce à des services linux qui se lancent automatiquement (voir le fichier `/etc/systemd/system/new-babel.service` sur la machine).
 
-### Outils
+##### Discord Webhook
 
-- [TypeScript](https://www.typescriptlang.org/) : Langage de programmation apportant des types à JavaScript
-- [Prettier](https://prettier.io/) : Formateur de code
-- [ESLint](https://eslint.org/) : Linter de code
+Le fichier précédemment cité contient aussi un webhook discord pour notifier quand le serveur est redémarré.
 
-## Styler avec Tailwind CSS
+#### *Vercel*
 
-Tailwind CSS est un framework CSS qui permet de créer des interfaces rapidement en utilisant des classes utilitaires.
-Similaire à Bootstrap, mais plus minimaliste. Simplemement ajouter des classes aux éléments HTML pour styliser.
+Le déploiement sur Vercel se fait automatiquement à chaque push sur la branche `staging` et `main`.
 
-### Exemple
+#### *GitHub*
 
-La manière la plus simple est d'ajouter les classes directement dans le code HTML. C'est aussi la méthode recommandée.
+Comme dit précédemment, le déploiement sur YUNOHOST se fait automatiquement à chaque push sur la branche `staging` grâce à des actions github.  
+De plus, un Webhook Discord est configuré pour notifier quand le déploiement à réussi ou échoué (voir les secrets github).
 
-```html
-<button
- class="px-4 py-2 font-bold text-white bg-blue-500
- rounded hover:bg-blue-700"
->
- Button
-</button>
-```
-
-## Déploiement
-
-Déploiement automatique sur le serveur YUNOHOST à chaque push.
-
-### OLD! Déploiment sur le serveur YUNOHOST
+### OLD! (mais peut servir un jour) Déploiment sur le serveur YUNOHOST
 
 Pour réussir à déployer le projet sur le serveur YUNOHOST, il faut suivre les étapes suivantes :
 
@@ -137,43 +113,23 @@ Pour réussir à déployer le projet sur le serveur YUNOHOST, il faut suivre les
   - [local preview uniquement] Modfier la variable `ORIGIN` et mettre `http://localhost:4173` sinon le serveur ne pourra pourra pas traiter les requêtes POST des formulaires
 - Ensuite, simplement ajouter le reverse proxy sur le serveur YUNOHOST
 
-### Adapter
+## Technologies utilisées
 
-Voir cette ligne dans ce fichier : [svelte.config.js:1](./svelte.config.js)
+### Frontend
 
-#### Docker
+- [Svelte](https://svelte.dev/) : Framework JavaScript
+- [Vite](https://vitejs.dev/) : Bundler et Runner pour le développement
+- [Tailwind CSS](https://tailwindcss.com/) : Framework CSS
+  - [DaisyUI](https://daisyui.com/) : Composants Tailwind CSS
 
-Utiliser l'adapter Bun.
+### Backend
 
-```bash
-docker-compose up --build
-```
+- [SvelteKit](https://kit.svelte.dev/) : Meta-Framework pour Svelte
+- [PocketBase](https://pocketbase.io/) : Base de données et API auto-hébergée
+- [Docker](https://www.docker.com/) : Conteneurisation & Déploiement
 
-#### Vercel
+### Outils
 
-Utiliser l'adapter auto (ou vercel).
-
-**Auto déploiement sur Vercel à chaque push.**
-
-La branche de déploiement est `main`.\
-La branche de test est `staging`.
-
-## Redéploiement
-
-### Docker ou YUNOHOST
-
-### Le redéploiement est automatique sur la branche staging
-
-Sinon, simplement pull le projet et relancer le serveur.
-
-```bash
-docker-compose down # si nécessaire
-```
-
-```bash
-docker-compose up --build
-```
-
-### Déploiement sur Vercel
-
-Vercel redéploie automatiquement à chaque push.
+- [TypeScript](https://www.typescriptlang.org/) : Langage de programmation apportant des types à JavaScript
+- [Prettier](https://prettier.io/) : Formateur de code
+- [ESLint](https://eslint.org/) : Linter de code
