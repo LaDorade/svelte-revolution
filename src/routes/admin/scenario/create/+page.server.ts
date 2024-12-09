@@ -4,6 +4,7 @@ import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
 import type { MyPocketBase } from '$types/pocketBase';
 import type { z } from 'zod';
 
+// TODO: Refacto to use zod schema, errors and translations
 export const actions = {
 	createScenario: async ({ request, locals }) => {
 		const pb = locals.pb as MyPocketBase;

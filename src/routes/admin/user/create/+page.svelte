@@ -15,7 +15,7 @@
 
 	$effect(() => {
 		if (form?.success) {
-			toast.success($t('user.creationSuccess'), {
+			toast.success($t('admin.user.creationSuccess'), {
 				duration: 5000,
 				position: 'bottom-center'
 			});
@@ -27,7 +27,7 @@
 </script>
 
 <div class="flex flex-col items-center">
-	<h1 class="p-4 text-3xl font-bold">{$t('user.createUser')}</h1>
+	<h1 class="p-4 text-3xl font-bold">{$t('admin.user.createUser')}</h1>
 	<form
 		action="?/createUser"
 		method="POST"
@@ -44,7 +44,7 @@
 	>
 		<div class="flex flex-col gap-4">
 			<div class="w-full">
-				<label for="username" class="text-lg font-thin">{$t('user.username')}</label>
+				<label for="username" class="text-lg font-thin">{$t('login.username')}</label>
 				<input
 					pattern={'[a-zA-Z0-9]{3,}'}
 					required
@@ -54,7 +54,7 @@
 				/>
 			</div>
 			<div class="w-full">
-				<label for="password" class="text-lg font-thin">{$t('user.password')}</label>
+				<label for="password" class="text-lg font-thin">{$t('login.password')}</label>
 				<input
 					required
 					placeholder="Snoup mange des pommes tous les matins"
@@ -69,7 +69,7 @@
 			disabled={!validForm}
 			class="self-center px-4 py-2 text-lg text-black transition-all ease-linear bg-white rounded disabled:cursor-not-allowed disabled:opacity-50"
 		>
-			{$t('user.createUser')}
+			{$t('admin.user.createUser')}
 		</button>
 	</form>
 </div>

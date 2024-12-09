@@ -13,11 +13,11 @@
 	let activeTab = $derived(data?.route);
 
 	const tabs = [
-		{ href: '/admin/scenario/create', label: $t('createScenario') },
-		{ href: '/admin/sessions/create', label: $t('sessions.createSession') }
+		{ href: '/admin/scenario/create', label: $t('admin.scenario.createScenario') },
+		{ href: '/admin/sessions/create', label: $t('admin.session.createSession') }
 	];
 	if (data.user?.role === 'superAdmin') {
-		tabs.push({ href: '/admin/user/create', label: $t('user.createUser') });
+		tabs.push({ href: '/admin/user/create', label: $t('admin.user.createUser') });
 	}
 
 	onMount(() => {
@@ -30,7 +30,7 @@
 
 <div class="flex flex-col items-center gap-4 py-4">
 	<a href="/admin" class="text-4xl font-thin text-center text-white hover:text-green-500 first-letter:capitalize">
-		{$t('administration')}
+		{$t('admin.administration')}
 	</a>
 	<div role="tablist" class="tabs tabs-lifted">
 		{#each tabs as tab}

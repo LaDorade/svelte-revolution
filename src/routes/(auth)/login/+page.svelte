@@ -20,7 +20,7 @@
 </script>
 
 <div class="flex flex-col w-full gap-4 py-4 text-center">
-	<h1 class="text-4xl font-thin text-center text-white first-letter:capitalize">{$t('login')}</h1>
+	<h1 class="text-4xl font-thin text-center text-white first-letter:capitalize">{$t('admin.administration')}</h1>
 	<form
 		use:enhance={() => {
 			nProgress.start();
@@ -35,11 +35,11 @@
 	>
 		<div class="flex flex-col items-start w-full gap-4 text-black dark:text-white">
 			<label class="flex items-center w-full gap-2 input input-bordered input-accent">
-				{$t('username')} |
+				{$t('login.username')} |
 				<input type="text" class="grow" placeholder="Daisy" autocomplete="username" name="username" />
 			</label>
 			<label class="flex items-center w-full gap-2 input input-bordered input-accent">
-				{$t('password')} |
+				{$t('login.password')} |
 				<input
 					type="password"
 					class="grow"
@@ -49,13 +49,13 @@
 				/>
 			</label>
 			<div class="flex flex-row items-center justify-center w-full h-12">
-				<button type="submit" class="p-4 font-bold w-fit btn btn-accent">{$t('login')}</button>
+				<button type="submit" class="p-4 font-bold w-fit btn btn-accent">{$t('login.login')}</button>
 			</div>
 		</div>
 	</form>
 	<div class="flex flex-col gap-4">
 		<h3 class="">
-			{$t('or')}
+			{$t('misc.or')}
 		</h3>
 		{@render authWithOAuth2('github')}
 		{@render authWithOAuth2('discord')}

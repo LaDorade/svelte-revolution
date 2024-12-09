@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { t } from 'svelte-i18n';
 	import toast from 'svelte-french-toast';
 	import nProgress from 'nprogress';
 	import type { ActionData, PageData } from './$types';
@@ -15,13 +16,13 @@
 
 	$effect(() => {
 		if (form?.success) {
-			toast.success('Session créée avec succès', { duration: 5000, position: 'bottom-center' });
+			toast.success($t('admin.session.creationSuccess'), { duration: 5000, position: 'bottom-center' });
 		}
 	});
 </script>
 
 <div class="flex flex-col items-center">
-	<h1 class="p-4 text-3xl font-bold">Créer une nouvelle session</h1>
+	<h1 class="p-4 text-3xl font-bold">{$t('admin.session.createSession')}</h1>
 	<form
 		action="?/createSession"
 		method="POST"
@@ -40,7 +41,7 @@
 		<div class="flex gap-4">
 			<div class="w-full">
 				<div>
-					<label for={'name'} class="text-lg font-thin">Nom de la session</label>
+					<label for={'name'} class="text-lg font-thin">{$t('admin.session.name')}</label>
 					<input
 						required
 						name={'name'}
@@ -50,7 +51,7 @@
 				</div>
 			</div>
 			<div>
-				<label for="image">Image</label>
+				<label for="image">{$t('admin.session.image')}</label>
 				<input
 					type="file"
 					name="image"
@@ -60,9 +61,13 @@
 			</div>
 		</div>
 		<div class="flex flex-col gap-4 p-4">
-			<label for="scenarioId"> Sélectionner un scénario </label>
-			<select name="scenarioId" class="p-4 border-b appearance-none focus-within:bg-transparent" required>
-				<option disabled>Choisir un scénario</option>
+			<label for="scenarioId">{$t('admin.session.selectScenario')}</label>
+			<select
+				name="scenarioId"
+				class="p-4 border-b appearance-none focus-within:bg-transparent text-white"
+				required
+			>
+				<option disabled>{$t('admin.session.chooseScenario')}</option>
 				{#each data.scenarios as scenario}
 					<option value={scenario.id}>{scenario.title}</option>
 				{/each}
@@ -73,7 +78,7 @@
 			disabled={!validForm}
 			class="self-center px-4 py-2 text-lg text-black transition-all ease-linear bg-white rounded disabled:cursor-not-allowed disabled:opacity-50"
 		>
-			Créer la session
+			{$t('admin.session.createTheSession')}
 		</button>
 	</form>
 
@@ -82,7 +87,7 @@
 			class="self-center px-4 py-2 mt-4 text-lg font-light text-white border rounded"
 			href="/sessions/{form?.session.slug}"
 		>
-			Aller à la session</a
+			{$t('admin.session.goto')}</a
 		>
 	{:else if form?.error}
 		<p class="p-4 text-red-500">{form.error}</p>

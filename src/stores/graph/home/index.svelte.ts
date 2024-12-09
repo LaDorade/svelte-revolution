@@ -6,28 +6,28 @@ interface ExampleNode extends d3.SimulationNodeDatum, BaseNode {}
 const exampleNodes: ExampleNode[] = [
 	{
 		id: 1,
-		title: 'exampleGraph.title1',
-		text: 'exampleGraph.text1'
+		title: 'home.exampleGraph.title1',
+		text: 'home.exampleGraph.text1'
 	},
 	{
 		id: 2,
-		title: 'exampleGraph.title2',
-		text: 'exampleGraph.text2'
+		title: 'home.exampleGraph.title2',
+		text: 'home.exampleGraph.text2'
 	},
 	{
 		id: 3,
-		title: 'exampleGraph.title3',
-		text: 'exampleGraph.text3'
+		title: 'home.exampleGraph.title3',
+		text: 'home.exampleGraph.text3'
 	},
 	{
 		id: 4,
-		title: 'exampleGraph.title4',
-		text: 'exampleGraph.text4'
+		title: 'home.exampleGraph.title4',
+		text: 'home.exampleGraph.text4'
 	},
 	{
 		id: 5,
-		title: 'exampleGraph.title5',
-		text: 'exampleGraph.text5'
+		title: 'home.exampleGraph.title5',
+		text: 'home.exampleGraph.text5'
 	}
 ];
 

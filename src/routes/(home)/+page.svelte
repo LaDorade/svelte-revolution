@@ -49,6 +49,8 @@
 
 		titleStore.setNavTitle('Babel Revolution');
 	});
+
+	$inspect(homeStore.selectedNode);
 </script>
 
 <div class="flex flex-col items-center w-full gap-12 px-4">
@@ -130,9 +132,9 @@
 		</div>
 	</div>
 	<div class="flex flex-col w-full text-gray-50 gap-4 items-center">
-		<h2>Sessions Ouvertes</h2>
+		<h2>{$t('sessions.openSessions')}</h2>
 		<Sessions sessions={data.sessions?.filter((session) => !session.completed)} />
-		<h2>Sessions Terminées</h2>
+		<h2>{$t('sessions.endedSessions')}</h2>
 		<Sessions sessions={data.sessions?.filter((session) => session.completed)} />
 	</div>
 	<div class="flex flex-col w-full text-gray-200 gap-4 items-cente">

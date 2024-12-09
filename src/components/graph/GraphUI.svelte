@@ -29,7 +29,8 @@
 		events?: GraphEvent[];
 		ends?: End[];
 		sides: Side[];
-		iaConnected?: boolean;
+		pseudo: string | null;
+		userSideId: string | null;
 	}
 
 	let {
@@ -39,13 +40,13 @@
 		events = [],
 		ends = [],
 		sides,
-		iaConnected
+		pseudo,
+		userSideId = $bindable()
 	}: Props = $props();
 
 	let nodeTitle = $state('');
 	let nodeText = $state('');
-	let nodeAuthor = $state('');
-	let userSideId = $state('');
+	let ai = $derived.by(() => session.expand?.scenario?.ai);
 
 	const states = $state({
 		nodeInfo: false,
@@ -93,7 +94,6 @@
 				states.addNode = false;
 				nodeTitle = '';
 				nodeText = '';
-				localStorage.setItem('author_' + session.id, nodeAuthor);
 
 				// Add the new event to the list of events
 				if (result.data?.body?.event && session.expand?.events) {
@@ -143,20 +143,12 @@
 
 	onMount(async () => {
 		await handleSessionEnd();
-		nodeAuthor = localStorage.getItem('author_' + session.id) || '';
-		userSideId = localStorage.getItem('side_' + session.id) || '';
 		mainGraphStore.selectedNode = null;
 		states.nodeInfo = false;
 	});
 </script>
 
-{#snippet formTemplate(
-	values: { id: string; title: string }[],
-	action: string,
-	name: string,
-	trad: string,
-	needDisabled: boolean = false
-)}
+{#snippet formTemplate(values: { id: string; title: string }[], action: string, name: string, trad: string)}
 	<form
 		method="POST"
 		action="/sessions/{session.id}?/{action}"
@@ -178,10 +170,7 @@
 			<select {name} id={name} class="select select-accent appearance-none bg-black select-sm">
 				<option disabled selected>{trad}</option>
 				{#each values as value}
-					{@const alreadySelected =
-						needDisabled &&
-						(session.expand?.events?.filter((event) => event.id === value.id).length ?? 0) > 0}
-					<option disabled={alreadySelected} value={value.id}>{value.title}</option>
+					<option value={value.id}>{value.title}</option>
 				{/each}
 			</select>
 		</label>
@@ -288,17 +277,17 @@
 								{sides.find((side) => side.id === mainGraphStore.selectedNode?.side)?.name}
 							</div>
 							<div>
-								{$t('from')}
+								{$t('inSession.from')}
 								<span class="text-white">{mainGraphStore.selectedNode.author}</span>
 							</div>
 							<div class="max-h-60 overflow-auto text-justify text-gray-300">
-								{mainGraphStore.selectedNode.text}
+								{@html mainGraphStore.selectedNode.text}
 							</div>
 						</div>
 					{/key}
 				{:else}
 					<div class="text-xl text-center font-semibold first-letter:capitalize">
-						{$t('noNodeSelected')}
+						{$t('inSession.noNodeSelected')}
 					</div>
 				{/if}
 			</div>
@@ -322,7 +311,7 @@
 			>
 				<label class="form-control w-full max-w-xs">
 					<div class="label p-0">
-						<span class="label-text text-inherit">{$t('messageTitle')}</span>
+						<span class="label-text text-inherit">{$t('home.messageTitle')}</span>
 					</div>
 					<input
 						name="title"
@@ -331,38 +320,6 @@
 						placeholder="Youhouhou"
 						class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
 					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label p-0">
-						<span class="label-text text-inherit">{$t('yourName')}</span>
-					</div>
-					<input
-						name="author"
-						type="text"
-						bind:value={nodeAuthor}
-						placeholder="Snoup"
-						class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label p-0">
-						<span class="label-text text-inherit">{$t('side.yourSide')}</span>
-					</div>
-					<select
-						bind:value={userSideId}
-						name="side"
-						class="select select-accent text-primary-500 bg-gray-950 select-sm select-bordered"
-					>
-						{#each sides as side}
-							<option
-								disabled={iaConnected &&
-									session?.expand?.scenario?.ai &&
-									!!userSideId &&
-									side.id !== userSideId}
-								value={side.id}>{side.name}</option
-							>
-						{/each}
-					</select>
 				</label>
 				<label class="form-control w-full max-w-xs">
 					<div class="label p-0">
@@ -375,9 +332,69 @@
 						placeholder="Ton message"
 					></textarea>
 				</label>
+				{#if admin || !ai}
+					<label class="form-control w-full max-w-xs">
+						<div class="label p-0">
+							<span class="label-text text-inherit">{$t('side.yourSide')}</span>
+						</div>
+						<select
+							bind:value={userSideId}
+							name="side"
+							class="select select-accent text-primary-500 bg-gray-950 select-sm select-bordered"
+						>
+							<option disabled selected>{$t('side.chooseSide')}</option>
+							{#each sides as side}
+								<option
+									disabled={session?.expand?.scenario?.ai && side.id !== userSideId}
+									value={side.id}>{side.name}</option
+								>
+							{/each}
+						</select>
+					</label>
+				{:else}
+					<input type="hidden" name="side" value={userSideId} />
+					<div class=" flex gap-2">
+						<div class="">
+							{$t('side.yourSide')} :
+						</div>
+						<div class=" text-white">
+							{sides.find((side) => side.id === userSideId)?.name}
+						</div>
+					</div>
+				{/if}
+				{#if !admin}
+					<div class=" flex gap-2">
+						<div>
+							{$t('home.yourName')} :
+						</div>
+						<div class=" text-white">
+							{pseudo}
+						</div>
+					</div>
+					<input
+						value={pseudo}
+						name="author"
+						type={'hidden'}
+						placeholder="Pseudo"
+						class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
+					/>
+				{:else}
+					<label class="form-control w-full max-w-xs">
+						<div class="label p-0">
+							<span class="label-text text-inherit">{$t('home.yourName')}</span>
+						</div>
+						<input
+							value={pseudo}
+							name="author"
+							type={'text'}
+							placeholder="Pseudo"
+							class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
+						/>
+					</label>
+				{/if}
 				<input type="hidden" name="session" value={session.id} />
 				<input type="hidden" name="parent" value={mainGraphStore.selectedNode?.id ?? null} />
-				<button class="btn w-fit btn-accent btn-sm self-center" type="submit">{$t('form.submit')}</button>
+				<button class="btn w-fit btn-accent btn-sm self-center" type="submit">{$t('misc.submit')}</button>
 			</form>
 		{:else if states.admin}
 			<div
@@ -387,8 +404,8 @@
 				}}
 				class="flex flex-col items-center gap-2 p-2 text-primary-500 z-10"
 			>
-				{@render formTemplate(events, 'addEvent', 'eventId', $t('sessions.addEvent'), true)}
-				{@render formTemplate(ends, 'endSession', 'endId', $t('sessions.endSession'))}
+				{@render formTemplate(events, 'addEvent', 'eventId', $t('misc.add'))}
+				{@render formTemplate(ends, 'endSession', 'endId', $t('misc.end'))}
 			</div>
 		{:else if states.sessionEnd}
 			<div

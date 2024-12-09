@@ -63,27 +63,17 @@
 		if (form?.error) {
 			toast.error(form.error, { duration: 5000, position: 'bottom-center' });
 		} else if (form?.success) {
-			toast.success($t('scenario.success'), { duration: 3000, position: 'bottom-center' });
+			toast.success($t('misc.success'), { duration: 3000, position: 'bottom-center' });
 		}
 	});
 </script>
 
 <div class="flex flex-col items-center text-white">
-	<h1 class="p-4 text-3xl font-bold">{$t('scenario.newScenario')}</h1>
+	<h1 class="p-4 text-3xl font-bold">{$t('admin.scenario.newScenario')}</h1>
 	<form
 		method="POST"
 		use:enhance={({ cancel }) => {
 			nProgress.start();
-			// try {
-			// 	fullScenarioSchema.parse(formData);
-			// } catch (error) {
-			// 	nProgress.done();
-			// 	cancel();
-			// 	const err = error as z.ZodError;
-			// 	const { message, path } = err.issues[0];
-			// 	toast.error(path + ': ' + message, { duration: 5000, position: 'bottom-center' });
-			// 	return;
-			// }
 			return async ({ update }) => {
 				await update();
 				nProgress.done();
@@ -99,7 +89,7 @@
 					class="appearance-none rounded w-full h-full p-4"
 					type="text"
 					bind:value={formData.title}
-					placeholder="Titre du scénario"
+					placeholder={$t('scenario.title')}
 					name="title"
 				/>
 			</label>
@@ -115,7 +105,7 @@
 		<!-- AI -->
 		<div class="flex">
 			<label class="standardLabel flex gap-4">
-				{$t('scenario.useAi')}
+				{$t('admin.scenario.useAi')}
 				<input class="rounded p-2" type="checkbox" bind:checked={formData.ai} name="useAi" />
 			</label>
 		</div>
@@ -148,14 +138,14 @@
 					class="rounded w-full h-full p-2"
 					type="text"
 					bind:value={formData.firstNode.title}
-					placeholder={$t('scenario.firstNodeTitle')}
+					placeholder={$t('scenario.firstNode.firstNodeTitle')}
 					name="firstNodeTitle"
 				/>
 			</label>
 			<label class="standardLabel">
 				<textarea
 					class=" rounded block w-full h-full p-2"
-					placeholder={$t('scenario.firstNodeText')}
+					placeholder={$t('scenario.firstNode.firstNodeText')}
 					bind:value={formData.firstNode.text}
 					name="firstNodeText"
 				></textarea>
@@ -165,7 +155,7 @@
 					type="text"
 					class=" rounded w-full h-full p-2"
 					bind:value={formData.firstNode.author}
-					placeholder={$t('scenario.firstNodeAuthor')}
+					placeholder={$t('scenario.firstNode.firstNodeAuthor')}
 					name="firstNodeAuthor"
 				/>
 			</label>
@@ -175,14 +165,14 @@
 			<div class=" flex flex-wrap gap-4 justify-center items-center">
 				{#each formData.sides as side, i (side)}
 					<div class=" flex-col gap-2 flex">
-						<h2 class="text-2xl font-bold">{$t('scenario.side')} {i + 1}</h2>
+						<h2 class="text-2xl font-bold">{$t('side.side')} {i + 1}</h2>
 						<div class="flex gap-2 items-center">
 							<label class="standardLabel">
 								<input
 									class=" w-full h-full p-2 rounded"
 									type="text"
 									bind:value={side.title}
-									placeholder="Titre du côté"
+									placeholder={$t('side.title')}
 									name="side"
 								/>
 							</label>
@@ -196,7 +186,7 @@
 								}}
 								disabled={formData.sides.length <= 1}
 							>
-								{$t('scenario.delete')}
+								{$t('misc.delete')}
 							</button>
 						</div>
 					</div>
@@ -209,7 +199,7 @@
 					formData.sides = [...formData.sides, { title: '' }];
 				}}
 			>
-				{$t('scenario.add')}
+				{$t('misc.add')}
 			</button>
 		</div>
 		<!-- Events -->
@@ -218,13 +208,13 @@
 				{#each formData.events as event, i (event)}
 					<div class="flex flex-col justify-center items-center p-2 border-gray-800 border-l rounded-md">
 						<div class="flex items-center justify-center flex-col gap-2">
-							<h2 class="p-4 text-2xl font-bold">{$t('scenario.event')} {i + 1}</h2>
+							<h2 class="p-4 text-2xl font-bold">{$t('scenario.event.event')} {i + 1}</h2>
 							<label class="standardLabel">
 								<input
 									class=" w-full h-full p-2 rounded"
 									type="text"
 									bind:value={event.title}
-									placeholder="Titre de l'événement"
+									placeholder={$t('scenario.event.title')}
 									name="eventTitle"
 								/>
 							</label>
@@ -232,7 +222,7 @@
 								<textarea
 									class=" appearance-none block w-full h-full p-2 rounded"
 									bind:value={event.text}
-									placeholder="Texte de l'événement"
+									placeholder={$t('scenario.event.text')}
 									name="eventText"
 								></textarea>
 							</label>
@@ -241,7 +231,7 @@
 									class=" w-full h-full p-2 rounded"
 									type="text"
 									bind:value={event.author}
-									placeholder="Auteur de l'événement"
+									placeholder={$t('scenario.event.author')}
 									name="eventAuthor"
 								/>
 							</label>
@@ -256,7 +246,7 @@
 							}}
 							disabled={formData.events.length <= 1}
 						>
-							{$t('scenario.delete')}
+							{$t('misc.delete')}
 						</button>
 					</div>
 				{/each}
@@ -268,7 +258,7 @@
 					formData.events = [...formData.events, { title: '', text: '', author: '' }];
 				}}
 			>
-				{$t('scenario.add')}
+				{$t('misc.add')}
 			</button>
 		</div>
 		<!-- Ends -->
@@ -276,13 +266,13 @@
 			<div class="flex flex-wrap gap-4 justify-center items-center">
 				{#each formData.ends as end, i (end)}
 					<div class="flex flex-col items-center p-2 border-gray-800 border-l rounded-md">
-						<h2 class="p-4 text-2xl font-bold">{$t('scenario.end')} {i + 1}</h2>
+						<h2 class="p-4 text-2xl font-bold">{$t('scenario.end.end')} {i + 1}</h2>
 						<label class="standardLabel">
 							<input
 								class="w-full h-full p-2 rounded"
 								type="text"
 								bind:value={end.title}
-								placeholder="Titre de la fin"
+								placeholder={$t('scenario.end.title')}
 								name="endTitle"
 							/>
 						</label>
@@ -290,7 +280,7 @@
 							<textarea
 								class="appearance-none block w-full h-full p-2 rounded"
 								bind:value={end.text}
-								placeholder="Texte de la fin"
+								placeholder={$t('scenario.end.text')}
 								name="endText"
 							></textarea>
 						</label>
@@ -304,7 +294,7 @@
 							}}
 							disabled={formData.ends.length <= 1}
 						>
-							{$t('scenario.delete')}
+							{$t('misc.delete')}
 						</button>
 					</div>
 				{/each}
@@ -316,7 +306,7 @@
 					formData.ends = [...formData.ends, { title: '', text: '' }];
 				}}
 			>
-				{$t('scenario.add')}
+				{$t('misc.add')}
 			</button>
 		</div>
 		<button
@@ -324,14 +314,14 @@
 			type="submit"
 			disabled={Boolean(issues.length)}
 		>
-			{$t('scenario.createYourScenario')}
+			{$t('admin.scenario.createYourScenario')}
 		</button>
 		<div class="sticky bottom-0 h-36 p-4 rounded-md">
 			{#if issues.length > 0}
 				<div class="bg-black flex flex-col items-center gap-4">
 					<h3 class=" font-semibold text-xl flex items-center gap-2 k">
 						<TriangleAlert class="w-8 h-8" />
-						{$t('scenario.scenarioIsNotValide')}
+						{$t('errors.scenario.notValid')}
 						<TriangleAlert class="w-8 h-8" />
 					</h3>
 					<div class=" grid grid-cols-2 grid-flow-row w-full gap-4 justify-center items-center">
@@ -347,7 +337,7 @@
 				<div class="bg-green-500 h-full w-full p-4 rounded-md flex flex-col justify-center items-center">
 					<h3 class=" font-semibold text-xl flex items-center gap-2">
 						<Sparkles class="w-8 h-8" />
-						<div>{$t('scenario.scenarioIsValide')}</div>
+						<div>{$t('admin.scenario.scenarioIsValide')}</div>
 						<Sparkles class="w-8 h-8" />
 					</h3>
 				</div>

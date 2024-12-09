@@ -5,6 +5,8 @@ import { createNewEvents } from '$lib/server/ia/event';
 import { type Actions, fail, type ServerLoad } from '@sveltejs/kit';
 import type { End, GraphEvent, GraphNode, Session } from '$types/pocketBase/TableTypes';
 import type { MyPocketBase } from '$types/pocketBase';
+import type { ClientResponseError } from 'pocketbase';
+import { addNodeSchema } from '$lib/zschemas/addNode.schema';
 
 export const load: ServerLoad = async ({ params, locals }) => {
 	const pb = locals.pb;
@@ -47,14 +49,9 @@ export const actions: Actions = {
 			side: data.get('side') as string
 		};
 
-		if (!nodeData.parent) {
-			return fail(422, { success: false, error: 'No selected node' });
-		}
-		if (!nodeData.session) {
-			return fail(500, { success: false, error: 'Not in a session' });
-		}
-		if (!nodeData.title || !nodeData.text || !nodeData.author || !nodeData.side) {
-			return fail(422, { success: false, error: 'Missing required fields' });
+		const validation = addNodeSchema.safeParse(nodeData);
+		if (!validation.success) {
+			return fail(422, { success: false, error: validation.error.toString() });
 		}
 
 		const censorResponse = await censorNode(nodeData);
@@ -67,8 +64,8 @@ export const actions: Actions = {
 			nodeData.author,
 			nodeData.session,
 			nodeData.parent,
-			nodeData.side,
-			'contribution'
+			'contribution',
+			nodeData.side
 		);
 
 		if (censorResponse.triggerEvent && censorResponse.events) {
@@ -123,11 +120,13 @@ export const actions: Actions = {
 				author,
 				sessionId,
 				String(firstNode.id),
-				'event'
+				'event',
+				null
 			);
 			await locals.pb.collection('Session').update(sessionId, { events: eventId });
 		} catch (error) {
-			console.error('Error creating event:', JSON.stringify(error));
+			const e = error as ClientResponseError;
+			console.error('Error creating event:', e.toJSON());
 			if (createdEventNode) {
 				await locals.pb.collection('Node').delete(String(createdEventNode.id));
 			}

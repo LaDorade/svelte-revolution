@@ -1,79 +1,113 @@
 {
-  "page_title": "Page d'accueil",
+  "admin": {
+    "admin": "Admin",
+    "administration": "Administration",
+    "youAreAdmin": "Vous êtes admin",
+    "debugPanel": "Panneau de debug",
+    "session": {
+      "createSession": "Créer une session",
+      "endSession": "Terminer la session",
+      "name": "Nom de la session",
+      "selectScenario": "Sélectionner un scénario",
+      "chooseScenario": "Choisir un scénario",
+      "image": "Image",
+      "creationSuccess": "Session créée avec succés",
+      "createTheSession": "Créer la session",
+      "goto": "Aller à la session"
+    },
+    "scenario": {
+      "language": "Langue",
+      "yourScenarios": "Vos scénarios",
+      "createYourScenario": "Creez votre scénario",
+      "createScenario": "Créer un scénario",
+      "newScenario": "Nouveau scénario",
+      "editScenario": "Modifier le scénario",
+      "deleteScenario": "Supprimer le scénario",
+      "success": "Scénario créé avec succès",
+      "scenarioIsValide": "Le scénario est valide !",
+      "scenarioIsNotValide": "Le scénario n'est pas valide",
+      "useAi": "Utiliser l'IA",
+      "start": "Commencer"
+    },
+    "user": {
+      "createUser": "Créer un utilisateur",
+      "creationSuccess": "Utilisateur créé avec succès"
+    }
+  },
+  "login": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "S'inscrire",
+    "profile": "Profil",
+    "email": "Email",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe"
+  },
   "sessions": {
     "addNode": "Ajouter un nœud",
-    "addEvent": "Ajouter un événement",
     "session": "Session",
     "sessions": "Sessions",
     "yourSessions": "Vos sessions",
-    "createSession": "Démarrer une session",
-    "endSession": "Terminer la session",
     "sessionEnded": "Session terminée",
     "sortByNotCompleted": "Trier par non terminé",
     "noSessions": "Aucune session",
     "otherSessions": "Autres sessions",
-    "sessionIsOver": "La sessions est terminée !"
+    "sessionIsOver": "La sessions est terminée !",
+    "openSessions": "Sessions ouvertes",
+    "endedSessions": "Sessions terminées"
+  },
+  "inSession": {
+    "writeMessage": "Écrire un message",
+    "nodeInformation": "Informations sur le nœud",
+    "from": "De :",
+    "noNodeSelected": "Aucun nœud sélectionné",
+    "eventHidden": "Événement pour un autre camp"
   },
   "scenario": {
     "scenario": "Scénario",
     "scenarios": "Scénarios",
-    "yourScenarios": "Vos scénarios",
-    "createScenario": "Créer un scénario",
-    "createYourScenario": "Creez votre scénario",
-    "newScenario": "Nouveau scénario",
-    "editScenario": "Modifier le scénario",
-    "deleteScenario": "Supprimer le scénario",
     "noScenarios": "Aucun scénario",
-    "add": "Ajouter",
-    "delete": "Supprimer",
     "essentials": "Essentiel",
-    "firstNode": "Premier nœud",
+    "firstNode": {
+      "firstNode": "Premier nœud",
+      "firstNodeTitle": "Titre du premier nœud",
+      "firstNodeText": "Texte du premier nœud",
+      "firstNodeAuthor": "Auteur du premier nœud"
+    },
     "title": "Titre",
     "text": "Texte",
     "prologue": "Prologue",
-    "eventTitle": "Titre de l'événement",
-    "eventText": "Texte de l'événement",
-    "endTitle": "Titre de fin",
-    "endText": "Texte de fin",
-    "firstNodeTitle": "Titre du premier nœud",
-    "firstNodeText": "Texte du premier nœud",
-    "firstNodeAuthor": "Auteur du premier nœud",
-    "events": "Événements",
-    "event": "Événement",
+    "end": {
+      "ends": "Fins",
+      "end": "Fin",
+      "title": "Titre de la fin",
+      "text": "Texte de la fin"
+    },
     "author": "Auteur",
-    "ends": "Fins",
-    "end": "Fin",
-    "side": "Côté",
-    "sides": "Côtés",
-    "success": "Scénario créé avec succès",
-    "scenarioIsValide": "Le scénario est valide !",
-    "scenarioIsNotValide": "Le scénario n'est pas valide",
-    "useAi": "Utiliser l'IA",
-    "start": "Commencer",
-    "chooseSide": "Choisir un camp",
-    "sideChosen": "Vous avez choisi votre camp",
-    "choose": "Choisissez votre camp"
+    "event": {
+      "events": "Événements",
+      "event": "Événement",
+      "title": "Titre de l'événement",
+      "text": "Texte de l'événement",
+      "author": "Auteur"
+    }
   },
   "side": {
     "side": "Camp",
     "sides": "Camps",
     "chooseSide": "Choisir un camp",
-    "yourSide": "Ton camp"
-  },
-  "form": {
-    "submit": "Soumettre",
-    "save": "Sauvegarder",
-    "cancel": "Annuler",
-    "next": "Suivant",
-    "previous": "Précédent"
+    "sideChosen": "Vous avez choisi votre camp",
+    "choose": "Choisissez votre camp",
+    "yourSide": "Ton camp",
+    "sideSaved": "Camp sauvegardé",
+    "title": "Titre du camp"
   },
   "user": {
+    "pseudo": "Pseudo",
+    "yourPseudo": "Votre pseudo",
+    "pseudoLocked": "Pseudo verrouillé",
     "user": "Utilisateur",
-    "users": "Utilisateurs",
-    "createUser": "Créer un utilisateur",
-    "username": "Nom d'utilisateur",
-    "password": "Mot de passe",
-    "creationSuccess": "Utilisateur créé avec succès"
+    "users": "Utilisateurs"
   },
   "home": {
     "home": "Accueil",
@@ -87,6 +121,10 @@
     "yourMessage": "Ton message",
     "emptyMessage": "Allez, essaye d'écire quelque chose !",
     "tryDragGraph": "Essaye de déplacer le graphe !",
+    "yourTitle": "Votre titre",
+    "yourName": "Ton nom",
+    "publish": "Publier",
+    "messageTitle": "Titre du message",
     "animateYourSession": "Animer votre session",
     "animateSession": "Enseignante ou enseignant, animatrice ou animateur d'ateliers, ou simplement révolutionnaire dans l'âme ? Si vous voulez animer votre propre BⱯBEL RËVOLUㅏION, contactez les administrateurs du site qui vous ouvriront un compte et vous accompagneront dans l'aventure. Contact : Serge Bouchardon (serge.bouchardon@utc.fr) et Isabelle Cros (isabelle.CROS@univ-amu.fr)",
     "footer": {
@@ -96,19 +134,19 @@
       "techUsed": "Technologies utilisées",
       "devAndDesign": "Développement et design",
       "credits": "Crédits"
+    },
+    "exampleGraph": {
+      "title1": "Contemple le réseau",
+      "text1": "Le graphe apparaît avec plusieurs noeuds interconnectés. Chaque nœud contient un titre, un texte et un auteur, c'est une porte d’entrée vers un message. Observe l’ensemble, ressens les connexions, et découvre les relations entre chaque message.",
+      "title2": "Plonge dans les mots",
+      "text2": "Clique sur un nœud pour dévoiler les détails : l’auteur et le contenu du message. Chaque interaction révèle une nouvelle étape dans la compréhension des échanges qui précèdent ton intervention.",
+      "title3": "Ajoute ta voix",
+      "text3": "En cliquant sur un nœud, tu peux y greffer ta contribution. Rédige ton propre message, qui viendra s’ajouter au réseau, créant un nouveau lien ou poursuivant la conversation.",
+      "title4": "Manipule l’ensemble",
+      "text4": "Saisis un nœud et déplace le pour voir les liens réagir. Déplace le graphe dans sa totalité, réorganise ta vue, et joue avec la gravité qui lie les messages entre eux.",
+      "title5": "Explore à ta manière",
+      "text5": "Utilise le zoom pour agrandir ou rétrécir ta vue du graphe. Que tu veuilles entrer dans les détails d’une section précise ou obtenir une vue d’ensemble, c’est à toi de choisir l’angle qui te convient."
     }
-  },
-  "exampleGraph": {
-    "title1": "Contemple le réseau",
-    "text1": "Le graphe apparaît avec plusieurs noeuds interconnectés. Chaque nœud contient un titre, un texte et un auteur, c'est une porte d’entrée vers un message. Observe l’ensemble, ressens les connexions, et découvre les relations entre chaque message.",
-    "title2": "Plonge dans les mots",
-    "text2": "Clique sur un nœud pour dévoiler les détails : l’auteur et le contenu du message. Chaque interaction révèle une nouvelle étape dans la compréhension des échanges qui précèdent ton intervention.",
-    "title3": "Ajoute ta voix",
-    "text3": "En cliquant sur un nœud, tu peux y greffer ta contribution. Rédige ton propre message, qui viendra s’ajouter au réseau, créant un nouveau lien ou poursuivant la conversation.",
-    "title4": "Manipule l’ensemble",
-    "text4": "Saisis un nœud et déplace le pour voir les liens réagir. Déplace le graphe dans sa totalité, réorganise ta vue, et joue avec la gravité qui lie les messages entre eux.",
-    "title5": "Explore à ta manière",
-    "text5": "Utilise le zoom pour agrandir ou rétrécir ta vue du graphe. Que tu veuilles entrer dans les détails d’une section précise ou obtenir une vue d’ensemble, c’est à toi de choisir l’angle qui te convient."
   },
   "nav": {
     "home": "Accueil",
@@ -120,48 +158,61 @@
     "profile": "Profil",
     "settings": "Paramètres"
   },
-  "join": "Rejoindre",
-  "createSession": "Démarrer une session",
-  "createScenario": "Créer un scénario",
-  "language": "Langue",
-  "days": "jours",
-  "hours": "heures",
-  "minutes": "minutes",
-  "seconds": "secondes",
-  "writeMessage": "Écrire un message",
-  "nodeInformation": "Informations sur le nœud",
-  "from": "De :",
-  "noNodeSelected": "Aucun nœud sélectionné",
-  "returnInSafePlace": "Retourner dans un endroit sûr",
-  "login": "Connexion",
-  "logout": "Déconnexion",
-  "admin": "Admin",
-  "administration": "Administration",
-  "register": "S'inscrire",
-  "username": "Nom d'utilisateur",
-  "password": "Mot de passe",
-  "email": "Email",
-  "yourTitle": "Votre titre",
-  "yourMessage": "Votre message",
-  "yourName": "Votre nom",
-  "publish": "Publier",
-  "messageTitle": "Titre du message",
-  "validation": {
-    "min_length": "La longueur minimale est de {min} caractères.",
-    "max_length": "La longueur maximale est de {max} caractères.",
-    "invalid_locale": "La langue sélectionnée n'est pas valide.",
-    "min_items": "Le nombre minimum d'éléments est de 2."
+  "time": {
+    "seconds": "secondes",
+    "minutes": "minutes",
+    "hours": "heures",
+    "days": "jours"
   },
   "toast": {
     "newMessageBy": "Nouveau message de :"
   },
   "ia": {
-    "iaIsConnected": "L'IA est connectée"
+    "connected": "L'IA est connectée"
   },
-  "prologue": {
-    "sideSaved": "Camp Sauvegardé"
+  "misc": {
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "save": "Sauvegarder",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "submit": "Soumettre",
+    "start": "Commencer",
+    "end": "Terminer",
+    "success": "Succès",
+    "or": "ou",
+    "soon": "Bientôt"
   },
-  "event": {
-    "eventHidden": "Événement Caché"
+  "errors": {
+    "returnInSafePlace": "Retourner dans un endroit sûr",
+    "missingTitle": "Titre manquant",
+    "missingText": "Texte manquant",
+    "missingAuthor": "Auteur manquant",
+    "missingFirstNode": "Premier nœud manquant",
+    "addNode": {
+      "missingParent": "Node parent manquant",
+      "missingSession": "Session manquante",
+      "missingSide": "Camp manquant"
+    },
+    "createScenario": {
+      "missingFirstNodeTitle": "Titre du premier nœud manquant",
+      "missingFirstNodeText": "Texte du premier nœud manquant",
+      "missingFirstNodeAuthor": "Auteur du premier nœud manquant",
+      "missingEventTitle": "Titre de l'événement manquant",
+      "missingEventText": "Texte de l'événement manquant",
+      "missingEndTitle": "Titre de fin manquant",
+      "missingEndText": "Texte de fin manquant"
+    },
+    "scenario": {
+      "notFound": "Scénario introuvable",
+      "notValid": "Le scénario n'est pas valide"
+    },
+    "internalError": "Erreur interne",
+    "unauthorized": "Non autorisé"
   }
 }

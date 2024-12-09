@@ -11,6 +11,6 @@
 				{$page.error?.message}
 			</div>
 		</div>
-		<a class="btn btn-accent" href="/">{$t('returnInSafePlace')}</a>
+		<a class="btn btn-accent" href="/">{$t('errors.returnInSafePlace')}</a>
 	</div>
 </div>

@@ -20,7 +20,7 @@
 	}
 </script>
 
-<nav class="sticky top-0 z-50 border-b border-gray-500 bg-black navbar text-gray-200 bg-opacity-30">
+<nav class="sticky top-0 z-50 border-b border-gray-500 bg-black navbar text-gray-200 bg-opacity-70">
 	<div class="navbar-start">
 		<div class="dropdown">
 			<button tabindex="0" aria-label="menu" class="btn btn-ghost">
@@ -49,14 +49,16 @@
 								<a href="/admin">{$t('sessions.yourSessions')}</a>
 							</li>
 							<li>
-								<a href="/admin/scenario/create">{$t('scenario.createScenario')}</a>
+								<a href="/admin/scenario/create">{$t('admin.scenario.createScenario')}</a>
 							</li>
 							<li>
-								<a class="text-nowrap" href="/admin/sessions/create">{$t('sessions.createSession')}</a>
+								<a class="text-nowrap" href="/admin/sessions/create"
+									>{$t('admin.session.createSession')}</a
+								>
 							</li>
 							<li>
 								<label>
-									{$t('admin.debugPane')}
+									{$t('admin.debugPanel')}
 									<input
 										class=" cursor-pointer"
 										type="checkbox"
@@ -105,13 +107,13 @@
 						<li class="text-gray-500">
 							<a href="/" class="justify-between">
 								{$t('nav.profile')}
-								<span class="badge">{$t('soon')}</span>
+								<span class="badge">{$t('misc.soon')}</span>
 							</a>
 						</li>
 						<li class="text-gray-500">
 							<a href="/"
 								>{$t('nav.settings')}
-								<span class="badge">{$t('soon')}</span>
+								<span class="badge">{$t('misc.soon')}</span>
 							</a>
 						</li>
 						<form
@@ -132,7 +134,7 @@
 				</div>
 			</div>
 		{:else}
-			<a href="/login" class="justify-between btn btn-ghost">{$t('admin')}</a>
+			<a href="/login" class="justify-between btn btn-ghost">{$t('admin.administration')}</a>
 		{/if}
 	</div>
 </nav>
