@@ -27,7 +27,8 @@
       "scenarioIsValide": "Le scénario est valide !",
       "scenarioIsNotValide": "Le scénario n'est pas valide",
       "useAi": "Utiliser l'IA",
-      "start": "Commencer"
+      "start": "Commencer",
+      "informations": "Informations"
     },
     "user": {
       "createUser": "Créer un utilisateur",
@@ -168,7 +169,8 @@
     "newMessageBy": "Nouveau message de :"
   },
   "ia": {
-    "connected": "L'IA est connectée"
+    "connected": "L'IA est connectée",
+    "ia": "Inteligence Artificielle"
   },
   "misc": {
     "add": "Ajouter",

@@ -27,7 +27,8 @@
       "scenarioIsValide": "¡El escenario es válido!",
       "scenarioIsNotValide": "El escenario no es válido",
       "useAi": "Usar IA",
-      "start": "Comenzar"
+      "start": "Comenzar",
+      "informations": "Información"
     },
     "user": {
       "createUser": "Crear un usuario",

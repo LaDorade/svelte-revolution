@@ -27,7 +27,8 @@
       "scenarioIsValide": "シナリオは有効です！",
       "scenarioIsNotValide": "シナリオは無効です",
       "useAi": "AIを使用",
-      "start": "開始"
+      "start": "開始",
+      "informations": "Information"
     },
     "user": {
       "createUser": "ユーザーを作成",

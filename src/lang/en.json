@@ -27,7 +27,8 @@
       "scenarioIsValide": "The scenario is valid!",
       "scenarioIsNotValide": "The scenario is not valid",
       "useAi": "Use AI",
-      "start": "Start"
+      "start": "Start",
+      "informations": "Information"
     },
     "user": {
       "createUser": "Create a user",

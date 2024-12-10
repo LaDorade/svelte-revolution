@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import toast from 'svelte-french-toast';
 	import { t } from 'svelte-i18n';
@@ -6,10 +7,10 @@
 
 	import { availableLocales } from '$lib/i18n';
 
-	import type { ActionData } from './$types';
-	import type { z } from 'zod';
 	import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
 	import { Sparkles, TriangleAlert } from 'lucide-svelte';
+	import type { z } from 'zod';
+	import type { ActionData } from './$types';
 
 	interface Props {
 		form: ActionData;
@@ -66,6 +67,24 @@
 			toast.success($t('misc.success'), { duration: 3000, position: 'bottom-center' });
 		}
 	});
+
+	onMount(() => {
+		const data = localStorage.getItem('scenario');
+		if (data) {
+			const parsed = JSON.parse(data);
+			formData.title = parsed.title;
+			formData.prologue = parsed.prologue;
+			formData.lang = parsed.lang;
+			formData.firstNode = parsed.firstNode;
+			formData.ai = parsed.ai;
+			formData.sides = parsed.sides;
+			formData.events = parsed.events;
+			formData.ends = parsed.ends;
+		}
+		$effect(() => {
+			localStorage.setItem('scenario', JSON.stringify(formData));
+		});
+	});
 </script>
 
 <div class="flex flex-col items-center text-white">
@@ -83,6 +102,9 @@
 		class="flex flex-col w-full gap-4 p-4 items-center text-white text-center border-t md:w-4/6"
 	>
 		<!-- Title and prologue -->
+		<h3 class=" text-white text-3xl text-center w-full">
+			{$t('admin.scenario.informations')}
+		</h3>
 		<div class=" flex flex-col w-full gap-2">
 			<label class="standardLabel">
 				<input
@@ -100,13 +122,6 @@
 					bind:value={formData.prologue}
 					name="prologue"
 				></textarea>
-			</label>
-		</div>
-		<!-- AI -->
-		<div class="flex">
-			<label class="standardLabel flex gap-4">
-				{$t('admin.scenario.useAi')}
-				<input class="rounded p-2" type="checkbox" bind:checked={formData.ai} name="useAi" />
 			</label>
 		</div>
 		<!-- Lang -->
@@ -131,7 +146,20 @@
 				</label>
 			{/each}
 		</div>
+		<!-- AI -->
+		<h3 class=" text-white text-3xl text-center w-full">
+			{$t('ia.ia')}
+		</h3>
+		<div class="flex">
+			<label class="standardLabel flex gap-4">
+				{$t('admin.scenario.useAi')}
+				<input class="rounded p-2" type="checkbox" bind:checked={formData.ai} name="useAi" />
+			</label>
+		</div>
 		<!-- First node -->
+		<h3 class=" text-white text-3xl text-center w-full">
+			{$t('scenario.firstNode.firstNode')}
+		</h3>
 		<div class="flex flex-col gap-4 items-center w-full">
 			<label class="standardLabel">
 				<input
@@ -161,6 +189,9 @@
 			</label>
 		</div>
 		<!-- Sides -->
+		<h3 class=" text-white text-3xl text-center w-full">
+			{$t('side.sides')}
+		</h3>
 		<div class="standardLabel flex flex-col items-center gap-4 justify-center">
 			<div class=" flex flex-wrap gap-4 justify-center items-center">
 				{#each formData.sides as side, i (side)}
@@ -203,6 +234,9 @@
 			</button>
 		</div>
 		<!-- Events -->
+		<h3 class=" text-white text-3xl text-center w-full">
+			{$t('scenario.event.events')}
+		</h3>
 		<div class="standardLabel flex flex-col items-center gap-4 p-4 justify-center">
 			<div class=" flex flex-wrap gap-4 justify-center items-center">
 				{#each formData.events as event, i (event)}
@@ -262,6 +296,9 @@
 			</button>
 		</div>
 		<!-- Ends -->
+		<h3 class=" text-white text-3xl text-center w-full">
+			{$t('scenario.end.ends')}
+		</h3>
 		<div class="standardLabel flex flex-col items-center gap-4 justify-center">
 			<div class="flex flex-wrap gap-4 justify-center items-center">
 				{#each formData.ends as end, i (end)}
@@ -316,7 +353,8 @@
 		>
 			{$t('admin.scenario.createYourScenario')}
 		</button>
-		<div class="sticky bottom-0 h-36 p-4 rounded-md">
+		<!-- Errors -->
+		<div class="h-36 p-4 rounded-md overflow-auto">
 			{#if issues.length > 0}
 				<div class="bg-black flex flex-col items-center gap-4">
 					<h3 class=" font-semibold text-xl flex items-center gap-2 k">
@@ -344,10 +382,11 @@
 			{/if}
 		</div>
 	</form>
+	<!-- TODO: add Graph preview -->
 </div>
 
 <style lang="postcss">
 	.standardLabel {
-		@apply bg-black/90 shadow-lg backdrop-contrast-50 w-full rounded-md appearance-none p-4;
+		@apply bg-gray-950/50 border border-gray-200/20 shadow-lg backdrop-blur-[2px] w-full rounded-md appearance-none p-4;
 	}
 </style>
