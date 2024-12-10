@@ -1,7 +1,6 @@
-import { get } from 'svelte/store';
-import { t } from 'svelte-i18n';
 import { z } from 'zod';
 
+// TODO: find a way to translate error messages
 export const addNodeSchema = z.object({
 	title: z.string({ message: 'errors.missingTitle' }),
 	text: z.string({ message: 'errors.missingText' }),
