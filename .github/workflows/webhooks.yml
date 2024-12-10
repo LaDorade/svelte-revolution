@@ -11,7 +11,9 @@ jobs:
 
         steps:
             - name: Checkout code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
             - name: Notify on Discord Webhook
               env:
@@ -24,4 +26,4 @@ jobs:
                   COMMITS=$(echo "$COMMITS" | sed ':a;N;$!ba;s/\n/\\n/g')
                   BRANCH_URL="$REPO_URL"
                   CURRENT_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-                  curl -X POST -H 'Content-type: application/json' --data "{\"embeds\": [{\"title\": \"Mise à jour de New Babel Révolution \", \"description\": \"[Repository]($REPO_URL)\", \"color\": 5814783, \"url\": \"$SITE_URL\", \"thumbnail\": {\"url\": \"$THUMB_URL\"}, \"fields\": [{\"name\": \"Commits\", \"value\": \"$COMMITS\"}], \"footer\": {\"text\": \"New Babel Révolution\"}, \"timestamp\": \"$CURRENT_DATE\"}]}" $BABEL_DISCORD_WEBHOOK_URL
+                  curl -X POST -H 'Content-type: application/json' --data "{\"embeds\": [{\"title\": \"Mise à jour de New Babel Révolution \", \"description\": \"[Voir le Repo Git]($REPO_URL)\", \"color\": 5814783, \"url\": \"$SITE_URL\", \"thumbnail\": {\"url\": \"$THUMB_URL\"}, \"fields\": [{\"name\": \"Derniers Commits\", \"value\": \"$COMMITS\"}], \"footer\": {\"text\": \"New Babel Révolution\"}, \"timestamp\": \"$CURRENT_DATE\"}]}" $BABEL_DISCORD_WEBHOOK_URL
