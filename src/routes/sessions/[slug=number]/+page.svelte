@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { onDestroy, onMount, untrack } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { replaceState } from '$app/navigation';
 	import { LoaderPinwheel } from 'lucide-svelte';
 	import { pb } from '$lib/client/pocketbase';
 	import toast from 'svelte-french-toast';
-	import { initStores } from './utils';
+	import { initStores, mapNodeSides } from './utils';
 	import { titleStore } from '$stores/titles/index.svelte';
 	import { buildLinks } from '$lib/sessions';
 	import { mainGraphStore } from '$stores/graph/main/store.svelte';
@@ -53,17 +53,8 @@
 		replaceState(url.toString(), '');
 	}
 
-	function mapNodeSides(nodes: GraphNode[]) {
-		return nodes.map((n) => {
-			return {
-				...n,
-				sideNumber: sides.find((s: Side) => s.id === n.side)?.number ?? 0
-			};
-		});
-	}
-
 	async function init() {
-		const nodes = mapNodeSides(await nodesPromise);
+		const nodes = mapNodeSides(await nodesPromise, sides);
 		const links = buildLinks(nodes);
 		initStores(nodes, links);
 		manageQueryStrings();

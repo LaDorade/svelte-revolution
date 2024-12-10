@@ -365,7 +365,6 @@
 					<div class=" grid grid-cols-2 grid-flow-row w-full gap-4 justify-center items-center">
 						{#each issues as issue (issue)}
 							<div class="bg-red-500 grow p-2 rounded-md flex flex-col items-center gap-2">
-								<div>{issue.path.map((p) => $t('scenario.' + String(p))).join('.')}</div>
 								<div>{$t(issue.message)}</div>
 							</div>
 						{/each}
