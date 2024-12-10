@@ -17,8 +17,11 @@ jobs:
               env:
                   BABEL_DISCORD_WEBHOOK_URL: ${{ secrets.BABEL_DISCORD_WEBHOOK_URL }}
               run: |
-                  COMMITS=$(git log origin/staging -n 5 --pretty=format:'- [%s](https://github.com/KoroSensei10/svelte-revolution/commit/%H) (%an)')
+                  COMMITS=$(git log origin/staging -n 5 --pretty=format:'- [%s](https://github.com/KoroSensei10/svelte-revolution/commit/%H) (%an) - %cd' --date=format:'%d/%m/%Y')
+                  SITE_URL="https://new.babel-revolution.fr"
+                  THUMB_URL="https://new.babel-revolution.fr/favicon.png"
                   REPO_URL="https://github.com/KoroSensei10/svelte-revolution"
                   COMMITS=$(echo "$COMMITS" | sed ':a;N;$!ba;s/\n/\\n/g')
                   BRANCH_URL="$REPO_URL"
-                  curl -X POST -H 'Content-type: application/json' --data "{\"embeds\": [{\"title\": \"New commits pushed to [staging branch]($BRANCH_URL)\", \"description\": \"$COMMITS\", \"color\": 5814783, \"url\": \"$REPO_URL\"}]}" $BABEL_DISCORD_WEBHOOK_URL
+                  CURRENT_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+                  curl -X POST -H 'Content-type: application/json' --data "{\"embeds\": [{\"title\": \"Mise à jour de New Babel Révolution \", \"description\": \"[Repository]($REPO_URL)\", \"color\": 5814783, \"url\": \"$SITE_URL\", \"thumbnail\": {\"url\": \"$THUMB_URL\"}, \"fields\": [{\"name\": \"Commits\", \"value\": \"$COMMITS\"}], \"footer\": {\"text\": \"New Babel Révolution\"}, \"timestamp\": \"$CURRENT_DATE\"}]}" $BABEL_DISCORD_WEBHOOK_URL
