@@ -19,7 +19,7 @@ jobs:
               env:
                   BABEL_DISCORD_WEBHOOK_URL: ${{ secrets.BABEL_DISCORD_WEBHOOK_URL }}
               run: |
-                  COMMITS=$(git log origin/staging -n 5 --pretty=format:'- [%s](https://github.com/KoroSensei10/svelte-revolution/commit/%H) (%an) - %cd' --date=format:'%d/%m/%Y')
+                  COMMITS=$(git log origin/staging -n 5 --pretty=format:'- [%s](https://github.com/KoroSensei10/svelte-revolution/commit/%H) (%an) - %cd %H:%M:%S' --date=format:'%d/%m/%Y %H:%M:%S')
                   SITE_URL="https://new.babel-revolution.fr"
                   THUMB_URL="https://new.babel-revolution.fr/favicon.png"
                   REPO_URL="https://github.com/KoroSensei10/svelte-revolution"
