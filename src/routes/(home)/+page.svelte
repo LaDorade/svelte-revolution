@@ -49,8 +49,6 @@
 
 		titleStore.setNavTitle('Babel Revolution');
 	});
-
-	$inspect(homeStore.selectedNode);
 </script>
 
 <div class="flex flex-col items-center w-full gap-12 px-4">

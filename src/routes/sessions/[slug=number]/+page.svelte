@@ -148,7 +148,7 @@
 	</div>
 {:then}
 	<div class="">
-		{#if prologueSeen && (admin || (pseudoLocked && pseudo && userSideId))}
+		{#if prologueSeen && (admin || sessionData.completed || (pseudoLocked && pseudo && userSideId))}
 			<GraphUi bind:session={sessionData} {admin} {user} {events} {pseudo} {userSideId} {ends} {sides} />
 			<MainGraph sessionId={sessionData.id} {sides} />
 		{:else}
@@ -165,70 +165,72 @@
 						<!-- TODO: use rich text editor -->
 						{@html scenario?.prologue}
 					</p>
-					<div
-						class="flex items-center gap-8 flex-col relative rounded {admin
-							? 'border border-gray-200 p-2'
-							: ''}"
-					>
-						{#if admin}
-							<div
-								class="text-white h-full w-full flex items-center justify-center text-xl top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] absolute opacity-100"
-							>
-								{$t('admin.youAreAdmin')}
-							</div>
-						{/if}
-						{#if scenario?.ai}
-							<form
-								onsubmit={handleSideSubmit}
-								class:opacity-10={admin}
-								class="flex flex-col gap-4 items-center"
-							>
-								<select class="p-4 border border-gray-100 rounded w-full" bind:value={userSideId}>
-									<option disabled value={null} selected>{$t('side.chooseSide')}</option>
-									{#each sides as side}
-										<option
-											disabled={validSide && !!userSideId && side.id !== userSideId}
-											value={side.id}>{side.name}</option
-										>
-									{/each}
-								</select>
+					{#if !sessionData.completed}
+						<div
+							class="flex items-center gap-8 flex-col relative rounded {admin
+								? 'border border-gray-200 p-2'
+								: ''}"
+						>
+							{#if admin}
+								<div
+									class="text-white h-full w-full flex items-center justify-center text-xl top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] absolute opacity-100"
+								>
+									{$t('admin.youAreAdmin')}
+								</div>
+							{/if}
+							{#if scenario?.ai}
+								<form
+									onsubmit={handleSideSubmit}
+									class:opacity-10={admin}
+									class="flex flex-col gap-4 items-center"
+								>
+									<select class="p-4 border border-gray-100 rounded w-full" bind:value={userSideId}>
+										<option disabled value={null} selected>{$t('side.chooseSide')}</option>
+										{#each sides as side}
+											<option
+												disabled={validSide && !!userSideId && side.id !== userSideId}
+												value={side.id}>{side.name}</option
+											>
+										{/each}
+									</select>
+									<button
+										disabled={validSide}
+										type="submit"
+										class="font-bold border hover:bg-black disabled:opacity-50 border-gray-200 py-2 px-4 rounded"
+									>
+										{validSide ? $t('side.sideChosen') : $t('side.choose')}
+									</button>
+								</form>
+							{/if}
+							<form class:opacity-10={admin} class="flex flex-col gap-2" onsubmit={handlePseudoSubmit}>
+								<input
+									disabled={pseudoLocked}
+									type="text"
+									class="p-4 border border-gray-100 rounded w-fit disabled:opacity-50"
+									placeholder={$t('user.pseudo')}
+									bind:value={pseudo}
+								/>
 								<button
-									disabled={validSide}
+									disabled={pseudoLocked || !validPseudo}
 									type="submit"
 									class="font-bold border hover:bg-black disabled:opacity-50 border-gray-200 py-2 px-4 rounded"
 								>
-									{validSide ? $t('side.sideChosen') : $t('side.choose')}
+									{pseudoLocked ? $t('user.pseudoLocked') : $t('misc.submit')}
 								</button>
-							</form>
-						{/if}
-						<form class:opacity-10={admin} class="flex flex-col gap-2" onsubmit={handlePseudoSubmit}>
-							<input
-								disabled={pseudoLocked}
-								type="text"
-								class="p-4 border border-gray-100 rounded w-fit disabled:opacity-50"
-								placeholder={$t('user.pseudo')}
-								bind:value={pseudo}
-							/>
-							<button
-								disabled={pseudoLocked || !validPseudo}
-								type="submit"
-								class="font-bold border hover:bg-black disabled:opacity-50 border-gray-200 py-2 px-4 rounded"
-							>
-								{pseudoLocked ? $t('user.pseudoLocked') : $t('misc.submit')}
-							</button>
-							{#if pseudoLocked}
-								<div class=" flex gap-2">
-									<div>{$t('user.yourPseudo')}</div>
-									<div class=" text-white">
-										{pseudo}
+								{#if pseudoLocked}
+									<div class=" flex gap-2">
+										<div>{$t('user.yourPseudo')}</div>
+										<div class=" text-white">
+											{pseudo}
+										</div>
 									</div>
-								</div>
-							{/if}
-						</form>
-					</div>
+								{/if}
+							</form>
+						</div>
+					{/if}
 					<button
 						type="button"
-						disabled={scenario?.ai && !validSide}
+						disabled={!sessionData.completed && scenario?.ai && !validSide}
 						onclick={handlePrologueSeen}
 						class="font-bold w-fit self-center border float-end border-gray-200 py-2 px-4 rounded disabled:opacity-50 hover:bg-black hover:border-white"
 					>

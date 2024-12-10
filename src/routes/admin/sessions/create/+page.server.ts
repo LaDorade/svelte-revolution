@@ -6,13 +6,18 @@ import type { MyPocketBase } from '$types/pocketBase';
 import { get } from 'svelte/store';
 import { t } from 'svelte-i18n';
 import { createSessionSchema } from '$lib/zschemas/createSession.schema.js';
+import type { ClientResponseError } from 'pocketbase';
 
 export const actions = {
 	createSession: async ({ request, locals }) => {
 		const pb = locals.pb as MyPocketBase;
 		if (!pb || !pb.authStore) {
 			return fail(500, { error: get(t)('errors.internalError') });
-		} else if (!pb.authStore.isValid || !pb.authStore.model || !pb.authStore.model.admin) {
+		} else if (
+			!pb.authStore.isValid ||
+			!pb.authStore.model ||
+			!['admin', 'superAdmin'].includes(pb.authStore.model.role)
+		) {
 			return fail(401, { error: get(t)('errors.unauthorized') });
 		}
 
@@ -27,7 +32,7 @@ export const actions = {
 		const sessionCreationValidation = createSessionSchema.safeParse(formData);
 		if (!sessionCreationValidation.success) {
 			return fail(400, {
-				error: sessionCreationValidation.error.format()
+				error: sessionCreationValidation.error.toString()
 			});
 		}
 
@@ -56,8 +61,11 @@ export const actions = {
 				session: session
 			};
 		} catch (error) {
+			const err = error as ClientResponseError;
+			console.log(err.toJSON());
+
 			return fail(500, {
-				error: String(error)
+				error: err.message
 			});
 		}
 	}
