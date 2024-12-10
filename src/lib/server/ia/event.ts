@@ -16,6 +16,7 @@ export async function createNewEvents(sessionId: string, event: AICensorResponse
 		.collection('Side')
 		.getFullList({ filter: pb.filter('scenario = {:scenario}', { scenario: scenario.id }) });
 
+	// TODO: Map the sides to the correct side, making it accessible to create
 	const qgSide = sides.find((side) => side.name === 'QG');
 	const terrainSide = sides.find((side) => side.name === 'Terrain');
 
