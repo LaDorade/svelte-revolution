@@ -17,5 +17,8 @@ jobs:
               env:
                   BABEL_DISCORD_WEBHOOK_URL: ${{ secrets.BABEL_DISCORD_WEBHOOK_URL }}
               run: |
-                  COMMITS=$(git log origin/staging --not --remotes=origin --pretty=format:'- %s (%an)')
-                  curl -X POST -H 'Content-type: application/json' --data "{\"embeds\": [{\"title\": \"New commits pushed to staging branch\", \"description\": \"$COMMITS\", \"color\": 5814783}]}" $BABEL_DISCORD_WEBHOOK_URL
+                  COMMITS=$(git log origin/staging -n 5 --pretty=format:'- [%s](https://github.com/KoroSensei10/svelte-revolution/commit/%H) (%an)')
+                  REPO_URL="https://github.com/KoroSensei10/svelte-revolution"
+                  COMMITS=$(echo "$COMMITS" | sed ':a;N;$!ba;s/\n/\\n/g')
+                  BRANCH_URL="$REPO_URL"
+                  curl -X POST -H 'Content-type: application/json' --data "{\"embeds\": [{\"title\": \"New commits pushed to [staging branch]($BRANCH_URL)\", \"description\": \"$COMMITS\", \"color\": 5814783, \"url\": \"$REPO_URL\"}]}" $BABEL_DISCORD_WEBHOOK_URL
