@@ -14,16 +14,24 @@ jobs:
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
+                  ref: staging
 
             - name: Notify on Discord Webhook
               env:
                   BABEL_DISCORD_WEBHOOK_URL: ${{ secrets.BABEL_DISCORD_WEBHOOK_URL }}
               run: |
-                  COMMITS=$(git log origin/staging -n 5 --pretty=format:'- [%s](https://github.com/KoroSensei10/svelte-revolution/commit/%H) (%an) - %cd %H:%M:%S' --date=format:'%d/%m/%Y %H:%M:%S')
+                  LAST_COMMIT_FILE=".last_commit"
+                  if [ -f "$LAST_COMMIT_FILE" ]; then
+                      LAST_COMMIT=$(cat $LAST_COMMIT_FILE)
+                  else
+                      LAST_COMMIT=$(git rev-list --max-parents=0 HEAD)
+                  fi
+                  NEW_COMMITS=$(git log $LAST_COMMIT..origin/staging --pretty=format:'- [%s](https://github.com/KoroSensei10/svelte-revolution/commit/%H) (%an) - %cd %H:%M:%S' --date=format:'%d/%m/%Y %H:%M:%S')
+                  echo $(git rev-parse origin/staging) > $LAST_COMMIT_FILE
                   SITE_URL="https://new.babel-revolution.fr"
                   THUMB_URL="https://new.babel-revolution.fr/favicon.png"
                   REPO_URL="https://github.com/KoroSensei10/svelte-revolution"
-                  COMMITS=$(echo "$COMMITS" | sed ':a;N;$!ba;s/\n/\\n/g')
+                  NEW_COMMITS=$(echo "$NEW_COMMITS" | sed ':a;N;$!ba;s/\n/\\n/g')
                   BRANCH_URL="$REPO_URL"
                   CURRENT_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-                  curl -X POST -H 'Content-type: application/json' --data "{\"embeds\": [{\"title\": \"Mise à jour de New Babel Révolution \", \"description\": \"[Voir le Repo Git]($REPO_URL)\", \"color\": 5814783, \"url\": \"$SITE_URL\", \"thumbnail\": {\"url\": \"$THUMB_URL\"}, \"fields\": [{\"name\": \"Derniers Commits\", \"value\": \"$COMMITS\"}], \"footer\": {\"text\": \"New Babel Révolution\"}, \"timestamp\": \"$CURRENT_DATE\"}]}" $BABEL_DISCORD_WEBHOOK_URL
+                  curl -X POST -H 'Content-type: application/json' --data "{\"embeds\": [{\"title\": \"Mise à jour de New Babel Révolution \", \"description\": \"[Voir le Repo Git]($REPO_URL)\", \"color\": 5814783, \"url\": \"$SITE_URL\", \"thumbnail\": {\"url\": \"$THUMB_URL\"}, \"fields\": [{\"name\": \"Derniers Commits\", \"value\": \"$NEW_COMMITS\"}], \"footer\": {\"text\": \"New Babel Révolution\"}, \"timestamp\": \"$CURRENT_DATE\"}]}" $BABEL_DISCORD_WEBHOOK_URL
