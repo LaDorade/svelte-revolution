@@ -31,7 +31,11 @@
 	// Intro related
 	let prologueSeen = $state(false);
 	let userSideId: string | null = $state(null);
-	let validSide = $state(false);
+	let validSide = $derived.by(() => {
+		const side = sides.find((side) => side.id === userSideId)?.id;
+		return !!side;
+	});
+	let sideLocked = $state(false);
 	let pseudo: string | null = $state(null);
 	let validPseudo = $derived(pseudoSchema.safeParse(pseudo).success);
 	let pseudoLocked = $state(false);
@@ -40,6 +44,10 @@
 	let admin = $derived($page.data.isAdmin as boolean);
 	let sessionTitle = $derived.by(() => {
 		return (admin ? 'ADMIN - ' : '') + data.sessionData.name;
+	});
+
+	let accessToPage = $derived.by(() => {
+		return admin || sessionData.completed || (pseudoLocked && sideLocked);
 	});
 
 	function manageQueryStrings() {
@@ -87,11 +95,13 @@
 		e.preventDefault();
 		if (userSideId) {
 			localStorage.setItem('side_' + sessionData.id, userSideId);
-			validSide = true;
+			sideLocked = true;
 			toast.success($t('side.sideSaved'), {
 				position: 'bottom-center'
 			});
-			filterNodeBySide();
+			if (scenario?.ai) {
+				filterNodeBySide();
+			}
 		}
 	}
 
@@ -119,9 +129,11 @@
 		prologueSeen = new URL(location.href).searchParams.get('prologueSeen') === 'true';
 		userSideId = localStorage.getItem('side_' + sessionData.id);
 		pseudo = localStorage.getItem('pseudo_' + sessionData.id);
-		if (scenario?.ai && userSideId) {
-			validSide = true;
-			filterNodeBySide();
+		if (userSideId) {
+			sideLocked = true;
+			if (scenario?.ai) {
+				filterNodeBySide();
+			}
 		}
 		if (validPseudo) {
 			pseudoLocked = true;
@@ -148,7 +160,7 @@
 	</div>
 {:then}
 	<div class="">
-		{#if prologueSeen && (admin || sessionData.completed || (pseudoLocked && pseudo && userSideId))}
+		{#if prologueSeen && accessToPage}
 			<GraphUi bind:session={sessionData} {admin} {user} {events} {pseudo} {userSideId} {ends} {sides} />
 			<MainGraph sessionId={sessionData.id} {sides} />
 		{:else}
@@ -162,7 +174,6 @@
 					<p
 						class="text-balance h-40 overflow-auto border border-gray-200/30 p-2 rounded leading-7 text-gray-300"
 					>
-						<!-- TODO: use rich text editor -->
 						{@html scenario?.prologue}
 					</p>
 					{#if !sessionData.completed}
@@ -178,30 +189,25 @@
 									{$t('admin.youAreAdmin')}
 								</div>
 							{/if}
-							{#if scenario?.ai}
-								<form
-									onsubmit={handleSideSubmit}
-									class:opacity-10={admin}
-									class="flex flex-col gap-4 items-center"
+							<form
+								onsubmit={handleSideSubmit}
+								class:opacity-10={admin}
+								class="flex flex-col gap-4 items-center"
+							>
+								<select class="p-4 border border-gray-100 rounded w-full" bind:value={userSideId}>
+									<option disabled value={null} selected>{$t('side.chooseSide')}</option>
+									{#each sides as side}
+										<option disabled={sideLocked} value={side.id}>{side.name}</option>
+									{/each}
+								</select>
+								<button
+									disabled={sideLocked}
+									type="submit"
+									class="font-bold border hover:bg-black disabled:opacity-50 border-gray-200 py-2 px-4 rounded"
 								>
-									<select class="p-4 border border-gray-100 rounded w-full" bind:value={userSideId}>
-										<option disabled value={null} selected>{$t('side.chooseSide')}</option>
-										{#each sides as side}
-											<option
-												disabled={validSide && !!userSideId && side.id !== userSideId}
-												value={side.id}>{side.name}</option
-											>
-										{/each}
-									</select>
-									<button
-										disabled={validSide}
-										type="submit"
-										class="font-bold border hover:bg-black disabled:opacity-50 border-gray-200 py-2 px-4 rounded"
-									>
-										{validSide ? $t('side.sideChosen') : $t('side.choose')}
-									</button>
-								</form>
-							{/if}
+									{sideLocked ? $t('side.sideChosen') : $t('side.choose')}
+								</button>
+							</form>
 							<form class:opacity-10={admin} class="flex flex-col gap-2" onsubmit={handlePseudoSubmit}>
 								<input
 									disabled={pseudoLocked}
