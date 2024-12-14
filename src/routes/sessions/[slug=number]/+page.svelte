@@ -194,7 +194,11 @@
 								class:opacity-10={admin}
 								class="flex flex-col gap-4 items-center"
 							>
-								<select class="p-4 border border-gray-100 rounded w-full" bind:value={userSideId}>
+								<select
+									disabled={sideLocked}
+									class="p-4 border border-gray-100 rounded w-full"
+									bind:value={userSideId}
+								>
 									<option disabled value={null} selected>{$t('side.chooseSide')}</option>
 									{#each sides as side}
 										<option disabled={sideLocked} value={side.id}>{side.name}</option>
@@ -236,7 +240,7 @@
 					{/if}
 					<button
 						type="button"
-						disabled={!sessionData.completed && scenario?.ai && !validSide}
+						disabled={admin || (!sideLocked && !pseudoLocked)}
 						onclick={handlePrologueSeen}
 						class="font-bold w-fit self-center border float-end border-gray-200 py-2 px-4 rounded disabled:opacity-50 hover:bg-black hover:border-white"
 					>
