@@ -16,6 +16,8 @@ export interface GraphNode extends BaseNode {
 	};
 }
 
+export type PreviewNode = Pick<GraphNode, 'id' | 'title' | 'text' | 'type' | 'side' | 'sideNumber' | 'parent'>;
+
 export interface Scenario {
 	id: string;
 	title: string;

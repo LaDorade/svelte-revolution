@@ -1,21 +1,25 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import toast from 'svelte-french-toast';
 	import { t } from 'svelte-i18n';
 	import nProgress from 'nprogress';
-
 	import { availableLocales } from '$lib/i18n';
-
-	import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
+	import { fullScenarioSchema, sideSchema } from '$lib/zschemas/scenario.schema';
 	import { Sparkles, TriangleAlert } from 'lucide-svelte';
 	import type { z } from 'zod';
 	import type { ActionData } from './$types';
+	import type { PreviewNode, Side } from '$types/pocketBase/TableTypes';
+	import { PreviewGraph } from '$stores/graph/Classes/PreviewGraph.svelte';
 
 	interface Props {
 		form: ActionData;
 	}
 	let { form }: Props = $props();
+
+	let svg: SVGElement | null = $state.raw(null);
+	let graph: PreviewGraph | null = $state.raw(null);
+	let preview = $state(true);
 
 	const formData: z.infer<typeof fullScenarioSchema> = $state({
 		title: '',
@@ -68,6 +72,49 @@
 		}
 	});
 
+	function generateNodes() {
+		if (!graph || !formData) return;
+		untrack(() => {
+			graph?.clearNodes();
+			const startNode = {
+				id: 'startNodeId',
+				type: 'startNode',
+				title: formData.firstNode.title,
+				text: formData.firstNode.text,
+				parent: 'null',
+				side: 'start',
+				sideNumber: 0
+			} as PreviewNode;
+			graph?.addNode(startNode);
+			formData.sides.forEach((side, i) => {
+				if (!side.title) return;
+				const node = {
+					id: `side-${i}`,
+					type: 'contribution',
+					title: side.title,
+					text: 'Message de test',
+					parent: 'startNodeId',
+					side: side.title,
+					sideNumber: i
+				} as PreviewNode;
+				graph?.addNode(node);
+			});
+			formData.events.forEach((event, i) => {
+				if (!event.title) return;
+				const node = {
+					id: `event-${i}`,
+					type: 'event',
+					title: event.title,
+					text: 'Message de test',
+					parent: 'startNodeId',
+					side: 'event',
+					sideNumber: i
+				} as PreviewNode;
+				graph?.addNode(node);
+			});
+		});
+	}
+
 	onMount(() => {
 		const data = localStorage.getItem('scenario');
 		if (data) {
@@ -80,9 +127,24 @@
 			formData.sides = parsed.sides;
 			formData.events = parsed.events;
 			formData.ends = parsed.ends;
+			if (preview) {
+				generateNodes();
+			} else {
+				graph?.clearNodes();
+			}
 		}
 		$effect(() => {
 			localStorage.setItem('scenario', JSON.stringify(formData));
+			if (preview) {
+				generateNodes();
+			} else {
+				graph?.clearNodes();
+			}
+		});
+		if (!svg) return;
+		graph = new PreviewGraph(svg, [], [], {
+			width: 500,
+			height: 500
 		});
 	});
 </script>
@@ -381,7 +443,40 @@
 			{/if}
 		</div>
 	</form>
-	<!-- TODO: add Graph preview -->
+	<h3 class=" text-white text-3xl text-center w-full">
+		{$t('admin.session.preview')}
+	</h3>
+	<label class="rounded-md border px-4 py-2 bg-black text-gray-50">
+		{$t('admin.session.preview')}
+		<input type="checkbox" bind:checked={preview} />
+	</label>
+	<div class=" text-gray-200 relative w-fit h-fit p-0 m-4">
+		<svg
+			bind:this={svg}
+			width="500"
+			height="500"
+			class="relative bg-dotted-gray bg-dotted-40 bg-black border border-white/20 rounded-md"
+		>
+		</svg>
+		<div class=" absolute top-2 left-2 border border-white/20 bg-black p-2 rounded-md">
+			{$t('scenario.title')} :
+			<span class=" text-white font-bold">
+				{formData.title}
+			</span>
+		</div>
+		<div class="absolute left-2 bottom-2 border border-white/20 bg-black p-2 rounded-md">
+			{$t('admin.scenario.language')} :
+			<span class=" text-white font-bold">
+				{formData.lang?.toUpperCase()}
+			</span>
+		</div>
+		<div class="absolute right-2 bottom-2 border border-white/20 bg-black p-2 rounded-md">
+			{$t('ia.ia')} :
+			<span class=" text-white font-semibold">
+				{formData.ai ? $t('misc.yes') : $t('misc.no')}
+			</span>
+		</div>
+	</div>
 </div>
 
 <style lang="postcss">
