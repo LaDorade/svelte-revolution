@@ -18,11 +18,12 @@
 		X
 	} from 'lucide-svelte';
 	import GraphTree from './GraphTree.svelte';
-	import { mainGraphStore } from '$stores/graph/main/store.svelte';
 	import { watch } from '$lib/runes/watch.svelte';
 	import { pb } from '$lib/client/pocketbase';
+	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
 
 	interface Props {
+		graph: MainGraph | null;
 		session: Session;
 		user?: User | null;
 		admin?: boolean;
@@ -34,6 +35,7 @@
 	}
 
 	let {
+		graph,
 		user = null,
 		session = $bindable(),
 		admin = false,
@@ -108,13 +110,13 @@
 
 	$effect(() => {
 		watch(() => {
-			if (!mainGraphStore.selectedNode) {
+			if (!graph?.selectedNode) {
 				states.nodeInfo = false;
 				return;
 			}
 			if (states.nodeInfo) return;
 			setCheck('nodeInfo');
-		}, [mainGraphStore.selectedNode]);
+		}, [graph?.selectedNode]);
 	});
 
 	async function handleSessionEnd() {
@@ -143,7 +145,9 @@
 
 	onMount(async () => {
 		await handleSessionEnd();
-		mainGraphStore.selectedNode = null;
+		if (graph?.selectedNode) {
+			graph.selectedNode = null;
+		}
 		states.nodeInfo = false;
 	});
 </script>
@@ -161,12 +165,12 @@
 				handleSubmit(result);
 			};
 		}}
-		class="flex flex-col gap-4 p-x-4 cursor-default text-primary-500 w-full items-center"
+		class="flex flex-col gap-2 p-x-4 cursor-default text-primary-500 w-full items-center"
 	>
 		<label class="form-control w-full max-w-xs">
-			<div class="label">
+			<!-- <div class="label">
 				<span class="label-text text-inherit">{trad}</span>
-			</div>
+			</div> -->
 			<select {name} id={name} class="select select-accent appearance-none bg-black select-sm">
 				<option disabled selected>{trad}</option>
 				{#each values as value}
@@ -259,8 +263,8 @@
 	>
 		{#if states.nodeInfo}
 			<div in:fade={{ duration: 200, easing: quintOut }}>
-				{#if mainGraphStore.selectedNode}
-					{#key mainGraphStore.selectedNode}
+				{#if graph?.selectedNode}
+					{#key graph?.selectedNode}
 						<div
 							in:blur={{
 								duration: 300,
@@ -271,17 +275,17 @@
 							class="flex flex-col items-center gap-2"
 						>
 							<div class="text-xl text-white font-semibold first-letter:capitalize">
-								{mainGraphStore.selectedNode.title}
+								{graph?.selectedNode.title}
 							</div>
 							<div class=" text-green-400">
-								{sides.find((side) => side.id === mainGraphStore.selectedNode?.side)?.name}
+								{sides.find((side) => side.id === graph?.selectedNode?.side)?.name}
 							</div>
 							<div>
 								{$t('inSession.from')}
-								<span class="text-white">{mainGraphStore.selectedNode.author}</span>
+								<span class="text-white">{graph?.selectedNode.author}</span>
 							</div>
 							<div class="max-h-60 overflow-auto text-justify text-gray-300">
-								{@html mainGraphStore.selectedNode.text}
+								{@html graph?.selectedNode.text}
 							</div>
 						</div>
 					{/key}
@@ -332,7 +336,7 @@
 						placeholder="Ton message"
 					></textarea>
 				</label>
-				{#if admin || !ai}
+				{#if admin}
 					<label class="form-control w-full max-w-xs">
 						<div class="label p-0">
 							<span class="label-text text-inherit">{$t('side.yourSide')}</span>
@@ -344,10 +348,7 @@
 						>
 							<option disabled selected>{$t('side.chooseSide')}</option>
 							{#each sides as side}
-								<option
-									disabled={session?.expand?.scenario?.ai && side.id !== userSideId}
-									value={side.id}>{side.name}</option
-								>
+								<option value={side.id}>{side.name}</option>
 							{/each}
 						</select>
 					</label>
@@ -393,7 +394,7 @@
 					</label>
 				{/if}
 				<input type="hidden" name="session" value={session.id} />
-				<input type="hidden" name="parent" value={mainGraphStore.selectedNode?.id ?? null} />
+				<input type="hidden" name="parent" value={graph?.selectedNode?.id ?? null} />
 				<button class="btn w-fit btn-accent btn-sm self-center" type="submit">{$t('misc.submit')}</button>
 			</form>
 		{:else if states.admin}
@@ -402,10 +403,10 @@
 					duration: 200,
 					easing: quintOut
 				}}
-				class="flex flex-col items-center gap-2 p-2 text-primary-500 z-10"
+				class="flex flex-col items-center gap-4 p-2 text-primary-500 z-10"
 			>
-				{@render formTemplate(events, 'addEvent', 'eventId', $t('misc.add'))}
-				{@render formTemplate(ends, 'endSession', 'endId', $t('misc.end'))}
+				{@render formTemplate(events, 'addEvent', 'eventId', $t('admin.event.triggerEvent'))}
+				{@render formTemplate(ends, 'endSession', 'endId', $t('admin.session.endSession'))}
 			</div>
 		{:else if states.sessionEnd}
 			<div
@@ -435,6 +436,6 @@
 		<GitPullRequest strokeWidth={1.5} color="white" />
 	</button>
 	{#if treeView}
-		<GraphTree />
+		<GraphTree {graph} />
 	{/if}
 </div>

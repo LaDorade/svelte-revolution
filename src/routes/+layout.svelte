@@ -19,8 +19,6 @@
 	};
 	let { data, children }: Props = $props();
 
-	let seeDebugPanel: boolean = $state(false);
-
 	NProgress.configure({
 		minimum: 0.16
 	});
@@ -35,7 +33,7 @@
 
 	onMount(() => {
 		viewportStore.updateViewport(window);
-		seeDebugPanel = localStorage.getItem('seeDebugPanel') === 'true';
+		viewportStore.seeDebugPanel = localStorage.getItem('seeDebugPanel') === 'true';
 	});
 </script>
 
@@ -54,11 +52,8 @@
 <!-- Utilities -->
 <Toaster />
 <BackToTop />
-{#if $page.data.user?.role === 'superAdmin' && seeDebugPanel}
-	<DebugPane />
-{/if}
 
-<Navigation isAdmin={data.isAdmin} user={data.user} bind:seeDebugPanel />
+<Navigation isAdmin={data.isAdmin} user={data.user} />
 
 <!-- MAIN -->
 <div class="relative inset-0 w-full h-full text-gray-300">

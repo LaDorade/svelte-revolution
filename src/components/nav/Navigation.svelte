@@ -9,14 +9,14 @@
 	import nProgress from 'nprogress';
 	import type { User } from '$types/pocketBase/TableTypes';
 
-	let { isAdmin, user, seeDebugPanel = $bindable() } = $props();
+	let { isAdmin, user } = $props();
 
 	function getUserAvatar(user: User) {
 		return user.avatar ? pb.files.getUrl(user, user.avatar) : graph1;
 	}
 
 	function storePanelInLocalStorage() {
-		localStorage.setItem('seeDebugPanel', seeDebugPanel.toString());
+		localStorage.setItem('seeDebugPanel', viewportStore.seeDebugPanel.toString());
 	}
 </script>
 
@@ -65,7 +65,7 @@
 										name="seeDebugPane"
 										id="debugPaneCheck"
 										onchange={storePanelInLocalStorage}
-										bind:checked={seeDebugPanel}
+										bind:checked={viewportStore.seeDebugPanel}
 									/>
 								</label>
 							</li>

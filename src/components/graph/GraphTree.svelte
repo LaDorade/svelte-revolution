@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { nodesStore } from '$stores/graph';
-	import { mainGraphStore } from '$stores/graph/main/store.svelte';
-	import type { NodeMessage } from '$types/graph';
 	import { fade } from 'svelte/transition';
+	import type { NodeMessage } from '$types/graph';
+	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
+
+	let { graph }: { graph: MainGraph | null } = $props();
 
 	let startNode = $derived.by(() => {
-		return $nodesStore.find((node) => !node.parent);
+		return graph?._nodes.find((node) => !node.parent);
 	});
 	let sortedNodes = $derived.by(() => {
 		const map = new Map<string | null, NodeMessage[]>();
-		$nodesStore.forEach((node) => {
+		graph?._nodes.forEach((node) => {
 			if (node.parent) {
 				if (map.has(node.parent)) {
 					map.get(node.parent)?.push(node);
@@ -33,8 +34,12 @@
 					{/each}
 				</div>
 				<button
-					onclick={() => (mainGraphStore.selectedNode = node)}
-					class="border rounded p-1 border-white + {node.id === mainGraphStore.selectedNode?.id
+					onclick={() => {
+						if (graph) {
+							graph.selectedNode = node;
+						}
+					}}
+					class="border rounded p-1 border-white + {node.id === graph?.selectedNode?.id
 						? 'bg-gray-500'
 						: 'bg-gray-800'}"
 				>

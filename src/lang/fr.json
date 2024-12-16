@@ -4,6 +4,12 @@
     "administration": "Administration",
     "youAreAdmin": "Vous êtes admin",
     "debugPanel": "Panneau de debug",
+    "event": {
+      "addEvent": "Ajouter un événement",
+      "triggerEvent": "Déclencher un événement",
+      "createEvent": "Créer un événement",
+      "creationSuccess": "Événement créé avec succès"
+    },
     "session": {
       "createSession": "Créer une session",
       "endSession": "Terminer la session",

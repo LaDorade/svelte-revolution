@@ -7,6 +7,7 @@ function createViewportStore() {
 	let outerWidth: number = $state(0);
 	let isMobile: boolean = $state(false);
 	let isTablet: boolean = $state(false);
+	let seeDebugPanel: boolean = $state(false);
 
 	const actualBreakpoint: string = $derived.by(() => {
 		if (innerWidth < 768) {
@@ -45,7 +46,13 @@ function createViewportStore() {
 		get actualBreakpoint() {
 			return actualBreakpoint;
 		},
-		updateViewport
+		updateViewport,
+		get seeDebugPanel() {
+			return seeDebugPanel;
+		},
+		set seeDebugPanel(value: boolean) {
+			seeDebugPanel = value;
+		}
 	};
 }
 

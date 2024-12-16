@@ -1,28 +1,9 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import {
-		forceLink,
-		forceManyBody,
-		forceRadial,
-		forceSimulation,
-		forceX,
-		forceY,
-		select,
-		type Selection,
-		type Simulation,
-		type SimulationLinkDatum,
-		zoom as d3Zoom,
-		zoomIdentity,
-		local
-	} from 'd3';
 	import { pb } from '$lib/client/pocketbase';
-	import { watch } from '$lib/runes/watch.svelte';
-	import { buildLinks } from '$lib/sessions';
-	import { linksStore, nodesStore } from '$stores/graph';
-	import { mainGraphStore } from '$stores/graph/main/store.svelte';
-	import type { LinkMessage, NodeMessage } from '$types/graph';
-	import { type GraphNode, type Side } from '$types/pocketBase/TableTypes';
-	import { updateLabelsInGraph, updateLinksInGraph, updateNodesInGraph } from './mainGraph';
+	import { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
+	import type { NodeMessage } from '$types/graph';
+	import type { GraphNode, Side } from '$types/pocketBase/TableTypes';
 
 	// Dev Feature to reinstanciate the component when the file is changed
 	// ? It's because the hot reload is not working well with the d3 library
@@ -33,153 +14,35 @@
 	}
 
 	interface Props {
+		admin: boolean;
+		nodes: GraphNode[];
 		sessionId: string;
 		sides: Side[];
 		iaConnected?: boolean;
+		graph: MainGraph | null;
+		ai: boolean | undefined;
+		userSideId: string | number | null;
 	}
-	let { sessionId, sides, iaConnected }: Props = $props();
+	let { nodes, sessionId, sides, iaConnected, userSideId, admin, ai, graph = $bindable() }: Props = $props();
 
-	let svg: SVGElement;
-	let svgElement: Selection<SVGElement, NodeMessage, null, undefined>;
-	let nodeLayer: Selection<SVGGElement, NodeMessage, null, undefined>;
-	let linkLayer: Selection<SVGGElement, NodeMessage, null, undefined>;
-	let labelLayer: Selection<SVGGElement, NodeMessage, null, undefined>;
-
-	let simulation: Simulation<NodeMessage, SimulationLinkDatum<NodeMessage>>;
-	const zoom = d3Zoom().on('zoom', (e) => {
-		const { transform } = e;
-		nodeLayer.attr('transform', transform);
-		linkLayer.attr('transform', transform);
-		labelLayer.attr('transform', transform);
-		const strokeWidth = 3 / Math.sqrt(transform.k);
-		nodeLayer.style('stroke-width', strokeWidth);
-		linkLayer.style('stroke-width', strokeWidth);
-		labelLayer.style('stroke-width', strokeWidth);
-	});
-
-	function renderGraph() {
-		if (!svgElement) {
-			return;
-		}
-		const currentWidth = window?.innerWidth || 500;
-		const currentHeight = window?.innerHeight || 500;
-		svgElement.attr('width', currentWidth).attr('height', currentHeight);
-
-		const linksInGraph = updateLinksInGraph(linkLayer);
-		// @ts-expect-error d3...
-		const nodesInGraph = updateNodesInGraph(nodeLayer, linksInGraph, simulation);
-		// @ts-expect-error d3...
-		const labelsInGraph = updateLabelsInGraph(labelLayer, linksInGraph, nodesInGraph, simulation);
-
-		simulation.on('tick', () => {
-			if (!linksInGraph || !nodesInGraph || !labelsInGraph) {
-				return;
-			}
-			linksInGraph
-				.attr('x1', (d) => String(d.source.x))
-				.attr('y1', (d) => String(d.source.y))
-				.attr('x2', (d) => String(d.target.x))
-				.attr('y2', (d) => String(d.target.y));
-
-			nodesInGraph.attr('cx', (d) => String(d.x)).attr('cy', (d) => String(d.y));
-			labelsInGraph.attr('x', (d) => String(d.x)).attr('y', (d) => String(d.y));
-		});
-
-		simulation
-			.force('centerNode', forceRadial(100, currentWidth / 2, currentHeight / 2).strength(0.02))
-			.force(
-				'x',
-				forceX<GraphNode>(currentWidth / 2).strength((d) => (d.type === 'startNode' ? 1 : 0))
-			)
-			.force(
-				'y',
-				forceY<GraphNode>(currentHeight / 2).strength((d) => (d.type === 'startNode' ? 1 : 0))
-			);
-	}
-
-	/**
-	 * Append a new node and his links to the graph, then restart the simulation
-	 */
-	function addNodeToGraph(node: NodeMessage | null) {
-		// ? IA related
-		if (iaConnected && node?.type === 'event' && node.side) {
-			const userSide = localStorage.getItem('side_' + sessionId);
-			if (userSide !== node.side) {
-				return;
-			}
-		}
-		if (node) {
-			// handle this in db
-			node.sideNumber = sides.find((s: Side) => s.id === node.side)?.number ?? 0;
-			nodesStore.set([...$nodesStore, node]);
-		}
-		linksStore.set(buildLinks($nodesStore));
-		restartSimulation();
-	}
-
-	function restartSimulation() {
-		simulation.nodes($nodesStore);
-		// @ts-expect-error d3...
-		simulation.force('link')?.links($linksStore);
-		simulation.alpha(1).restart();
-		renderGraph();
-	}
-
-	function initSimulation() {
-		svgElement = select(svg);
-		linkLayer = svgElement.append('g');
-		nodeLayer = svgElement.append('g');
-		labelLayer = svgElement.append('g');
-
-		// @ts-expect-error d3...
-		svgElement.call(zoom).call(zoom.transform, zoomIdentity);
-
-		simulation = forceSimulation($nodesStore)
-			.force(
-				'link',
-				forceLink<NodeMessage, LinkMessage>($linksStore)
-					.id((d) => d.id)
-					.distance((d) => {
-						// if (typeof d.source !== 'object' || typeof d.target !== 'object') {
-						// 	return 100;
-						// }
-						if (d.source.type === 'startNode' || d.target.type === 'startNode') {
-							return 80;
-						} else if (d.source.type === 'event' || d.target.type === 'event') {
-							return 100;
-						}
-						return 100;
-					})
-					.strength(2)
-			)
-			.force('charge', forceManyBody().strength(-500));
-
-		renderGraph();
-	}
+	let svg: SVGElement | null = $state(null);
 
 	const realTimeActions = {
 		create: (record: NodeMessage) => {
-			addNodeToGraph(record);
+			if (iaConnected && record?.type === 'event' && record.side) {
+				const userSide = localStorage.getItem('side_' + sessionId);
+				if (userSide !== record.side) {
+					return;
+				}
+			}
+			graph?.addNode(record);
 		},
 		update: (record: NodeMessage) => {
-			nodesStore.set(
-				$nodesStore.map((node) => {
-					if (node.id === record.id) {
-						node.text = record.text;
-						node.title = record.title;
-					}
-					return node;
-				})
-			);
-			renderGraph();
+			graph?.updateNode(record);
 		},
-		delete: async () => {
-			const newNodes = await pb.collection('Node').getFullList({ filter: `session="${sessionId}"` });
-			nodesStore.set(newNodes);
-			linksStore.set(buildLinks(newNodes));
-			mainGraphStore.selectedNode =
-				newNodes.find((node) => node.id === mainGraphStore.selectedNode?.parent) || null;
-			restartSimulation();
+		delete: async (record: GraphNode) => {
+			// const newNodes = await pb.collection('Node').getFullList({ filter: `session="${sessionId}"` });
+			graph?.deleteNode(record);
 		}
 	};
 
@@ -198,26 +61,33 @@
 	}
 
 	onMount(async () => {
+		if (!svg) return;
+		graph = new MainGraph(svg, nodes, sides, {
+			width: window.innerWidth,
+			height: window.innerHeight
+		});
+		if (ai && !admin) {
+			graph.filterNodeBySide(userSideId);
+		}
 		await realTimeNodeUpdate();
-		initSimulation();
-	});
-
-	$effect(() => {
-		watch(() => {
-			renderGraph();
-		}, [mainGraphStore.selectedNode]);
 	});
 
 	onDestroy(() => {
-		simulation?.stop();
+		if (graph) {
+			graph._simulation.stop();
+			graph.selectedNode = null;
+		}
 		pb.collection('Node').unsubscribe();
-		mainGraphStore.selectedNode = null;
-		nodesStore.set([]);
-		linksStore.set([]);
 	});
 </script>
 
-<svelte:window on:resize={restartSimulation} />
+<svelte:window
+	on:resize={() =>
+		graph?.setOptions({
+			width: window.innerWidth,
+			height: window.innerHeight
+		})}
+/>
 
 <svg
 	bind:this={svg}
