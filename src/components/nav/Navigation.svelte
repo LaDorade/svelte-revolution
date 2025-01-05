@@ -37,7 +37,7 @@
 			<ul
 				role="menu"
 				tabindex="0"
-				class="z-50 p-2 mt-3 bg-gray-800 shadow menu dropdown-content rounded-box w-52"
+				class="z-50 p-2 mt-3 bg-secondary-800 shadow menu dropdown-content rounded-box w-52"
 			>
 				<li><a href="/">{$t('nav.home')}</a></li>
 				<li><a href="/sessions">{$t('nav.sessions')}</a></li>

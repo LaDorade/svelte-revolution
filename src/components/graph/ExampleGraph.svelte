@@ -140,29 +140,57 @@
 
 			node = nodeLayer
 				.append('g')
-				.selectAll('circle')
+				.selectAll('g')
 				.data(homeStore.nodes)
 				.enter()
-				.append('circle')
+				.append('g')
 				.style('cursor', 'pointer')
 				.call(drag().on('start', dragstarted).on('drag', dragged).on('end', dragended))
 				.on('click', (event, d) => {
 					homeStore.selectedNode = d;
 				});
 
+			// background / cercle du noeud
+			node.append('circle')
+				.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))
+				.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'yellow' : 'green'));
+
+			// image du noeud
+			let cube = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWJveCI+PHBhdGggZD0iTTIxIDhhMiAyIDAgMCAwLTEtMS43M2wtNy00YTIgMiAwIDAgMC0yIDBsLTcgNEEyIDIgMCAwIDAgMyA4djhhMiAyIDAgMCAwIDEgMS43M2w3IDRhMiAyIDAgMCAwIDIgMGw3LTRBMiAyIDAgMCAwIDIxIDE2WiIvPjxwYXRoIGQ9Im0zLjMgNyA4LjcgNSA4LjctNSIvPjxwYXRoIGQ9Ik0xMiAyMlYxMiIvPjwvc3ZnPg==";
+			node.append('image')
+				.attr('xlink:href', cube)
+				.attr('width', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))
+				.attr('height', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))
+				.attr('x', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5))
+				.attr('y', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5));
+
 			simulation.on('tick', () => {
 				if (!node || !link || !label) return;
-				node.attr('cx', (d) => Number(d.x))
-					.attr('cy', (d) => Number(d.y))
-					.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))
-					.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'yellow' : 'green'));
 
+				// Déplacer le groupe entier (image + cercle) à la position du nœud
+				node.attr('transform', (d) => `translate(${d.x},${d.y})`);
+
+				// Mettre à jour la taille et la couleur du cercle
+				node.select('circle')
+					.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))  // Taille du cercle
+					.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? '#ffed7a' : '#9ef2bd'));  // Couleur du cercle
+
+				// Mettre à jour la taille et la position de l'image
+				node.select('image')
+					.attr('x', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5))  // Décalage horizontal pour centrer l'image
+					.attr('y', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5))  // Décalage vertical pour centrer l'image
+					.attr('width', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))  // Taille de l'image
+					.attr('height', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15));  // Taille de l'image
+
+				// Mettre à jour les liens entre les nœuds
 				link.attr('x1', (d) => d.source.x ?? 0)
 					.attr('y1', (d) => Number(d.source.y) ?? 0)
 					.attr('x2', (d) => Number(d.target.x) ?? 0)
 					.attr('y2', (d) => Number(d.target.y) ?? 0);
 
-				label.attr('x', (d) => d.x).attr('y', (d) => d.y);
+				// Mettre à jour la position des labels
+				label.attr('x', (d) => d.x)
+					.attr('y', (d) => d.y);
 			});
 
 			simulation.alpha(1).restart();

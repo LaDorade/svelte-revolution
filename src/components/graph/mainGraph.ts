@@ -8,11 +8,19 @@ import { linksStore, nodesStore } from '$stores/graph';
 import type { BaseType } from 'd3';
 
 function selectNode(node: NodeMessage) {
-	if (mainGraphStore.selectedNode?.id === node.id) {
+	if (mainGraphStore.selectedNode?.id === node.id) { // si on clique sur le node déjà sélectionné, ça le désélectionne
 		mainGraphStore.selectedNode = null;
 		return;
 	}
 	mainGraphStore.selectedNode = node;
+}
+
+function getNodeIcon(node: NodeMessage) {
+	if (node.type === 'startNode' || node.type === 'event' || node.type === 'hidden') {
+		return "";
+	} else {
+		return values.graphIcons[node.sideNumber];
+	}
 }
 
 function getNodeFill(node: NodeMessage) {
@@ -26,7 +34,7 @@ function getNodeFill(node: NodeMessage) {
 	} else if (node.type === 'hidden') {
 		return values.graphColors.nodes.hidden;
 	} else {
-		return values.graphColors.nodes.sides[node.sideNumber];
+		return values.graphColors.nodes.sides;
 	}
 }
 
@@ -120,10 +128,11 @@ export const updateNodesInGraph = (
 	const links = get(linksStore);
 
 	const updatedNodes = nodeLayer
-		.selectAll('circle')
+		.selectAll('g')
 		.data(nodes)
-		.join('circle')
+		.join('g')
 		.attr('draggable', true)
+		.attr('transform', (d) => `translate(${d.x}, ${d.y})`)
 		.attr('r', (d) => getNodeRadius(d, selectedNode))
 		.style('cursor', 'pointer')
 		.style('fill', (d) => {
@@ -148,6 +157,16 @@ export const updateNodesInGraph = (
 				.on('end', (event, d) => handleDragEnd(event, d, simulation))
 		)
 		.on('click', (_, d) => selectNode(d));
+
+		updatedNodes.append('circle')
+			.attr('r', (d) => getNodeRadius(d, selectedNode));
+
+		updatedNodes.append('image')
+			.attr('xlink:href', (d) => getNodeIcon(d))
+			.attr('width', (d) => getNodeRadius(d, selectedNode)*1.2)
+			.attr('height', (d) => getNodeRadius(d, selectedNode)*1.2)
+			.attr('x', (d) => getNodeRadius(d, selectedNode)/-1.7)
+			.attr('y', (d) => getNodeRadius(d, selectedNode)/-1.7);
 
 	return updatedNodes;
 };

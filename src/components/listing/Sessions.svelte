@@ -49,7 +49,7 @@
 
 <div class=" w-5/6 sm:w-4/5">
 	{#if sessions?.length}
-		<ul class="grid grid-flow-row lg:grid-cols-2 gap-4 text-black">
+		<ul class="grid grid-flow-row lg:grid-cols-3 sm:grid-cols-2 gap-4 text-black">
 			{#each sessions as session (session.id)}
 				{@const completed = session.completed}
 				{@const scenario = session.expand?.scenario}
@@ -64,20 +64,22 @@
 						<Tooltip>
 							<a
 								tabindex="0"
-								class="grid hover:z-20 w-full h-full grid-cols-3 p-4 hover:scale-105 transition-all rounded-lg place-items-center {completed
+								class="grid hover:z-20 w-full h-full grid-cols-[3fr,1fr] p-4 hover:scale-105 transition-all rounded-lg {completed
 									? ' bg-gray-500'
 									: 'bg-primary-500'}"
 								href={getSessionUrl(session)}
 							>
-								<h2 class="text-lg font-semibold text-ellipsis capitalize justify-self-start">
-									{session.name}
-								</h2>
-								<div class="text-center w-full">
-									{$t('scenario.scenario')}:
-									<span
-										class="italic underline text-pretty text-ellipsis font-light cursor-default hover:underline"
-										>{scenario?.title}</span
-									>
+								<div>
+									<h3 class="text-lg font-semibold text-ellipsis capitalize justify-self-start">
+										{session.name}
+									</h3>
+									<div class="w-full">
+										{$t('scenario.scenario')}:
+										<span
+											class="italic underline text-pretty text-ellipsis font-light cursor-default hover:underline"
+											>{scenario?.title}</span
+										>
+									</div>
 								</div>
 								<div class="w-12 h-12 p-0 flex justify-center justify-self-end">
 									<img
