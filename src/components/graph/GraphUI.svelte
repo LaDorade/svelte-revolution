@@ -196,6 +196,7 @@
 <!-- Buttons -->
 <div class="fixed m-4 right-0 bottom-0 z-50">
 	{#snippet menuButton(type: string)}
+		<!-- button to open the small menu -->
 		<button
 			class=" p-2 flex justify-center shadow-2xl items-center border z-50 rounded-full bg-black bg-opacity-90"
 			onclick={() => (stateActive ? setCheck('close') : setCheck('nodeInfo'))}
@@ -262,8 +263,19 @@
 	</div>
 </div>
 
+<!-- Sides legend -->
+<div class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 pr-10 m-6 bottom-0 left-0 bg-black bg-opacity-65 align-right" >
+	{#each sides as side}
+		<div class="text-white flex items-center">
+			<img src={side.icon} alt={"icon"} class="w-4 h-4 mr-1 filter invert"/>
+			{side.name}
+		</div>
+	{/each}
+</div>
+
 <!-- Display -->
 {#if stateActive}
+	<!-- affichage détails message -->
 	<div
 		class="fixed w-1/2 max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl
 			p-4 m-6 bottom-0 left-0 bg-black bg-opacity-65"
