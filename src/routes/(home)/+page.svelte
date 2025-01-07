@@ -132,7 +132,7 @@
 	<div class="flex flex-col w-full text-gray-50 gap-4 items-center">
 		<h2>{$t('sessions.openSessions')}</h2>
 		<Sessions sessions={data.sessions?.filter((session) => !session.completed)} />
-		<h2>{$t('sessions.endedSessions')}</h2>
+		<h2 class="mt-5">{$t('sessions.endedSessions')}</h2>
 		<Sessions sessions={data.sessions?.filter((session) => session.completed)} />
 	</div>
 	<div class="flex flex-col w-full text-gray-200 gap-4 items-cente">
@@ -142,7 +142,7 @@
 		</div>
 	</div>
 	<footer class=" text-gray-300 backdrop-blur-[2px] -mx-4 p-4 border-primary-500 border-t">
-		<div class="text-center flex items-center flex-col gap-2 antialiased">
+		<div class="text-center flex items-center flex-col gap-2 antialiased mb-4">
 			<svg
 				width="50"
 				height="50"
@@ -157,7 +157,7 @@
 				></path>
 			</svg>
 			<p class="text-xl font-semibold mb-3">Babel Révolution | UTC</p>
-			<div class="lg:w-2/3 md:w-3/4 bg-black text-justify p-8 bg-black bg-opacity-30 mx-auto rounded flex flex-col gap-2 text-justify">
+			<div class="lg:w-2/3 md:w-3/4 bg-black text-justify p-8 bg-black bg-opacity-30 mx-auto mb-5 rounded flex flex-col gap-2 text-justify">
 				<blockquote>
 					« {$t('home.footer.citation')} »
 					<br />
@@ -167,7 +167,7 @@
 			</div>
 			<div>
 				<div class="text-lg font-semibold">{$t('home.footer.credits')}</div>
-				<div class="text-primary-500">Serge Bouchardon, Isabelle Cros, Erika Fülöp, Simon Renaud.</div>
+				<div class="text-primary-500">Serge Bouchardon, Isabelle Cros, Erika Fülöp, Simon Renaud</div>
 			</div>
 			<div>
 				<div class="text-lg font-semibold">{$t('home.footer.devAndDesign')}</div>
