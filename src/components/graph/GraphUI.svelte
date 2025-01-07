@@ -8,6 +8,7 @@
 	import type { ActionResult } from '@sveltejs/kit';
 	import { blur, fade, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+	import values from '$lib/mainGraph/values';
 	import {
 		Codesandbox,
 		Ellipsis,
@@ -45,6 +46,13 @@
 		pseudo,
 		userSideId = $bindable()
 	}: Props = $props();
+
+	function attributeIcons() {
+		for (let s of sides) {
+			s.icon = values.graphIcons[s.number];
+		}
+	}
+	attributeIcons();
 
 	let nodeTitle = $state('');
 	let nodeText = $state('');
@@ -277,7 +285,14 @@
 							<div class="text-xl text-white font-semibold first-letter:capitalize">
 								{graph?.selectedNode.title}
 							</div>
-							<div class=" text-green-400">
+							<div class="text-green-400 flex items-center">
+								{#if graph?.selectedNode?.side}
+									<img src={sides.find((side) => side.id === graph?.selectedNode?.side)?.icon} 
+										alt={"icon"}
+										class="w-4 h-4 mr-1 filter invert"
+										style={"filter: invert(51%) sepia(73%) saturate(352%) hue-rotate(90deg);"}
+									/>
+								{/if}
 								{sides.find((side) => side.id === graph?.selectedNode?.side)?.name}
 							</div>
 							<div>

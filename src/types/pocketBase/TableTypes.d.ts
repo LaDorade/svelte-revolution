@@ -67,6 +67,7 @@ export interface Side {
 	id: string;
 	name: string;
 	number: number;
+	icon?: string;
 }
 
 export interface User {
