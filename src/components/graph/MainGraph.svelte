@@ -91,7 +91,6 @@
 
 <svg
 	bind:this={svg}
-	class="mainGraph fixed top-0 left-0 w-screen h-screen z-10 cursor-grab bg-opacity-40 bg-dotted-40 bg-dotted-gray
-	[mask-image:radial-gradient(ellipse_80%_70%_at_50%_50%,#000_50%,transparent_100%)]"
+	class="mainGraph fixed top-0 left-0 w-screen h-screen z-10 cursor-grab bg-black bg-opacity-100 bg-dotted-40 bg-dotted-gray"
 >
 </svg>
