@@ -19,6 +19,7 @@ function getNodeIcon(node: NodeMessage) {
 	if (node.type === 'startNode' || node.type === 'event' || node.type === 'hidden') {
 		return "";
 	} else {
+		console.log("value:", values.graphIcons[node.sideNumber]);
 		return values.graphIcons[node.sideNumber];
 	}
 }
@@ -123,6 +124,7 @@ export const updateNodesInGraph = (
 	linksInGraph: d3.Selection<SVGGElement, LinkMessage, SVGElement, unknown>,
 	simulation: d3.Simulation<NodeMessage, LinkMessage>
 ) => {
+	console.log("COUCOU")
 	const nodes = get(nodesStore);
 	const selectedNode = mainGraphStore.selectedNode;
 	const links = get(linksStore);
