@@ -64,7 +64,7 @@
 			<label for="scenarioId">{$t('admin.session.selectScenario')}</label>
 			<select
 				name="scenarioId"
-				class="p-4 border-b appearance-none focus-within:bg-transparent text-white"
+				class="p-4 border-b appearance-none focus-within:bg-transparent text-gray-500"
 				required
 			>
 				<option disabled>{$t('admin.session.chooseScenario')}</option>

@@ -37,7 +37,7 @@
 			<a
 				href={tab.href}
 				role="tab"
-				class="tab hover:text-green-500 {activeTab === tab.href ? 'tab-active' : 'text-white'}"
+				class="tab hover:text-primary-500 {activeTab === tab.href ? 'tab-active' : 'text-white'}"
 			>
 				{tab.label}
 			</a>

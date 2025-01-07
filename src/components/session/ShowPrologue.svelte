@@ -84,7 +84,7 @@
 					>
 						<option disabled value={null} selected>{$t('side.chooseSide')}</option>
 						{#each sides as side}
-							<option disabled={sideLocked} value={side.id}>{side.name}</option>
+							<option disabled={sideLocked} value={side.id} class="text-gray-500">{side.name}</option>
 						{/each}
 					</select>
 					<button
