@@ -17,6 +17,7 @@ export default {
 			backgroundImage: {
 				'dotted-white': 'radial-gradient(white 1px, transparent 1px)', // Motif de points
 				'dotted-lightGray': 'radial-gradient(#edf2f7 1px, transparent 1px)',
+				'dotted-midGray': 'radial-gradient(#646E7E 1px, transparent 1px)',
 				'dotted-gray': 'radial-gradient(#4a5568 1px, transparent 1px)',
 				'dotted-darkGray': 'radial-gradient(#333 1px, transparent 1px)',
 				'dotted-black': 'radial-gradient(#000 1px, transparent 1px)',
@@ -42,6 +43,14 @@ export default {
 					700: '#508f67',
 					800: '#366045',
 					900: '#1b3022'
+				},
+				secondary: {
+					600: '#3F3E67',
+					700: '#3A3964',
+					800: '#2D2D51'
+				},
+				dark: {
+					800: '#232249'
 				}
 			}
 		}

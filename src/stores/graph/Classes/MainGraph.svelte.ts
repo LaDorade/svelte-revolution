@@ -59,6 +59,13 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 		});
 	}
 
+	getNodeIcon(node: GraphNode) {
+		if (node.type === 'startNode' || node.type === 'event' || node.type === 'hidden') {
+			return "";
+		} else {
+			return values.graphIcons[node.sideNumber];
+		}
+	};
 	getNodeFill = (node: GraphNode) => {
 		if (node.type === 'startNode') {
 			return values.graphColors.nodes.start;
@@ -69,7 +76,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 		} else if (node.type === 'hidden') {
 			return values.graphColors.nodes.hidden;
 		} else {
-			return values.graphColors.nodes.sides[node.sideNumber];
+			return values.graphColors.nodes.sides;//[node.sideNumber];
 		}
 	};
 	getLinkStroke = (l: LinkMessage) => {

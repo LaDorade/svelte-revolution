@@ -33,10 +33,12 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 	#nodeLayer: Selection<SVGGElement, T, null, undefined>;
 	#linkLayer: Selection<SVGGElement, T, null, undefined>;
 	#labelLayer: Selection<SVGGElement, T, null, undefined>;
+	#iconLayer: Selection<SVGGElement, T, null, undefined>;
 
 	#nodesInGraph: Selection<SVGCircleElement, T, SVGGElement, T> | undefined;
 	#linksInGraph: Selection<SVGLineElement, V, SVGGElement, T> | undefined;
 	#labelsInGraph: Selection<SVGTextElement, T, SVGGElement, T> | undefined;
+	#iconsInGraph: Selection<SVGTextElement, T, SVGGElement, T> | undefined;
 
 	_nodes: T[] = $state.raw([]); // lost fine-grained reactivity, but works with d3 (who doesn't like Proxys)
 	#links: V[] = $derived.by(() => this.#buildLinks(this._nodes));
@@ -58,6 +60,7 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 		this.#linkLayer = this.#svgElement.append('g');
 		this.#nodeLayer = this.#svgElement.append('g');
 		this.#labelLayer = this.#svgElement.append('g');
+		this.#iconLayer = this.#svgElement.append('g');
 
 		this._simulation = forceSimulation<T>();
 
@@ -70,10 +73,13 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 					this.#nodeLayer.attr('transform', transform);
 					this.#linkLayer.attr('transform', transform);
 					this.#labelLayer.attr('transform', transform);
+					this.#iconLayer.attr('transform', transform);
+
 					const strokeWidth = 3 / Math.sqrt(transform.k);
 					this.#nodeLayer.style('stroke-width', strokeWidth);
 					this.#linkLayer.style('stroke-width', strokeWidth);
 					this.#labelLayer.style('stroke-width', strokeWidth);
+					this.#iconLayer.style('stroke-width', strokeWidth);
 				})
 			);
 		}
@@ -84,6 +90,7 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 		this.#linksInGraph = this.#updateLinksInGraph();
 		this.#nodesInGraph = this.#updateNodesInGraph();
 		this.#labelsInGraph = this.#updateLabelsInGraph();
+		this.#iconsInGraph = this.#updateIconsInGraph();
 	}
 
 	setOptions(options: Partial<GraphOptions>) {
@@ -176,11 +183,14 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 					.attr('y2', (d) => String(d.target.y));
 				this.#nodesInGraph?.attr('cx', (d) => String(d.x)).attr('cy', (d) => String(d.y));
 				this.#labelsInGraph?.attr('x', (d) => String(d.x)).attr('y', (d) => String(d.y));
+				this.#iconsInGraph?.attr('x', (d) => String(d.x - this.getNodeRadius(d)*1.2/2))
+        							.attr('y', (d) => String(d.y - this.getNodeRadius(d)*1.2/2));
 			})
 			.restart();
 	};
 
 	// Styles
+	abstract getNodeIcon: (node: T) => string;
 	abstract getNodeFill: (node: T) => string;
 	abstract getNodeRadius: (node: T) => number;
 	abstract getNodeStroke: (node: T) => string;
@@ -224,6 +234,25 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 					.on('end', (event, d) => this.handleDragEnd(event, d))
 			)
 			.on('click', (_, d) => this.#selectNode(d)) as Selection<SVGCircleElement, T, SVGGElement, T>;
+	};
+	#updateIconsInGraph = () => {
+		return this.#iconLayer
+			.selectAll('image')
+			.data(this._nodes)
+			.join('image')
+			.attr('width', (d) => String(this.getNodeRadius(d) * 1.2))
+			.attr('height', (d) => String(this.getNodeRadius(d) * 1.2))
+			.attr('xlink:href', (d) => this.getNodeIcon(d))
+			.style('cursor', 'pointer')
+			.on('click', (_, d) => this.#selectNode(d))
+			.on('mouseover', (_, d) => this.handleMouseOver(d))
+			.on('mouseout', () => this.handleMouseOut())
+			.call(
+				drag<BaseType, T>()
+					.on('start', (event, d) => this.handleDragStart(event, d))
+					.on('drag', (event, d) => this.handleDrag(event, d))
+					.on('end', (event, d) => this.handleDragEnd(event, d))
+			);
 	};
 	#updateLabelsInGraph = () => {
 		return this.#labelLayer

@@ -59,7 +59,7 @@
 <div class="relative inset-0 w-full h-full text-gray-300">
 	{@render children()}
 	<div
-		class="absolute top-0 left-0 -z-50 bg-green-950 opacity-90 h-full w-full bg-dotted-lightGray bg-dotted-40
-	[mask-image:radial-gradient(ellipse_60%_70%_at_50%_50%,#000_40%,transparent_100%)]"
+		class="fixed top-0 left-0 -z-50 bg-dark-800 opacity-90 h-full w-full bg-dotted-midGray bg-dotted-40
+				[mask-image:radial-gradient(ellipse_60%_70%_at_50%_50%,#000_40%,transparent_100%)]"
 	></div>
 </div>

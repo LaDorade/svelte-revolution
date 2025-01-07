@@ -149,7 +149,7 @@
 	});
 </script>
 
-<div class="flex flex-col items-center text-white">
+<div class="flex flex-col items-center text-white pb-5">
 	<h1 class="p-4 text-3xl font-bold">{$t('admin.scenario.newScenario')}</h1>
 	<form
 		method="POST"
@@ -164,7 +164,7 @@
 		class="flex flex-col w-full gap-4 p-4 items-center text-white text-center border-t md:w-4/6"
 	>
 		<!-- Title and prologue -->
-		<h3 class=" text-white text-3xl text-center w-full">
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
 			{$t('admin.scenario.informations')}
 		</h3>
 		<div class=" flex flex-col w-full gap-2">
@@ -186,6 +186,7 @@
 				></textarea>
 			</label>
 		</div>
+		
 		<!-- Lang -->
 		<div class=" flex gap-2 justify-center w-full">
 			{#each availableLocales as lang (lang)}
@@ -208,8 +209,9 @@
 				</label>
 			{/each}
 		</div>
+
 		<!-- AI -->
-		<h3 class=" text-white text-3xl text-center w-full">
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
 			{$t('ia.ia')}
 		</h3>
 		<div class="flex">
@@ -218,8 +220,9 @@
 				<input class="rounded p-2" type="checkbox" bind:checked={formData.ai} name="useAi" />
 			</label>
 		</div>
+
 		<!-- First node -->
-		<h3 class=" text-white text-3xl text-center w-full">
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
 			{$t('scenario.firstNode.firstNode')}
 		</h3>
 		<div class="flex flex-col gap-4 items-center w-full">
@@ -250,8 +253,9 @@
 				/>
 			</label>
 		</div>
+
 		<!-- Sides -->
-		<h3 class=" text-white text-3xl text-center w-full">
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
 			{$t('side.sides')}
 		</h3>
 		<div class="standardLabel flex flex-col items-center gap-4 justify-center">
@@ -295,12 +299,13 @@
 				{$t('misc.add')}
 			</button>
 		</div>
+
 		<!-- Events -->
-		<h3 class=" text-white text-3xl text-center w-full">
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
 			{$t('scenario.event.events')}
 		</h3>
-		<div class="standardLabel flex flex-col items-center gap-4 p-4 justify-center">
-			<div class=" flex flex-wrap gap-4 justify-center items-center">
+		<div class="w-full standardLabel flex flex-col items-center gap-4 p-4 justify-center">
+			<div class="flex flex-wrap gap-4 justify-center items-center">
 				{#each formData.events as event, i (event)}
 					<div class="flex flex-col justify-center items-center p-2 border-gray-800 border-l rounded-md">
 						<div class="flex items-center justify-center flex-col gap-2">
@@ -333,7 +338,7 @@
 							</label>
 						</div>
 						<button
-							class="rounded-md border px-4 py-2 h-fit {formData.events.length <= 1
+							class="rounded-md border mt-2 px-4 py-2 h-fit {formData.events.length <= 1
 								? 'cursor-not-allowed text-gray-500 border-gray-500'
 								: 'bg-black text-gray-50  '}"
 							type="button"
@@ -348,7 +353,7 @@
 				{/each}
 			</div>
 			<button
-				class="rounded text-black px-4 w-60 py-2 font-bold bg-white"
+				class="rounded text-black mt-2 mb-1 px-4 w-60 py-2 font-bold bg-white"
 				type="button"
 				onclick={() => {
 					formData.events = [...formData.events, { title: '', text: '', author: '' }];
@@ -357,8 +362,9 @@
 				{$t('misc.add')}
 			</button>
 		</div>
+
 		<!-- Ends -->
-		<h3 class=" text-white text-3xl text-center w-full">
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
 			{$t('scenario.end.ends')}
 		</h3>
 		<div class="standardLabel flex flex-col items-center gap-4 justify-center">
@@ -384,7 +390,7 @@
 							></textarea>
 						</label>
 						<button
-							class="rounded-md border px-4 py-2 {formData.ends.length <= 1
+							class="rounded-md border mt-2 px-4 py-2 {formData.ends.length <= 1
 								? 'cursor-not-allowed text-gray-500 border-gray-500'
 								: 'bg-black text-gray-50'}"
 							type="button"
@@ -399,7 +405,7 @@
 				{/each}
 			</div>
 			<button
-				class="rounded text-black px-4 w-60 py-2 font-bold bg-white"
+				class="rounded text-black mt-2 mb-1 px-4 w-60 py-2 font-bold bg-white"
 				type="button"
 				onclick={() => {
 					formData.ends = [...formData.ends, { title: '', text: '' }];
@@ -415,6 +421,7 @@
 		>
 			{$t('admin.scenario.createYourScenario')}
 		</button>
+
 		<!-- Errors -->
 		<div class="h-36 p-4 rounded-md overflow-auto">
 			{#if issues.length > 0}
@@ -443,12 +450,14 @@
 			{/if}
 		</div>
 	</form>
-	<h3 class=" text-white text-3xl text-center w-full">
+
+	<!-- Session preview -->
+	<h3 class=" text-white text-3xl mt-10 mb-4 text-center w-full">
 		{$t('admin.session.preview')}
 	</h3>
 	<label class="rounded-md border px-4 py-2 bg-black text-gray-50">
 		{$t('admin.session.preview')}
-		<input type="checkbox" bind:checked={preview} />
+		<input type="checkbox" class="ml-1" bind:checked={preview} />
 	</label>
 	<div class=" text-gray-200 relative w-fit h-fit p-0 m-4">
 		<svg
