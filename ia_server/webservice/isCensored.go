@@ -54,7 +54,8 @@ func (rsa *ServerAgent) DoIsCensored(w http.ResponseWriter, r *http.Request) {
 		Events:          libs.Events{},
 		TriggerEnd:      ""}
 
-	//fmt.Print(req.Side)
+	fmt.Print(req.Side)
+	fmt.Print(session.IdTerrain)
 	if req.Side == session.IdTerrain {
 		is_message_performative := censor.IsActionPerformed(req.Title)
 

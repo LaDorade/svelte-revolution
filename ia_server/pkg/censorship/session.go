@@ -53,7 +53,17 @@ func LoadSession(sd libs.SessionData) (*Session, error) {
 	}
 
 	censorship := LoadCensorship(*sd.Censorship)
-	return &Session{censorship, sd.ID, scenario, sd.Step, len(scenario.Steps), sd.ScenarioFile, sd.IdTerrain, sd.IdGoodEnd, sd.IdBadEnd}, err
+	return &Session{
+		censorship,
+		sd.ID,
+		scenario,
+		sd.Step,
+		len(scenario.Steps),
+		sd.ScenarioFile,
+		sd.IdTerrain,
+		sd.IdGoodEnd,
+		sd.IdBadEnd,
+	}, err
 }
 
 func (s *Session) NextStep() bool {

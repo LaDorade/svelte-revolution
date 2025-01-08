@@ -20,8 +20,21 @@ func LoadSessions(data *libs.SessionsData) (map[string]*censorship.Session, erro
 func SaveSessions(data map[string]*censorship.Session) *libs.SessionsData {
 	sessionMap := make(map[string]*libs.SessionData)
 	for _, s := range data {
-		censor := libs.CensorshipData{BannedWords: s.Censorship.BannedWords, Corpus: s.Censorship.Corpus, Actions: s.Censorship.Actions, ActionKeyWords: s.Censorship.ActionKeyWords}
-		session := libs.SessionData{Censorship: &censor, ID: s.Id, Step: s.Step, ScenarioFile: s.ScenarioFile}
+		censor := libs.CensorshipData{
+			BannedWords:    s.Censorship.BannedWords,
+			Corpus:         s.Censorship.Corpus,
+			Actions:        s.Censorship.Actions,
+			ActionKeyWords: s.Censorship.ActionKeyWords,
+		}
+		session := libs.SessionData{
+			Censorship:   &censor,
+			ID:           s.Id,
+			Step:         s.Step,
+			ScenarioFile: s.ScenarioFile,
+			IdTerrain:    s.IdTerrain,
+			IdGoodEnd:    s.IdGoodEnd,
+			IdBadEnd:     s.IdBadEnd,
+		}
 		sessionMap[s.Id] = &session
 	}
 	res := libs.SessionsData{Sessions: sessionMap}

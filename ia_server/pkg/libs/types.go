@@ -67,7 +67,7 @@ type SideReq struct {
 
 type EndReq struct {
 	Id    string `json:"id"`
-	Title string `json:"titles"`
+	Title string `json:"title"`
 }
 
 type Step struct {
