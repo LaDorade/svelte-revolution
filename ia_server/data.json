@@ -1,0 +1,15 @@
+{
+  "sessions": {
+    "ux1qbkf2ag3zomc": {
+      "censorship": {
+        "banned_words": [],
+        "corpus": [],
+        "actions": [],
+        "action_keywords": []
+      },
+      "id": "ux1qbkf2ag3zomc",
+      "step": 0,
+      "scenarioFile": "resources/scenario.json"
+    }
+  }
+}

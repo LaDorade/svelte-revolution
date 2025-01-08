@@ -1,0 +1,68 @@
+{
+  "sessions": {
+    "2": {
+      "censorship": {
+        "banned_words": [
+          "fruit",
+          "lettres",
+          "framboise"
+        ],
+        "corpus": [
+          "mettre la clim",
+          "mettre la clim",
+          "mettre la clim",
+          "mettre la clim",
+          "mettre la clim",
+          "mettre la clim",
+          "mettre la clim",
+          "mettre la clim"
+        ],
+        "actions": [
+          "framboise",
+          "tapper framboise"
+        ],
+        "action_keywords": [
+          "framboise"
+        ]
+      },
+      "id": "2",
+      "step": 2,
+      "scenarioFile": "../../resources/scenario.json"
+    },
+    "ux1qbkf2ag3zomc": {
+      "censorship": {
+        "banned_words": [
+          "couloir",
+          "porte",
+          "droite",
+          "gauche",
+          "fond"
+        ],
+        "corpus": [
+          "oui",
+          "pourquoi",
+          "oui",
+          "oui",
+          "oui",
+          "oui",
+          "oui",
+          "oui",
+          "oui"
+        ],
+        "actions": [
+          "prendre la porte au fond à droite",
+          "ouvrir la porte au fond à droite",
+          "passer par la porte au fond à droite",
+          "entrer par la porte au fond à droite"
+        ],
+        "action_keywords": [
+          "fond",
+          "droite"
+        ]
+      },
+      "id": "ux1qbkf2ag3zomc",
+      "step": 1,
+      "scenarioFile": "../../resources/scenario.json"
+    }
+  }
+}
