@@ -7,6 +7,7 @@ import { get } from 'svelte/store';
 import { t } from 'svelte-i18n';
 import { createSessionSchema } from '$lib/zschemas/createSession.schema.js';
 import type { ClientResponseError } from 'pocketbase';
+import { env } from '$env/dynamic/private';
 
 export const actions = {
 	createSession: async ({ request, locals }) => {
@@ -52,7 +53,41 @@ export const actions = {
 			await createStartNode(pb, scenario, session.id);
 
 			if (scenario.ai) {
-				// TODO Create AI session
+				try {
+					const IA_SERVER_URL = env.IA_SERVER_URL;
+					if (!IA_SERVER_URL) {
+						console.error('IA_SERVER_URL not set in env');
+						return fail(500, {
+							error: 'IA_SERVER_URL not set in env'
+						});
+					}
+					const sides = await pb
+						.collection('side')
+						.getFullList({ filter: pb.filter('scenario = {:scenario}', { scenario: scenario.id }) });
+					const ends = await pb
+						.collection('end')
+						.getFullList({ filter: pb.filter('scenario = {:scenario}', { scenario: scenario.id }) });
+					await fetch(IA_SERVER_URL + '/api/newSession', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							session: session.id,
+							sides: sides.map((side) => {
+								return { id: side.id, name: side.name };
+							}),
+							ends: ends.map((end) => {
+								return { id: end.id, title: end.title };
+							})
+						})
+					});
+				} catch (error) {
+					console.error('Error creating session in IA server:', JSON.stringify(error));
+					return fail(500, {
+						error: 'Error creating session in IA server'
+					});
+				}
 			}
 
 			return {

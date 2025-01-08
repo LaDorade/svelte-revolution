@@ -1,7 +1,7 @@
 import { getSession } from '$lib/server/sessions';
 import { createNode } from '$lib/server/nodes';
 import { apiHealthy, censorNode } from '$lib/server/ia';
-import { createNewEvents } from '$lib/server/ia/event';
+import { createNewEvents, triggerEnd } from '$lib/server/ia/event';
 import { type Actions, fail, type ServerLoad } from '@sveltejs/kit';
 import type { End, GraphEvent, GraphNode, Session } from '$types/pocketBase/TableTypes';
 import type { MyPocketBase } from '$types/pocketBase';
@@ -70,9 +70,17 @@ export const actions: Actions = {
 
 		if (censorResponse.triggerEvent && censorResponse.events) {
 			try {
-				await createNewEvents(nodeData.session, censorResponse.events);
+				await createNewEvents(nodeData.session, censorResponse.events, node);
 			} catch (e) {
 				// TODO: Handle error
+				console.log(e);
+			}
+		}
+
+		if (censorResponse.triggerEnd) {
+			try {
+				await triggerEnd(nodeData.session, censorResponse.triggerEnd);
+			} catch (e) {
 				console.log(e);
 			}
 		}
