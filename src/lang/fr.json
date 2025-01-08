@@ -62,7 +62,7 @@
     "otherSessions": "Autres sessions",
     "sessionIsOver": "La sessions est terminée !",
     "openSessions": "Sessions ouvertes",
-    "endedSessions": "Sessions terminées"
+    "endedSessions": "Sessions publiques terminées"
   },
   "inSession": {
     "writeMessage": "Écrire un message",
