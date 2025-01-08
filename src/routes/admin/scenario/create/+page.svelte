@@ -186,7 +186,7 @@
 				></textarea>
 			</label>
 		</div>
-		
+
 		<!-- Lang -->
 		<div class=" flex gap-2 justify-center w-full">
 			{#each availableLocales as lang (lang)}
@@ -217,7 +217,13 @@
 		<div class="flex">
 			<label class="standardLabel flex gap-4">
 				{$t('admin.scenario.useAi')}
-				<input class="rounded p-2" type="checkbox" bind:checked={formData.ai} name="useAi" />
+				<input
+					class="rounded p-2"
+					type="checkbox"
+					value={formData.ai}
+					bind:checked={formData.ai}
+					name="useAi"
+				/>
 			</label>
 		</div>
 

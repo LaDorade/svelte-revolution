@@ -51,7 +51,7 @@ export const actions: Actions = {
 
 		const validation = addNodeSchema.safeParse(nodeData);
 		if (!validation.success) {
-			return fail(422, { success: false, error: validation.error.toString() });
+			return fail(422, { success: false, error: validation.error.format() });
 		}
 
 		const censorResponse = await censorNode(nodeData);
@@ -70,7 +70,7 @@ export const actions: Actions = {
 
 		if (censorResponse.triggerEvent && censorResponse.events) {
 			try {
-				await createNewEvents(nodeData.session, censorResponse.events, node);
+				await createNewEvents(locals.pb, nodeData.session, censorResponse.events, node);
 			} catch (e) {
 				// TODO: Handle error
 				console.log(e);
@@ -79,7 +79,7 @@ export const actions: Actions = {
 
 		if (censorResponse.triggerEnd) {
 			try {
-				await triggerEnd(nodeData.session, censorResponse.triggerEnd);
+				await triggerEnd(locals.pb, nodeData.session, censorResponse.triggerEnd);
 			} catch (e) {
 				console.log(e);
 			}

@@ -20,7 +20,8 @@ export async function apiHealthy() {
 	try {
 		const response = await fetch(url);
 		return response.ok;
-	} catch {
+	} catch (e) {
+		console.error(e);
 		return false;
 	}
 }
@@ -44,10 +45,10 @@ export async function censorNode<T extends { title: string; text: string; sessio
 		},
 		body: JSON.stringify(node)
 	});
-
 	if (!response.ok) return returnValue;
 
 	const data = (await response.json()) as AICensorResponse;
+	console.log('Censor response:', data);
 	const newNode = node;
 	if (data.isCensored) {
 		newNode.title = data.title;

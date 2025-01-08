@@ -67,6 +67,8 @@ export const actions = {
 					const ends = await pb
 						.collection('end')
 						.getFullList({ filter: pb.filter('scenario = {:scenario}', { scenario: scenario.id }) });
+					console.log('sides:', sides);
+					console.log('ends:', ends);
 					await fetch(IA_SERVER_URL + '/api/newSession', {
 						method: 'POST',
 						headers: {

@@ -28,6 +28,13 @@ export class PreviewGraph extends Graph<PreviewNode, LinkMessage> {
 		return true;
 	};
 
+	getNodeIcon = (node: PreviewNode) => {
+		if (node.type === 'startNode' || node.type === 'event' || node.type === 'hidden') {
+			return '';
+		} else {
+			return values.graphIcons[node.sideNumber];
+		}
+	};
 	getNodeFill = (node: PreviewNode) => {
 		if (node.type === 'startNode') {
 			return values.graphColors.nodes.start;
@@ -38,7 +45,7 @@ export class PreviewGraph extends Graph<PreviewNode, LinkMessage> {
 		} else if (node.type === 'hidden') {
 			return values.graphColors.nodes.hidden;
 		} else {
-			return values.graphColors.nodes.sides[node.sideNumber];
+			return values.graphColors.nodes.sides;
 		}
 	};
 	getLinkStroke = (l: LinkMessage) => {

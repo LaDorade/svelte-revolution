@@ -16,11 +16,11 @@ export const actions = {
 
 		const data = await request.formData();
 
-		const { scnearioData, firstNode, sides, events, ends } = parseFormData(data);
+		const { scenarioData, firstNode, sides, events, ends } = parseFormData(data);
 
 		try {
 			const parsed = fullScenarioSchema.parse({
-				...scnearioData,
+				...scenarioData,
 				firstNode,
 				sides,
 				events,
@@ -75,35 +75,33 @@ export const actions = {
 } satisfies Actions;
 
 function parseFormData(data: FormData) {
-	const scnearioData = {
+	const scenarioData = {
 		title: data.get('title')?.toString(),
 		prologue: data.get('prologue')?.toString(),
 		lang: data.get('lang')?.toString(),
-		ai: data.get('useAi')?.toString(),
-		bannedWords: data.getAll('bannedWords').map((word) => word.toString())
+		ai: Boolean(data.get('useAi'))
 	};
-	const events: z.infer<typeof fullScenarioSchema>['events'] = data.getAll('endTitle').map((endTitle, index) => {
-		return {
-			title: endTitle.toString(),
-			text: data.getAll('eventText')[index].toString(),
-			author: data.getAll('eventAuthor')[index].toString()
-		};
-	});
-	const sides: z.infer<typeof fullScenarioSchema>['sides'] = data.getAll('side').map((side) => {
-		return {
-			title: side.toString()
-		};
-	});
-	const ends: z.infer<typeof fullScenarioSchema>['ends'] = data.getAll('endTitle').map((endTitle, index) => {
-		return {
-			title: endTitle.toString(),
-			text: data.getAll('endText')[index].toString()
-		};
-	});
+
+	const events = data.getAll('eventTitle').map((title, index) => ({
+		title: title.toString(),
+		text: data.getAll('eventText')[index]?.toString() || '',
+		author: data.getAll('eventAuthor')[index]?.toString() || ''
+	}));
+
+	const sides = data.getAll('side').map((side) => ({
+		title: side.toString()
+	}));
+
+	const ends = data.getAll('endTitle').map((title, index) => ({
+		title: title.toString(),
+		text: data.getAll('endText')[index]?.toString() || ''
+	}));
+
 	const firstNode = {
 		title: data.get('firstNodeTitle')?.toString(),
 		text: data.get('firstNodeText')?.toString(),
 		author: data.get('firstNodeAuthor')?.toString()
 	};
-	return { scnearioData, firstNode, sides, events, ends };
+
+	return { scenarioData, firstNode, sides, events, ends };
 }

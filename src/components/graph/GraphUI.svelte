@@ -264,10 +264,12 @@
 </div>
 
 <!-- Sides legend -->
-<div class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 pr-10 m-6 bottom-0 left-0 bg-black bg-opacity-30 align-right" >
+<div
+	class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 pr-10 m-6 bottom-0 left-0 bg-black bg-opacity-30 align-right"
+>
 	{#each sides as side}
 		<div class="text-white flex items-center">
-			<img src={side.icon} alt={"icon"} class="w-4 h-4 mr-1 filter invert" draggable="false"/>
+			<img src={side.icon} alt={'icon'} class="w-4 h-4 mr-1 filter invert" draggable="false" />
 			{side.name}
 		</div>
 	{/each}
@@ -299,10 +301,11 @@
 							</div>
 							<div class="text-green-400 flex items-center">
 								{#if graph?.selectedNode?.side}
-									<img src={sides.find((side) => side.id === graph?.selectedNode?.side)?.icon} 
-										alt={"icon"}
+									<img
+										src={sides.find((side) => side.id === graph?.selectedNode?.side)?.icon}
+										alt={'icon'}
 										class="w-4 h-4 mr-1 filter invert"
-										style={"filter: invert(51%) sepia(73%) saturate(352%) hue-rotate(90deg);"}
+										style={'filter: invert(51%) sepia(73%) saturate(352%) hue-rotate(90deg);'}
 									/>
 								{/if}
 								{sides.find((side) => side.id === graph?.selectedNode?.side)?.name}
@@ -333,6 +336,11 @@
 				}}
 				use:enhance={() => {
 					nProgress.start();
+					if (!graph?.selectedNode) {
+						toast.error($t('inSession.noNodeSelected'), { duration: 3000, position: 'bottom-center' });
+						nProgress.done();
+						return;
+					}
 					return async ({ result }) => {
 						applyAction(result);
 						handleSubmit(result);
