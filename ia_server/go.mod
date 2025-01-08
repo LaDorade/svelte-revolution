@@ -3,7 +3,6 @@ module TestNLP
 go 1.23.1
 
 require (
-	code.sajari.com/word2vec v1.0.1
 	github.com/agnivade/levenshtein v1.2.0
 	github.com/james-bowman/nlp v0.0.0-20210511120306-26d441fa0ded
 )

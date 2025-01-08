@@ -5,13 +5,13 @@ import (
 	"TestNLP/pkg/dictionnary"
 	libs "TestNLP/pkg/libs"
 	"TestNLP/pkg/wiktionnaire"
+	"TestNLP/word2vec"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"strings"
 
-	"code.sajari.com/word2vec"
 	"github.com/james-bowman/nlp"
 )
 

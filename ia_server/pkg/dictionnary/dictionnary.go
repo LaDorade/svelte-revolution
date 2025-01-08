@@ -1,7 +1,8 @@
 package dictionnary
 
 import (
-	"code.sajari.com/word2vec"
+	"TestNLP/word2vec"
+
 	"github.com/agnivade/levenshtein"
 )
 
