@@ -27,7 +27,12 @@ export async function apiHealthy() {
 
 export async function censorNode<T extends { title: string; text: string; session: string }>(
 	node: T
-): Promise<{ node: T; triggerEvent: boolean; events: AICensorResponse['events'] | null }> {
+): Promise<{
+	node: T;
+	triggerEvent: boolean;
+	triggerEnd?: string;
+	events: AICensorResponse['events'] | null;
+}> {
 	const url = getURL('checkMsg');
 	const returnValue = { node, triggerEvent: false, events: null };
 	if (!(await apiHealthy()) || !url) return returnValue;
@@ -48,7 +53,12 @@ export async function censorNode<T extends { title: string; text: string; sessio
 		newNode.title = data.title;
 		newNode.text = data.text;
 	}
-	return { node: newNode, triggerEvent: data.triggerNewEvent, events: data.events };
+	return {
+		node: newNode,
+		triggerEvent: data.triggerNewEvent,
+		events: data.events,
+		triggerEnd: data.triggerEnd
+	};
 }
 
 export async function createAIAssociateSession(sessionId: string) {

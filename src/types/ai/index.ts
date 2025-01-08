@@ -3,6 +3,7 @@ export type AICensorResponse = {
 	title: string;
 	text: string;
 	triggerNewEvent: boolean;
+	triggerEnd?: string;
 	events?: {
 		qg: {
 			title: string;
