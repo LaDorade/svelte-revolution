@@ -1,0 +1,152 @@
+{
+    "ends": [
+        "Fichtres, on l'a fait !",
+        "Et #####, on est ######."
+    ],
+    "steps": [
+        {
+            "events": {
+                "qg": {
+                    "title": "",
+                    "text": "",
+                    "author": ""
+                },
+                "terrain": {
+                    "title": "",
+                    "text": "",
+                    "author": ""
+                }
+            },
+            "BannedWords": [],
+            "ActionToPerform": [],
+            "KeyWords": []
+        },
+        {
+            "events": {
+                "qg": {
+                    "title": "Ordre de mission",
+                    "text": "[Ce message n'est visible que par les membres de votre équipe] \n Vous faites partie de l'équipe qg. Votre but est de transmettre les instructions de neutralisation à l'équipe terrain qui se trouve dans le data center où l'IA est stockée.  Lisez la procédure de neutralisation de la machine puis attendez les observations de l'équipe terrain afin de leur transmettre les actions à réaliser pour stopper les dérives de l'IA. Lorsqu'elle aura réalisé l'action nécessaire, vous aurez accès aux nouvelles instructions afin d'avancer à l'étape suivante. Astuce : n'hésitez pas à partager vos indices aussi pour que tout le monde puisse y réfléchir \n \n Procédure de neutralisation [Page 1] La machine qui stocke l'IA se trouve dans la salle au fond à droite.",
+                    "author": "Groupe d'intervention internationnal"
+                },
+                "terrain": {
+                    "title": "Ordre de mission",
+                    "text": "[Ce message n'est visible que par les membres de votre équipe] \nVous faites parti de l'équipe terrain. Votre but est d'éxecuter les instructions que la team qg vous envoie. Par exemple si elle vous dit d'appuyer sur le bouton bleu, vous devrez envoyer un text avec pour title : \"Appuyer sur le bouton bleu\" . Si c'était la bonne action à réaliser, un nouvel évennement se déclenchera. Mais attention, l'équipe qg ne pourra vous aider que si vous décrivez ce que vous avez sous les yeux. Et justement : \n Description de l'environnement [Corridor]\n Face à vous, un grand couloir avec 4 portes, deux de chaque côté.",
+                    "author": "Groupe d'intervention internationnal"
+                }
+            },
+            "BannedWords": [
+                "couloir",
+                "porte",
+                "droite",
+                "gauche",
+                "fond"
+            ],
+            "ActionToPerform": [
+                "prendre la porte au fond à droite",
+                "ouvrir la porte au fond à droite",
+                "passer par la porte au fond à droite",
+                "entrer par la porte au fond à droite"
+            ],
+            "KeyWords": [
+                "fond",
+                "droite"
+            ]
+        },
+        {
+            "events": {
+                "qg": {
+                    "title": "Procédure de neutralisation [Page 2]",
+                    "text": "des mots de passe: \n- 28/11/2022 : ananas \n- 12/12/2022 : banane \n- 05/02/2023 : coing \n- 09/12/2023 : datte \n- 21/03/2024 : évi",
+                    "author": "SOPHIA inc."
+                },
+                "terrain": {
+                    "title": "Description de l'environnement [Porte]",
+                    "text": "\n Vous essayez d'ouvrir la porte mais vous appercevez qu'elle est protégée par un mot de passe. Un clavier miniature est accroché au mur. Sur celui-ci, les touches M-A-B-I sont plus abimées que les autres.",
+                    "author": "Scribe de l'expédition"
+                }
+            },
+            "BannedWords": [
+                "fruit",
+                "lettres",
+                "framboise"
+            ],
+            "ActionToPerform": [
+                "framboise",
+                "tapper framboise"
+            ],
+            "KeyWords": [
+                "framboise"
+            ]
+        },
+        {
+            "events": {
+                "qg": {
+                    "title": "Procédure de neutralisation [Page 3]",
+                    "text": "Cable-Management 101 :\n *Décrire des manières de ranger les cables*\n Attention, un câble ne peut fonctionner à sa pleine capacité que entre 5 et 35°C.",
+                    "author": "SOPHIA inc."
+                },
+                "terrain": {
+                    "title": "Description de l'environnement [Data center]",
+                    "text": "Vous entrez dans le data center, la chaleur est étouffante mais heureusement vous sentez la brise sortir du boitier de climatisation. Face à vous, une dizaine de machines alignées dont les voyants clignotent dans un chaos ordonné. Il vous est impossible de comprendre comment ces machines sont connectées, les câbles s'entre-mêlent, se chevauchent, serpente la salle comme une fourmilière immobile.",
+                    "author": "Scribe de l'expédition"
+                }
+            },
+            "BannedWords": [
+                "température",
+                "climatisation"
+            ],
+            "ActionToPerform": [
+                "éteindre la climatisation",
+                "éteindre la clim",
+                "mettre la clim à 36°C"
+            ],
+            "KeyWords": []
+        },
+        {
+            "events": {
+                "qg": {
+                    "title": "Procédure de neutralisation [Page 4]",
+                    "text": "*faire tableau correspondance voyants et boutons à appuyer*",
+                    "author": "SOPHIA inc."
+                },
+                "terrain": {
+                    "title": "Description de l'environnement [Machine]",
+                    "text": "Vous vous approchez de la machine qui a l'air d'avoir le moins apprécier le changement de température. Vous observez la ligne de voyants allumés : \n Réseau [o]\n Wifi   [ ]\n Mémoire Vive [o]\n Alimentation [o]\n Batterie de secours [ ]\n \n À côté des voyants, il y a deux boutons : Stop et Reset",
+                    "author": "Scribe de l'expédition"
+                }
+            },
+            "BannedWords": [
+                "Réseau",
+                "wifi",
+                "mémoire",
+                "alimentation",
+                "batterie",
+                "stop",
+                "reset"
+            ],
+            "ActionToPerform": [
+                "appuyer sur les deux boutons en même temps",
+                "appuyer sur stop et reset ensemble",
+                "maintenir stop et reset appuyés"
+            ],
+            "KeyWords": []
+        },
+        {
+            "events": {
+                "terrain": {
+                    "title": "Extinction",
+                    "text": "Tous les voyants de la machine s'éteignent",
+                    "author": "Scribe de l'expédition"
+                },
+                "qg": {
+                    "title": "Extinction",
+                    "text": "Le chef de brigader poste un sobriquet taquin sur Internet et.. Ce n'est pas croyable ! Il n'a pas été censuré ! L'équipe Terrain a réussi !!",
+                    "author": "Chef de brigade"
+                }
+            },
+            "BannedWords": [],
+            "ActionToPerform": [],
+            "KeyWords": []
+        }
+    ]
+}

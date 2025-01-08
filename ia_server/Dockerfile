@@ -1,13 +1,14 @@
-## Build Layer
-FROM rust:latest AS builder
+FROM golang:1.23.1
 
+# Setup the app
 WORKDIR /app
-COPY Cargo.toml Cargo.lock ./
+COPY go.mod go.sum ./
+RUN go mod download
 COPY . .
-RUN cargo build --release
 
-ENV ROCKET_ADDRESS=0.0.0.0
-ENV ROCKET_PORT=8000
+# Build the Go app
+RUN go build -o main ./cmd/lauchServer
+
 EXPOSE 8000
-
-CMD ["./target/release/rust-server"]
+# Run the binary
+CMD ["./main"]
