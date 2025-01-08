@@ -1,7 +1,6 @@
 package censorship
 
 import (
-	omwfr "TestNLP/pkg/OMWfr"
 	"TestNLP/pkg/dictionnary"
 	libs "TestNLP/pkg/libs"
 	"TestNLP/pkg/wiktionnaire"
@@ -18,7 +17,6 @@ import (
 type Censorship struct {
 	wiktionnaire   wiktionnaire.Wiktionnaire
 	dictionnary    dictionnary.Dictionnary
-	owm            omwfr.OMWfr
 	Word2VecModel  word2vec.Model
 	BannedWords    []string
 	Corpus         []string
@@ -39,7 +37,7 @@ func NewCensorship(banned_words []string, actions []string, actionsKW []string) 
 	}
 	defer file.Close()
 
-	return &Censorship{*wiktionnaire.NewWiktionnaire(), *dictionnary.NewDictionnary(model), *omwfr.NewOMWfr(), *model, banned_words, []string{}, actions, actionsKW}
+	return &Censorship{*wiktionnaire.NewWiktionnaire(), *dictionnary.NewDictionnary(model), *model, banned_words, []string{}, actions, actionsKW}
 }
 
 func LoadCensorship(cd libs.CensorshipData) *Censorship {
@@ -55,7 +53,7 @@ func LoadCensorship(cd libs.CensorshipData) *Censorship {
 	}
 	defer file.Close()
 
-	return &Censorship{*wiktionnaire.NewWiktionnaire(), *dictionnary.NewDictionnary(model), *omwfr.NewOMWfr(), *model, cd.BannedWords, cd.Corpus, cd.Actions, cd.ActionKeyWords}
+	return &Censorship{*wiktionnaire.NewWiktionnaire(), *dictionnary.NewDictionnary(model), *model, cd.BannedWords, cd.Corpus, cd.Actions, cd.ActionKeyWords}
 }
 
 func (c *Censorship) NextStep(banned_words []string, actions []string, actionKW []string) {
