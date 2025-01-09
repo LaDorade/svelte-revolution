@@ -29,12 +29,12 @@ func NewServerAgent(addr string) *ServerAgent {
 	if ok {
 		sessions, err := data_persistence.LoadSessions(sessionsData)
 		if err != nil {
-			fmt.Printf("impossible de charger les données de sauvegarde : %s", err)
+			fmt.Println("[Warning] Impossible de charger les données de sauvegarde :", err)
 		}
 		return &ServerAgent{sync.Mutex{}, addr, addr, sessions, saver}
 	} else {
 		if err != nil {
-			fmt.Printf("Fichier de sauvegarde inexistant %s", err)
+			fmt.Println("[Warning] Fichier de sauvegarde inexistant", err)
 		}
 		return &ServerAgent{sync.Mutex{}, addr, addr, map[string]*censorship.Session{}, saver}
 	}
@@ -67,7 +67,7 @@ func (rsa *ServerAgent) Start() {
 	mux.HandleFunc("GET /api/health", rsa.Health)
 
 	// création du serveur http
-	s := &http.Server{
+	server := &http.Server{
 		Addr:           rsa.addr,
 		Handler:        mux,
 		ReadTimeout:    10 * time.Second,
@@ -75,8 +75,8 @@ func (rsa *ServerAgent) Start() {
 		MaxHeaderBytes: 1 << 20}
 
 	// lancement du serveur
-	log.Println("Listening on", rsa.addr)
-	go log.Fatal(s.ListenAndServe())
+	log.Println("IA_Server running on http://localhost" + rsa.addr)
+	go log.Fatal(server.ListenAndServe())
 }
 
 func (rsa *ServerAgent) Health(w http.ResponseWriter, r *http.Request) {

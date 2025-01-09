@@ -38,7 +38,7 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 	#nodesInGraph: Selection<SVGCircleElement, T, SVGGElement, T> | undefined;
 	#linksInGraph: Selection<SVGLineElement, V, SVGGElement, T> | undefined;
 	#labelsInGraph: Selection<SVGTextElement, T, SVGGElement, T> | undefined;
-	#iconsInGraph: Selection<SVGTextElement, T, SVGGElement, T> | undefined;
+	#iconsInGraph: Selection<SVGImageElement, T, SVGGElement, T> | undefined;
 
 	_nodes: T[] = $state.raw([]); // lost fine-grained reactivity, but works with d3 (who doesn't like Proxys)
 	#links: V[] = $derived.by(() => this.#buildLinks(this._nodes));
@@ -183,8 +183,9 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 					.attr('y2', (d) => String(d.target.y));
 				this.#nodesInGraph?.attr('cx', (d) => String(d.x)).attr('cy', (d) => String(d.y));
 				this.#labelsInGraph?.attr('x', (d) => String(d.x)).attr('y', (d) => String(d.y));
-				this.#iconsInGraph?.attr('x', (d) => String(d.x - this.getNodeRadius(d)*1.2/2))
-        							.attr('y', (d) => String(d.y - this.getNodeRadius(d)*1.2/2));
+				this.#iconsInGraph
+					?.attr('x', (d) => String(Number(d.x) - (this.getNodeRadius(d) * 1.2) / 2))
+					.attr('y', (d) => String(Number(d.y) - (this.getNodeRadius(d) * 1.2) / 2));
 			})
 			.restart();
 	};
@@ -248,11 +249,12 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 			.on('mouseover', (_, d) => this.handleMouseOver(d))
 			.on('mouseout', () => this.handleMouseOut())
 			.call(
-				drag<BaseType, T>()
+				// @ts-expect-error d3....
+				drag<BaseType | SVGImageElement, T>()
 					.on('start', (event, d) => this.handleDragStart(event, d))
 					.on('drag', (event, d) => this.handleDrag(event, d))
 					.on('end', (event, d) => this.handleDragEnd(event, d))
-			);
+			) as Selection<SVGImageElement, T, SVGGElement, T>;
 	};
 	#updateLabelsInGraph = () => {
 		return this.#labelLayer

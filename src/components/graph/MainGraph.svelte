@@ -41,7 +41,6 @@
 			graph?.updateNode(record);
 		},
 		delete: async (record: GraphNode) => {
-			// const newNodes = await pb.collection('Node').getFullList({ filter: `session="${sessionId}"` });
 			graph?.deleteNode(record);
 		}
 	};

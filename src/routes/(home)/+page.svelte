@@ -28,7 +28,8 @@
 			const node = homeStore.addNode({
 				id,
 				title: $t('home.yourMessage'),
-				text: userMessage
+				text: userMessage,
+				type: 'contribution'
 			});
 			homeStore.addLink({ source: Number(id), target: Number(homeStore.selectedNode?.id) ?? 3 });
 			userMessage = '';
@@ -70,7 +71,9 @@
 		</div>
 		<div id="intro" class="grid grid-cols-2 grid-rows-2 gap-4">
 			<a class="btn dark:bg-white dark:text-black hover:bg-gray-200" href="#intro">{$t('home.discoverBabel')}</a>
-			<a class="text-white bg-secondary-700 btn w-fit hover:bg-secondary-800" href="/sessions">{$t('home.joinSession')}</a>
+			<a class="text-white bg-secondary-700 btn w-fit hover:bg-secondary-800" href="/sessions"
+				>{$t('home.joinSession')}</a
+			>
 			<a class="btn col-span-2 bg-primary-400 hover:bg-primary-500 text-black border-none" href="#animer"
 				>{$t('home.animateYourSession')}</a
 			>
@@ -106,7 +109,9 @@
 								placeholder={$t('home.writeMessage')}
 								class="max-w-xs input border-primary-500 appearance-none bg-black"
 							/>
-							<button type="submit" class=" btn btn-accent bg-primary-400 hover:bg-primary-500">{$t('home.send')}</button>
+							<button type="submit" class=" btn btn-accent bg-primary-400 hover:bg-primary-500"
+								>{$t('home.send')}</button
+							>
 						</form>
 					{:else if homeStore.selectedNode?.id === 5}
 						<div class="mt-2 chat chat-end">
@@ -157,7 +162,9 @@
 				></path>
 			</svg>
 			<p class="text-xl font-semibold mb-3">Babel Révolution | UTC</p>
-			<div class="lg:w-2/3 md:w-3/4 bg-black text-justify p-8 bg-black bg-opacity-30 mx-auto mb-5 rounded flex flex-col gap-2 text-justify">
+			<div
+				class="lg:w-2/3 md:w-3/4 bg-black text-justify p-8 bg-black bg-opacity-30 mx-auto mb-5 rounded flex flex-col gap-2 text-justify"
+			>
 				<blockquote>
 					« {$t('home.footer.citation')} »
 					<br />
