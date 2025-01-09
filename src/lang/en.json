@@ -135,6 +135,18 @@
       "techUsed": "Technologies used",
       "devAndDesign": "Development and design",
       "credits": "Credits"
+    },
+    "exampleGraph": {
+      "title1": "Contemplate the network",
+      "text1": "The graph appears with several interconnected nodes. Each node contains a title, text, and author, serving as an entry point to a message. Observe the whole, feel the connections, and discover the relationships between each message.",
+      "title2": "Dive into the words",
+      "text2": "Click on a node to reveal the details: the author and the content of the message. Each interaction unveils a new step in understanding the exchanges that precede your intervention.",
+      "title3": "Add your voice",
+      "text3": "By clicking on a node, you can add your contribution. Write your own message, which will be added to the network, creating a new link or continuing the conversation.",
+      "title4": "Manipulate the whole",
+      "text4": "Grab a node and move it to see the links react. Move the entire graph, reorganize your view, and play with the gravity that binds the messages together.",
+      "title5": "Explore your way",
+      "text5": "Use the zoom to enlarge or shrink your view of the graph. Whether you want to delve into the details of a specific section or get an overview, it's up to you to choose the angle that suits you."
     }
   },
   "nav": {

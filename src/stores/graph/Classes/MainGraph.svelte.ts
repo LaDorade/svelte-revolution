@@ -48,7 +48,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 	filterNodeBySide(userSideId: number | string | null) {
 		// Hide events from other side if it's an AI scenario
 		const filteredText = get(t)('inSession.eventHidden');
-		this._nodes = this._nodes.map((node) => {
+		this._nodes = this._nodes?.map((node) => {
 			if (node.type === 'event' && node.side && node.side !== userSideId) {
 				node.text = filteredText;
 				node.title = filteredText;

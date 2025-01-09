@@ -1,13 +1,9 @@
-version: '3'
-
 services:
     sveltekit:
         build: .
         ports:
             - '8080:8080'
         container_name: sveltekit
-        env_file:
-            - ${ENV_FILE}
         depends_on:
             - pocketbase
             - iaserver
@@ -38,9 +34,12 @@ services:
         networks:
             - babelNetwork
         container_name: iaserver
+        volumes:
+            - ia-server-data:/data
 
 volumes:
     pocketbase-data:
+    ia-server-data:
 
 networks:
     babelNetwork:

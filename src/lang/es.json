@@ -135,6 +135,18 @@
       "techUsed": "Tecnologías utilizadas",
       "devAndDesign": "Desarrollo y diseño",
       "credits": "Créditos"
+    },
+    "exampleGraph": {
+      "title1": "Contempla la red",
+      "text1": "El grafo aparece con varios nodos interconectados. Cada nodo contiene un título, un texto y un autor, es una puerta de entrada a un mensaje. Observa el conjunto, siente las conexiones y descubre las relaciones entre cada mensaje.",
+      "title2": "Sumérgete en las palabras",
+      "text2": "Haz clic en un nodo para revelar los detalles: el autor y el contenido del mensaje. Cada interacción revela una nueva etapa en la comprensión de los intercambios que preceden tu intervención.",
+      "title3": "Añade tu voz",
+      "text3": "Al hacer clic en un nodo, puedes agregar tu contribución. Escribe tu propio mensaje, que se añadirá a la red, creando un nuevo enlace o continuando la conversación.",
+      "title4": "Manipula el conjunto",
+      "text4": "Toma un nodo y muévelo para ver cómo reaccionan los enlaces. Mueve el grafo en su totalidad, reorganiza tu vista y juega con la gravedad que une los mensajes entre sí.",
+      "title5": "Explora a tu manera",
+      "text5": "Usa el zoom para ampliar o reducir tu vista del grafo. Ya sea que quieras entrar en los detalles de una sección específica o obtener una vista general, tú eliges el ángulo que te conviene."
     }
   },
   "nav": {
