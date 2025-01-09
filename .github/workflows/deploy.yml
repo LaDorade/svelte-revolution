@@ -32,11 +32,6 @@ jobs:
               run: |
                   ssh -o StrictHostKeyChecking=no $USERNAME@$SERVER_IP << 'EOF'
                   cd ./app
-                  echo "ENV_FILE=.env.production" >> .env
-                  rm -rf .env.production
-                  echo "DB_URL=http://pocketbase:8090" >> .env.production
-                  echo "PUBLIC_DB_URL=https://new-db.babel-revolution.fr" >> .env.production
-                  echo "IA_SERVER_URL=http://iaserver:8000" >> .env.production
                   docker-compose down
                   docker-compose up -d --build
                   EOF

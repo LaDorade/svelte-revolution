@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env.production ./build/index.js",
+    "start": "node --env-file=.env.server ./build/index.js",
     "ia": "cd ./ia_server && cargo run",
     "dev": "vite dev",
     "vercel-build": "ADAPTER=auto vite build",
