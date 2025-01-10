@@ -3,6 +3,7 @@ import adapterNode from '@sveltejs/adapter-node';
 import 'dotenv/config';
 
 const adapterType = process.env.ADAPTER || 'auto';
+const checkOrigin = process.env.CSRF_CHECK_ORIGIN === 'true';
 
 const adapter = () => {
 	switch (adapterType) {
@@ -31,6 +32,9 @@ const config = {
 			$components: './src/components',
 			$stores: './src/stores',
 			$types: './src/types'
+		},
+		csrf: {
+			checkOrigin
 		}
 	}
 };

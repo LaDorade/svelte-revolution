@@ -7,8 +7,6 @@ services:
         depends_on:
             - pocketbase
             - iaserver
-        networks:
-            - babelNetwork
 
     pocketbase:
         build: ./db
@@ -18,8 +16,6 @@ services:
             - 8090:8090
         volumes:
             - pocketbase-data:/pb_data
-        networks:
-            - babelNetwork
         container_name: pocketbase_c
         healthcheck:
             test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
@@ -31,8 +27,6 @@ services:
         build: ./ia_server
         ports:
             - 8000:8000
-        networks:
-            - babelNetwork
         container_name: iaserver_c
         volumes:
             - ia-server-data:/data
@@ -40,7 +34,3 @@ services:
 volumes:
     pocketbase-data:
     ia-server-data:
-
-networks:
-    babelNetwork:
-        driver: bridge
