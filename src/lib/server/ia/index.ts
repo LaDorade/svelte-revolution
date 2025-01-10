@@ -13,12 +13,11 @@ function getURL(url: keyof typeof URLs) {
 }
 
 export async function apiHealthy() {
-	console.log('Checking if AI server is healthy');
-	console.log('IA server URL:', iaServerUrl);
-	if (!iaServerUrl) return false;
-	console.log('IA server URL:', iaServerUrl);
+	if (!iaServerUrl) {
+		console.error('IA server URL not defined');
+		return false;
+	}
 	const url = getURL('health');
-	console.log('IA server health URL:', url);
 
 	if (!url) return false;
 
