@@ -4,9 +4,9 @@ services:
         ports:
             - '8080:8080'
         container_name: sveltekit_c
-        depends_on:
-            - pocketbase
-            - iaserver
+        # depends_on:
+        #     - pocketbase
+        #     - iaserver
 
     pocketbase:
         build: ./db
