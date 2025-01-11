@@ -52,6 +52,12 @@
 	});
 </script>
 
+<svelte:head>
+	<title>BⱯBEL RËVOLUㅏION</title>
+	<meta content="BⱯBEL RËVOLUㅏION" property="og:site_name" />
+	<meta content={window.location.href} property="og:url" />
+</svelte:head>
+
 <div class="flex flex-col items-center w-full gap-12 px-4">
 	<section class="flex flex-col items-center w-full gap-6 p-8 pb-0 md:w-2/3">
 		<h1 class="pb-0 text-nowrap max-md:text-4xl">

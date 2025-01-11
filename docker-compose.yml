@@ -13,6 +13,7 @@ services:
             - 8090:8090
         volumes:
             - pocketbase-data:/pb_data
+            - pocketbase-migration:/pb_migrations
 
     iaserver:
         build: ./ia_server
@@ -24,4 +25,5 @@ services:
 
 volumes:
     pocketbase-data:
+    pocketbase-migration:
     ia-server-data:

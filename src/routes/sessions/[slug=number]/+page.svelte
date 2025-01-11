@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, setContext, tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { page } from '$app/stores';
 	import { replaceState } from '$app/navigation';
 	import { LoaderPinwheel } from 'lucide-svelte';
@@ -15,11 +15,10 @@
 	import MainGraph from '$components/graph/MainGraph.svelte';
 	import { viewportStore } from '$stores/ui/index.svelte';
 	import DebugPane from '$components/admin/DebugPane.svelte';
-	import type { PageServerData } from './$types';
-	import type { LayoutServerData } from '../../$types';
+	import type { LayoutServerData, LayoutServerParentData } from './$types';
 
 	interface Props {
-		data: PageServerData & LayoutServerData;
+		data: LayoutServerData & LayoutServerParentData;
 	}
 	let { data }: Props = $props();
 	let { events = [], user = null, ends = [], sides, iaConnected = false, scenario } = data;
@@ -31,10 +30,7 @@
 	// Intro related
 	let prologueSeen = $state(false);
 	let userSideId: string | null = $state(null);
-	let validSide = $derived.by(() => {
-		const side = sides.find((side) => side.id === userSideId)?.id;
-		return !!side;
-	});
+	let validSide = $derived(!!sides.find((side) => side.id === userSideId)?.id);
 	let sideLocked = $state(false);
 	let pseudo: string | null = $state(null);
 	let validPseudo = $derived(pseudoSchema.safeParse(pseudo).success);
@@ -81,7 +77,6 @@
 		if (validPseudo) {
 			pseudoLocked = true;
 		}
-		setContext('nodes', graph?._nodes);
 		await manageSearchParams();
 	});
 </script>

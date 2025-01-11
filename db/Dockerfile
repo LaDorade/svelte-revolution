@@ -13,8 +13,8 @@ ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/po
 RUN unzip /tmp/pb.zip -d /
 
 # run migrations
-# COPY pb_migrations/ /pb/pb_migrations/
-# RUN /pb/pocketbase migrate
+# COPY pb_migrations/ /pb_migrations/
+# RUN /pocketbase migrate
 
 # start PocketBase
 EXPOSE 8090

@@ -24,8 +24,9 @@ export async function apiHealthy() {
 	try {
 		const response = await fetch(url);
 		return response.ok;
-	} catch (e) {
-		console.error(e);
+	} catch {
+		// const err = e as Error;
+		// console.trace('IA server not reachable:', err.message);
 		return false;
 	}
 }
