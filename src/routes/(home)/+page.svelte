@@ -55,7 +55,7 @@
 <svelte:head>
 	<title>BⱯBEL RËVOLUㅏION</title>
 	<meta content="BⱯBEL RËVOLUㅏION" property="og:site_name" />
-	<meta content={window.location.href} property="og:url" />
+	<meta content="new.babel-revolution.fr" property="og:url" />
 </svelte:head>
 
 <div class="flex flex-col items-center w-full gap-12 px-4">
