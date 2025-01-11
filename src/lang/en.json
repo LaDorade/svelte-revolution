@@ -55,7 +55,7 @@
     "otherSessions": "Other sessions",
     "sessionIsOver": "The session is over!",
     "openSessions": "Open sessions",
-    "endedSessions": "Ended sessions"
+    "endedSessions": "Completed public sessions"
   },
   "inSession": {
     "writeMessage": "Write a message",
