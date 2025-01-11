@@ -12,7 +12,7 @@
 </script>
 
 <button
-	class="absolute z-40 m-4 cursor-pointer flex justify-center items-center p-2 border rounded-full top-0 right-0"
+	class="absolute print:hidden z-40 m-4 cursor-pointer flex justify-center items-center p-2 border rounded-full top-0 right-0"
 	onclick={reload}
 >
 	<RefreshCcw strokeWidth={1.5} color="white" />

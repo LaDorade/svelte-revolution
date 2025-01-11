@@ -1,36 +1,29 @@
 services:
     sveltekit:
         build: .
+        container_name: sveltekit_c
         ports:
             - '8080:8080'
-        container_name: sveltekit_c
-        depends_on:
-            - pocketbase
-            - iaserver
 
     pocketbase:
         build: ./db
-        # image: ghcr.io/muchobien/pocketbase:latest # wait for official pocketbase image
         restart: unless-stopped
+        container_name: pocketbase_c
         ports:
             - 8090:8090
         volumes:
             - pocketbase-data:/pb_data
-        container_name: pocketbase_c
-        healthcheck:
-            test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
-            interval: 60s
-            timeout: 5s
-            retries: 5
+            - pocketbase-migration:/pb_migrations
 
     iaserver:
         build: ./ia_server
+        container_name: iaserver_c
         ports:
             - 8000:8000
-        container_name: iaserver_c
         volumes:
             - ia-server-data:/data
 
 volumes:
     pocketbase-data:
+    pocketbase-migration:
     ia-server-data:

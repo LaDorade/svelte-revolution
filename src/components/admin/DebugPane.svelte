@@ -2,7 +2,7 @@
 	import { pb } from '$lib/client/pocketbase';
 	import { ClientResponseError } from 'pocketbase';
 	import toast from 'svelte-french-toast';
-	import { Pane, Button, Text, Textarea, Separator, TabGroup, TabPage, FpsGraph } from 'svelte-tweakpane-ui';
+	import { Pane, Button, Text, Textarea, Separator } from 'svelte-tweakpane-ui';
 	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
 
 	let { graph }: { graph: MainGraph | null } = $props();
@@ -94,46 +94,36 @@
 </script>
 
 <Pane position="draggable" title="Debug Panel">
-	<TabGroup>
+	{#if graph}
+		<Button
+			on:click={() => {
+				const randomIndex = Math.floor(Math.random() * graph?._nodes.length);
+				if (graph?._nodes[randomIndex]) {
+					graph.selectedNode = graph._nodes[randomIndex];
+				}
+			}}
+			title="Select Random Node"
+		></Button>
+		<Button on:click={addRandomNode} title="Add random node"></Button>
 		<Separator />
-		<TabPage title="Basics">
-			<Button on:click={() => window.location.reload()} title="Reload Page"></Button>
-			<FpsGraph interval={50} label="FPS" rows={3} />
-		</TabPage>
-		{#if graph}
-			<Button
-				on:click={() => {
-					const randomIndex = Math.floor(Math.random() * graph?._nodes.length);
-					if (graph?._nodes[randomIndex]) {
-						graph.selectedNode = graph._nodes[randomIndex];
-					}
-				}}
-				title="Select Random Node"
-			></Button>
-			<TabPage selected={!!graph?.selectedNode} title="Graph">
-				<Button on:click={addRandomNode} title="Add random node"></Button>
-				<Separator />
-				<Button on:click={deleteNode} title="Delete node"></Button>
-				<Separator />
-				{#if graph?.selectedNode}
-					<Text
-						on:change={() => (nodeUpdated = true)}
-						bind:value={graph.selectedNode.title}
-						label="Node title"
-					></Text>
-					<Textarea
-						on:change={() => (nodeUpdated = true)}
-						bind:value={graph.selectedNode.text}
-						label="Node description"
-					></Textarea>
-					<Text disabled value={String(graph?.selectedNode.id)} label="Node ID"></Text>
-					<Text disabled value={String(graph?.selectedNode.parent)} label="Parent ID"></Text>
-					<Button on:click={updateNode} title="Update node"></Button>
-					{#if nodeUpdated}
-						<Text disabled value="Change not saved !" label="Status"></Text>
-					{/if}
-				{/if}
-			</TabPage>
+		<Button on:click={deleteNode} title="Delete node"></Button>
+		<Separator />
+		{#if graph?.selectedNode}
+			<Text on:change={() => (nodeUpdated = true)} bind:value={graph.selectedNode.title} label="Node title"
+			></Text>
+			<Textarea
+				on:change={() => (nodeUpdated = true)}
+				bind:value={graph.selectedNode.text}
+				label="Node description"
+			></Textarea>
+			<Text disabled value={String(graph?.selectedNode.id)} label="Node ID"></Text>
+			<Text disabled value={String(graph?.selectedNode.parent)} label="Parent ID"></Text>
+			<Button on:click={updateNode} title="Update node"></Button>
+			{#if nodeUpdated}
+				<Text disabled value="Change not saved !" label="Status"></Text>
+			{/if}
 		{/if}
-	</TabGroup>
+	{:else}
+		<Text value="No graph" label="Status"></Text>
+	{/if}
 </Pane>

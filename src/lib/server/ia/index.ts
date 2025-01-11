@@ -13,15 +13,20 @@ function getURL(url: keyof typeof URLs) {
 }
 
 export async function apiHealthy() {
-	if (!iaServerUrl) return false;
+	if (!iaServerUrl) {
+		console.error('IA server URL not defined');
+		return false;
+	}
 	const url = getURL('health');
+
 	if (!url) return false;
 
 	try {
 		const response = await fetch(url);
 		return response.ok;
-	} catch (e) {
-		console.error(e);
+	} catch {
+		// const err = e as Error;
+		// console.trace('IA server not reachable:', err.message);
 		return false;
 	}
 }

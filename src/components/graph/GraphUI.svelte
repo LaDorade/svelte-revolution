@@ -463,9 +463,9 @@
 {/if}
 
 <!-- Graph Tree -->
-<div class=" fixed m-4 left-0 top-16 z-50">
+<div class=" fixed m-4 left-0 top-16 z-30">
 	<button
-		class=" p-2 flex justify-center shadow-2xl items-center border border-white z-50 rounded-full bg-black bg-opacity-90"
+		class=" p-2 flex justify-center shadow-2xl items-center border border-white rounded-full bg-black bg-opacity-90"
 		onclick={() => (treeView = !treeView)}
 	>
 		<GitPullRequest strokeWidth={1.5} color="white" />

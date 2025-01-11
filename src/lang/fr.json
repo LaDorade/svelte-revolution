@@ -223,5 +223,10 @@
     },
     "internalError": "Erreur interne",
     "unauthorized": "Non autorisé"
+  },
+  "print": {
+    "print": "Imprimer",
+    "returnToGraph": "Retourner au graphe",
+    "printTitle": "Imprimer"
   }
 }
