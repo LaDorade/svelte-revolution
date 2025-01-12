@@ -16,10 +16,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const response = await resolve(event);
 
-	response.headers.append(
-		'set-cookie',
-		event.locals.pb.authStore.exportToCookie({ httpOnly: false, path: '/', secure: dev ? false : false })
-	);
+	response.headers.append('set-cookie', event.locals.pb.authStore.exportToCookie({ httpOnly: false, secure: !dev }));
 	// httpOnly: if true, the cookie is not accessible via JavaScript, that's why we're setting it to false
 	// path: '/' is the default, but we're setting it explicitly here
 	// secure: if true, send cookie over HTTPS only
