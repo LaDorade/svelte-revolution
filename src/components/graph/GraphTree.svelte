@@ -55,6 +55,6 @@
 >
 	{@render leafs(graph?._nodes.filter((node) => !node.parent) ?? [], 1)}
 	<a class="sticky -bottom-2 bg-black w-full p-4 text-gray-200 hover:text-white" href={constructPrintUrl()}>
-		{$t('print.print')}
+		&gt {$t('print.print')}
 	</a>
 </div>

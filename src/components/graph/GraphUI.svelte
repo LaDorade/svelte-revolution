@@ -202,9 +202,9 @@
 			onclick={() => (stateActive ? setCheck('close') : setCheck('nodeInfo'))}
 		>
 			{#if type === 'dots'}
-				<Ellipsis strokeWidth={1.5} color="white" />
+				<Ellipsis strokeWidth={2} color="white" />
 			{:else if type === 'cross'}
-				<X strokeWidth={1.5} color="white" />
+				<X strokeWidth={2} color="white" />
 			{/if}
 		</button>
 	{/snippet}
@@ -264,9 +264,7 @@
 </div>
 
 <!-- Sides legend -->
-<div
-	class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 pr-10 m-6 bottom-0 left-0 bg-black bg-opacity-30 align-right"
->
+<div class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 bottom-0 left-0 bg-black bg-opacity-30">
 	{#each sides as side}
 		<div class="text-white flex items-center">
 			<img src={side.icon} alt={'icon'} class="w-4 h-4 mr-1 filter invert" draggable="false" />
@@ -280,7 +278,7 @@
 	<!-- affichage détails message -->
 	<div
 		class="fixed w-1/2 max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl
-			p-4 m-6 bottom-0 left-0 bg-black bg-opacity-75"
+			p-2 m-4 bottom-0 left-0 bg-black bg-opacity-75"
 		transition:fade={{ duration: 200 }}
 	>
 		{#if states.nodeInfo}
@@ -465,7 +463,7 @@
 <!-- Graph Tree -->
 <div class=" fixed m-4 left-0 top-16 z-30">
 	<button
-		class=" p-2 flex justify-center shadow-2xl items-center border border-white rounded-full bg-black bg-opacity-90"
+		class="p-2 flex justify-center shadow-2xl items-center border border-white rounded-full bg-black bg-opacity-90"
 		onclick={() => (treeView = !treeView)}
 	>
 		<GitPullRequest strokeWidth={1.5} color="white" />

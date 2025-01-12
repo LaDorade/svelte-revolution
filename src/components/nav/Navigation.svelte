@@ -12,7 +12,7 @@
 	let { isAdmin, user } = $props();
 
 	function getUserAvatar(user: User) {
-		return user.avatar ? pb.files.getUrl(user, user.avatar) : graph1;
+		return user.avatar ? pb.files.getURL(user, user.avatar) : graph1;
 	}
 
 	function storePanelInLocalStorage() {

@@ -88,8 +88,4 @@
 		})}
 />
 
-<svg
-	bind:this={svg}
-	class="mainGraph fixed top-0 left-0 w-screen h-screen z-10 cursor-grab bg-black bg-opacity-100 bg-dotted-40 bg-dotted-gray"
->
-</svg>
+<svg bind:this={svg} class="bg-black z-10 cursor-grab bg-dotted-40 bg-dotted-gray"> </svg>

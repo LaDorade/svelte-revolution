@@ -22,7 +22,7 @@
 	}
 
 	function getSessionImage(session: Session) {
-		return session.image ? pb.files.getUrl(session, session.image) : graphe1;
+		return session.image ? pb.files.getURL(session, session.image) : graphe1;
 	}
 
 	// update sessions in realtime when a new session is created

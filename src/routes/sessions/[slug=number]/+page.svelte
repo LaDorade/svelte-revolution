@@ -84,7 +84,7 @@
 <svelte:head>
 	<title>{sessionTitle}</title>
 	<meta content={sessionData.expand?.scenario?.prologue} property="description" />
-	<meta content={sessionData.image ? pb.files.getUrl(sessionData, sessionData.image) : graph1} property="og:image" />
+	<meta content={sessionData.image ? pb.files.getURL(sessionData, sessionData.image) : graph1} property="og:image" />
 	<meta content={sessionData.name} property="og:title" />
 	<meta content={sessionData.expand?.scenario?.prologue} property="og:description" />
 	<meta content="Babel Révolution" property="og:site_name" />
