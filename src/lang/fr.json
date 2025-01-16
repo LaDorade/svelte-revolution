@@ -20,7 +20,8 @@
       "creationSuccess": "Session créée avec succés",
       "createTheSession": "Créer la session",
       "goto": "Aller à la session",
-      "preview": "Prévisulation d'une session"
+      "preview": "Prévisulation d'une session",
+      "aiScenarios": "Scénarios avec IA"
     },
     "scenario": {
       "language": "Langue",

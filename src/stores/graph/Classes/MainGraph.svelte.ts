@@ -32,10 +32,6 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 	};
 
 	addNode = (node: GraphNode) => {
-		const selectedNode = this.selectedNode;
-		if (!selectedNode) {
-			return false;
-		}
 		node.sideNumber = this.sides.find((s: Side) => s.id === node.side)?.number ?? 0;
 		super.addNode(node);
 		return true;

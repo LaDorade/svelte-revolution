@@ -1,14 +1,19 @@
-import { createNode } from '$lib/server/nodes';
+import { createNode } from '$lib/nodes';
 import { censorNode } from '$lib/server/ia';
 import { createNewEvents, triggerEnd } from '$lib/server/ia/event';
-import { type Actions, fail } from '@sveltejs/kit';
-import type { GraphNode } from '$types/pocketBase/TableTypes';
-import type { ClientResponseError } from 'pocketbase';
 import { addNodeSchema } from '$lib/zschemas/addNode.schema';
+import PocketBase from 'pocketbase';
+import { DB_URL } from '$env/static/private';
+import type { ClientResponseError } from 'pocketbase';
+import type { GraphNode } from '$types/pocketBase/TableTypes';
+import { type Actions, fail } from '@sveltejs/kit';
 
 export const actions: Actions = {
-	addNode: async ({ request, locals }) => {
+	addNode: async ({ request }) => {
 		const data = await request.formData();
+
+		const pb = new PocketBase(DB_URL);
+		// * no needs to authenticate, as the session is public
 
 		let nodeData = {
 			title: data.get('title') as string,
@@ -28,7 +33,7 @@ export const actions: Actions = {
 		nodeData = censorResponse.node;
 
 		const node = await createNode(
-			locals.pb,
+			pb,
 			nodeData.title,
 			nodeData.text,
 			nodeData.author,
@@ -40,7 +45,7 @@ export const actions: Actions = {
 
 		if (censorResponse.triggerEvent && censorResponse.events) {
 			try {
-				await createNewEvents(locals.pb, nodeData.session, censorResponse.events, node);
+				await createNewEvents(pb, nodeData.session, censorResponse.events, node);
 			} catch (e) {
 				// TODO: Handle error
 				console.log(e);
@@ -49,7 +54,7 @@ export const actions: Actions = {
 
 		if (censorResponse.triggerEnd) {
 			try {
-				await triggerEnd(locals.pb, nodeData.session, censorResponse.triggerEnd);
+				await triggerEnd(pb, nodeData.session, censorResponse.triggerEnd);
 			} catch (e) {
 				console.log(e);
 			}
@@ -62,15 +67,19 @@ export const actions: Actions = {
 		};
 	},
 	// Admin only
-	addEvent: async ({ request, locals }) => {
+	addEvent: async ({ request }) => {
 		const data = await request.formData();
 		const eventId = data.get('eventId') as string;
 		const sessionId = data.get('session') as string;
+		const pb_cookie = data.get('pb_cookie') as string;
+
+		const pb = new PocketBase(DB_URL);
+		pb.authStore.loadFromCookie(pb_cookie);
 
 		// check if user is superAdmin or author
-		if (locals.pb.authStore.model?.role !== 'superAdmin') {
-			const session = await locals.pb.collection('Session').getOne(sessionId, { fields: 'author' });
-			if (session.author !== locals.pb.authStore.model?.id) {
+		if (pb.authStore.record?.role !== 'superAdmin') {
+			const session = await pb.collection('Session').getOne(sessionId, { fields: 'author' });
+			if (session.author !== pb.authStore.record?.id) {
 				return fail(401, { success: false, error: 'Unauthorized' });
 			}
 		}
@@ -84,15 +93,15 @@ export const actions: Actions = {
 
 		let createdEventNode: GraphNode | null = null;
 		try {
-			const { title, text, author } = await locals.pb.collection('Event').getOne(eventId);
-			const firstNode = await locals.pb.collection('Node').getFirstListItem(
-				locals.pb.filter('type = {:type} && session = {:session}', {
+			const { title, text, author } = await pb.collection('Event').getOne(eventId);
+			const firstNode = await pb.collection('Node').getFirstListItem(
+				pb.filter('type = {:type} && session = {:session}', {
 					session: sessionId,
 					type: 'startNode'
 				})
 			);
 			createdEventNode = await createNode(
-				locals.pb,
+				pb,
 				title,
 				text,
 				author,
@@ -101,12 +110,12 @@ export const actions: Actions = {
 				'event',
 				null
 			);
-			await locals.pb.collection('Session').update(sessionId, { events: eventId });
+			await pb.collection('Session').update(sessionId, { events: eventId });
 		} catch (error) {
 			const e = error as ClientResponseError;
 			console.error('Error creating event:', e.toJSON());
 			if (createdEventNode) {
-				await locals.pb.collection('Node').delete(String(createdEventNode.id));
+				await pb.collection('Node').delete(String(createdEventNode.id));
 			}
 			return fail(500, { success: false, error: 'Error while creating event' });
 		}
@@ -117,15 +126,19 @@ export const actions: Actions = {
 			body: { message: 'Event added', event: createdEventNode }
 		};
 	},
-	endSession: async ({ request, locals }) => {
+	endSession: async ({ request }) => {
 		const data = await request.formData();
 		const sessionId = data.get('session') as string;
 		const endId = data.get('endId') as string;
+		const pb_cookie = data.get('pb_cookie') as string;
+
+		const pb = new PocketBase(DB_URL);
+		pb.authStore.loadFromCookie(pb_cookie);
 
 		// check if user is superAdmin or author
-		if (locals.pb.authStore.model?.role !== 'superAdmin') {
-			const session = await locals.pb.collection('Session').getOne(sessionId, { fields: 'author' });
-			if (session.author !== locals.pb.authStore.model?.id) {
+		if (pb.authStore.model?.role !== 'superAdmin') {
+			const session = await pb.collection('Session').getOne(sessionId, { fields: 'author' });
+			if (session.author !== pb.authStore.model?.id) {
 				return fail(401, { success: false, error: 'Unauthorized' });
 			}
 		}
@@ -138,7 +151,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			await locals.pb.collection('Session').update(sessionId, {
+			await pb.collection('Session').update(sessionId, {
 				completed: true,
 				end: endId
 			});

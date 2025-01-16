@@ -29,7 +29,7 @@
 
 	const realTimeActions = {
 		create: (record: NodeMessage) => {
-			if (iaConnected && record?.type === 'event' && record.side) {
+			if (!admin && iaConnected && record?.type === 'event' && record.side) {
 				const userSide = localStorage.getItem('side_' + sessionId);
 				if (userSide !== record.side) {
 					return;

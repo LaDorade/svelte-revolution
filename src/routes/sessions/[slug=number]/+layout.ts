@@ -1,38 +1,37 @@
-import { getSession } from '$lib/server/sessions';
-import { apiHealthy } from '$lib/server/ia';
+import { getSession } from '$lib/sessions';
+import { pb } from '$lib/client/pocketbase';
 import { type ServerLoad } from '@sveltejs/kit';
 import type { End, GraphEvent, Session } from '$types/pocketBase/TableTypes';
-import type { MyPocketBase } from '$types/pocketBase';
 
-export const load: ServerLoad = async ({ params, locals }) => {
-	const pb = locals.pb;
-	const sessionData = await getSession(pb, Number(params.slug));
+export const load: ServerLoad = async ({ params, fetch }) => {
+	const sessionData = await getSession(Number(params.slug));
 
-	const { events, ends } = await adminCheck(pb, sessionData);
+	const { events, ends } = await adminCheck(sessionData);
 
-	const sides = await getSides(sessionData.scenario, pb);
+	const sides = await getSides(sessionData.scenario);
 
-	// ? Check if AI server is connected and if the scenario has IA
-	const iaConnected = (await apiHealthy()) && sessionData.expand?.scenario?.ai;
+	const aiHealty = await fetch('/api/ai/health', { method: 'POST' })
+		.then((res) => res.json())
+		.then((res) => res.aiHealthy);
+	const aiConnected = aiHealty && sessionData.expand?.scenario?.ai;
 
 	const nodes = pb
 		.collection('Node')
 		.getFullList({ filter: pb.filter('session = {:session}', { session: sessionData.id }), expand: 'side' });
 
 	return {
-		iaConnected,
+		aiConnected,
 		sessionData,
 		scenario: sessionData.expand?.scenario,
 		nodesPromise: nodes,
 		events,
 		ends,
 		sides,
-		isAdmin:
-			sessionData.author === locals.pb.authStore.model?.id || locals.pb.authStore.model?.role === 'superAdmin'
+		isAdmin: sessionData.author === pb.authStore.model?.id || pb.authStore.model?.role === 'superAdmin'
 	};
 };
 
-async function adminCheck(pb: MyPocketBase, sessionData: Session) {
+async function adminCheck(sessionData: Session) {
 	let events: GraphEvent[] = [];
 	let ends: End[] = [];
 	if (sessionData.author === pb.authStore.model?.id || pb.authStore.model?.role === 'superAdmin') {
@@ -49,7 +48,7 @@ async function adminCheck(pb: MyPocketBase, sessionData: Session) {
 	return { events, ends };
 }
 
-async function getSides(scenarioId: string, pb: MyPocketBase) {
+async function getSides(scenarioId: string) {
 	const sidesFromDb = await pb.collection('Side').getFullList({
 		filter: pb.filter('scenario = {:scenario}', { scenario: scenarioId })
 	});

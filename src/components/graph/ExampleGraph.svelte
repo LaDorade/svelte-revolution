@@ -157,38 +157,32 @@
 				homeStore.selectedNode = d;
 			});
 
-		// background / cercle du noeud
-		node.append('circle')
-			.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))
-			.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'yellow' : 'green'));
-
-		// image du noeud
-		let cube =
-			'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWJveCI+PHBhdGggZD0iTTIxIDhhMiAyIDAgMCAwLTEtMS43M2wtNy00YTIgMiAwIDAgMC0yIDBsLTcgNEEyIDIgMCAwIDAgMyA4djhhMiAyIDAgMCAwIDEgMS43M2w3IDRhMiAyIDAgMCAwIDIgMGw3LTRBMiAyIDAgMCAwIDIxIDE2WiIvPjxwYXRoIGQ9Im0zLjMgNyA4LjcgNSA4LjctNSIvPjxwYXRoIGQ9Ik0xMiAyMlYxMiIvPjwvc3ZnPg==';
-		node.append('image')
-			.attr('xlink:href', cube)
-			.attr('width', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))
-			.attr('height', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))
-			.attr('x', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5))
-			.attr('y', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5));
+		node.append('path')
+			.attr(
+				'd',
+				'M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z'
+			)
+			.attr('fill', 'white')
+			.attr('stroke', 'black')
+			.attr('stroke-width', 1);
 
 		simulation.on('tick', () => {
 			if (!node || !link || !label) return;
+			// Mettre à jour la taille et la position de l'image
+			node.select('path')
+				.attr('transform', (d) => {
+					if (d.id === homeStore.selectedNode?.id) {
+						// La value de translate doit être adaptée à la scale que l'on met pour rester au centre
+						return 'translate(-18,-18) scale(1.5)';
+					} else {
+						return 'translate(-12,-12) scale(1)';
+					}
+				})
+				.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'black' : 'white'))
+				.attr('stroke', (d) => (d.id === homeStore.selectedNode?.id ? 'white' : 'black'));
 
 			// Déplacer le groupe entier (image + cercle) à la position du nœud
 			node.attr('transform', (d) => `translate(${d.x},${d.y})`);
-
-			// Mettre à jour la taille et la couleur du cercle
-			node.select('circle')
-				.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10)) // Taille du cercle
-				.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? '#ffed7a' : '#9ef2bd')); // Couleur du cercle
-
-			// Mettre à jour la taille et la position de l'image
-			node.select('image')
-				.attr('x', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5)) // Décalage horizontal pour centrer l'image
-				.attr('y', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5)) // Décalage vertical pour centrer l'image
-				.attr('width', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15)) // Taille de l'image
-				.attr('height', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15)); // Taille de l'image
 
 			// Mettre à jour les liens entre les nœuds
 			link.attr('x1', (d) => d.source.x ?? 0)
@@ -216,5 +210,5 @@
 	}}
 	class="bg-black border-4 rounded-full w-fit bg-dotted-gray bg-dotted-20"
 >
-	<svg bind:this={svg} {width} height={width} class="rounded-full"></svg>
+	<svg bind:this={svg} {width} height={width} class="rounded-full"> </svg>
 </div>

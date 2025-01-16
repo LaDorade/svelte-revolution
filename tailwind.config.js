@@ -1,5 +1,6 @@
 import scrollbar from 'tailwind-scrollbar';
 import daisyui from 'daisyui';
+import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -61,7 +62,7 @@ export default {
 	variants: {
 		backgroundColor: ['responsive', 'hover', 'focus', 'active', 'checked']
 	},
-	plugins: [scrollbar(), daisyui],
+	plugins: [scrollbar(), daisyui, forms()],
 	daisyui: {
 		themes: false,
 		logs: false
