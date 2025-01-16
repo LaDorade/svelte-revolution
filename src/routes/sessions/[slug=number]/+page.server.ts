@@ -14,7 +14,6 @@ export const actions: Actions = {
 			const data = await request.formData();
 
 			const pb = new PocketBase(DB_URL);
-			console.log(pb);
 
 			// * no needs to authenticate, as the session is public
 
@@ -34,7 +33,6 @@ export const actions: Actions = {
 
 			const censorResponse = await censorNode(nodeData);
 			nodeData = censorResponse.node;
-			console.log('Censor response:', censorResponse);
 
 			const node = await createNode(
 				pb,
