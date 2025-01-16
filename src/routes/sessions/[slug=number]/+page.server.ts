@@ -34,6 +34,7 @@ export const actions: Actions = {
 
 			const censorResponse = await censorNode(nodeData);
 			nodeData = censorResponse.node;
+			console.log('Censor response:', censorResponse);
 
 			const node = await createNode(
 				pb,
