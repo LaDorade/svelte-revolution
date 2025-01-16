@@ -13,8 +13,8 @@ export const actions: Actions = {
 		try {
 			const data = await request.formData();
 
-			console.log(DB_URL);
 			const pb = new PocketBase(DB_URL);
+			console.log(pb);
 
 			// * no needs to authenticate, as the session is public
 
