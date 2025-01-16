@@ -35,10 +35,11 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 	#labelLayer: Selection<SVGGElement, T, null, undefined>;
 	#iconLayer: Selection<SVGGElement, T, null, undefined>;
 
-	#nodesInGraph: Selection<SVGCircleElement, T, SVGGElement, T> | undefined;
+	//#nodesInGraph: Selection<SVGCircleElement, T, SVGGElement, T> | undefined;
+	#nodesInGraph: Selection<SVGPathElement, T, SVGGElement, T> | undefined;
 	#linksInGraph: Selection<SVGLineElement, V, SVGGElement, T> | undefined;
 	#labelsInGraph: Selection<SVGTextElement, T, SVGGElement, T> | undefined;
-	#iconsInGraph: Selection<SVGImageElement, T, SVGGElement, T> | undefined;
+	//#iconsInGraph: Selection<SVGImageElement, T, SVGGElement, T> | undefined;
 
 	_nodes: T[] = $state.raw([]); // lost fine-grained reactivity, but works with d3 (who doesn't like Proxys)
 	#links: V[] = $derived.by(() => this.#buildLinks(this._nodes));
@@ -90,7 +91,7 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 		this.#linksInGraph = this.#updateLinksInGraph();
 		this.#nodesInGraph = this.#updateNodesInGraph();
 		this.#labelsInGraph = this.#updateLabelsInGraph();
-		this.#iconsInGraph = this.#updateIconsInGraph();
+		//this.#iconsInGraph = this.#updateIconsInGraph();
 	}
 
 	setOptions(options: Partial<GraphOptions>) {
@@ -181,11 +182,15 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 					.attr('y1', (d) => String(d.source.y))
 					.attr('x2', (d) => String(d.target.x))
 					.attr('y2', (d) => String(d.target.y));
-				this.#nodesInGraph?.attr('cx', (d) => String(d.x)).attr('cy', (d) => String(d.y));
+				//this.#nodesInGraph?.attr('cx', (d) => String(d.x)).attr('cy', (d) => String(d.y));
+				this.#nodesInGraph?.attr('transform', (d) => {
+					const scale = this.getNodeScale(d);
+					return `translate(${d.x},${d.y}) scale(${scale})`;
+				});
 				this.#labelsInGraph?.attr('x', (d) => String(d.x)).attr('y', (d) => String(d.y));
-				this.#iconsInGraph
+				/*this.#iconsInGraph
 					?.attr('x', (d) => String(Number(d.x) - (this.getNodeRadius(d) * 1.2) / 2))
-					.attr('y', (d) => String(Number(d.y) - (this.getNodeRadius(d) * 1.2) / 2));
+					.attr('y', (d) => String(Number(d.y) - (this.getNodeRadius(d) * 1.2) / 2));*/
 			})
 			.restart();
 	};
@@ -194,6 +199,7 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 	abstract getNodeIcon: (node: T) => string;
 	abstract getNodeFill: (node: T) => string;
 	abstract getNodeRadius: (node: T) => number;
+	abstract getNodeScale: (node: T) => number;
 	abstract getNodeStroke: (node: T) => string;
 	abstract getLinkStroke: (link: V) => string;
 
@@ -214,11 +220,11 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 	};
 	#updateNodesInGraph = () => {
 		return this.#nodeLayer
-			.selectAll('circle')
+			.selectAll('path')
 			.data(this._nodes)
-			.join('circle')
+			.join('path')
 			.attr('draggable', true)
-			.attr('r', (d: T) => this.getNodeRadius(d))
+			.attr('d', (d: T) => this.getNodeIcon(d))
 			.style('cursor', 'pointer')
 			.style('fill', (d: T) => {
 				return this.getNodeFill(d);
@@ -229,14 +235,16 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 			.on('mouseout', () => this.handleMouseOut())
 			.call(
 				// @ts-expect-error d3....
-				drag<BaseType | SVGCircleElement, T>()
+				//drag<BaseType | SVGCircleElement, T>()
+				drag<BaseType | SVGPathElement, T>()
 					.on('start', (event, d) => this.handleDragStart(event, d))
 					.on('drag', (event, d) => this.handleDrag(event, d))
 					.on('end', (event, d) => this.handleDragEnd(event, d))
 			)
-			.on('click', (_, d) => this.#selectNode(d)) as Selection<SVGCircleElement, T, SVGGElement, T>;
+			//.on('click', (_, d) => this.#selectNode(d)) as Selection<SVGCircleElement, T, SVGGElement, T>;
+			.on('click', (_, d) => this.#selectNode(d)) as Selection<SVGPathElement, T, SVGGElement, T>;
 	};
-	#updateIconsInGraph = () => {
+	/*#updateIconsInGraph = () => {
 		return this.#iconLayer
 			.selectAll('image')
 			.data(this._nodes)
@@ -255,7 +263,7 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 					.on('drag', (event, d) => this.handleDrag(event, d))
 					.on('end', (event, d) => this.handleDragEnd(event, d))
 			) as Selection<SVGImageElement, T, SVGGElement, T>;
-	};
+	};*/
 	#updateLabelsInGraph = () => {
 		return this.#labelLayer
 			.selectAll('text')

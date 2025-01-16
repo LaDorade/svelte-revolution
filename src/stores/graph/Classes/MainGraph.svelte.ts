@@ -57,7 +57,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 
 	getNodeIcon = (node: GraphNode) => {
 		if (node.type === 'startNode' || node.type === 'event' || node.type === 'hidden') {
-			return '';
+			return values.graphIconEvent;
 		} else {
 			return values.graphIcons[node.sideNumber];
 		}
@@ -96,6 +96,19 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 			return values.nodeRadius.selected;
 		} else {
 			return values.nodeRadius.default;
+		}
+	};
+	getNodeScale = (d: GraphNode) => {
+		const selected = this.selectedNode && this.selectedNode.id === d.id;
+		if (d.type === 'startNode') {
+			if (selected) return values.nodeScale.start.selected;
+			return values.nodeScale.start.default;
+		} else if (d.type === 'event') {
+			if (selected) return values.nodeScale.event.selected;
+			return values.nodeScale.event.default;
+		} else {
+			if (selected) return values.nodeScale.default.selected;
+			return values.nodeScale.default.default;
 		}
 	};
 }
