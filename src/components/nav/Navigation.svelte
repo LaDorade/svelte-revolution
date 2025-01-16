@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { pb } from '$lib/client/pocketbase';
 	import { titleStore } from '$stores/titles/index.svelte';
 	import { viewportStore } from '$stores/ui/index.svelte';
 	import { locale, locales } from 'svelte-i18n';
 	import { t } from 'svelte-i18n';
 	import graph1 from '$lib/assets/graphe1.png';
-	import nProgress from 'nprogress';
 	import type { User } from '$types/pocketBase/TableTypes';
+	import { invalidateAll } from '$app/navigation';
+	import nProgress from 'nprogress';
 
 	let { isAdmin, user } = $props();
 
@@ -15,8 +15,11 @@
 		return user.avatar ? pb.files.getURL(user, user.avatar) : graph1;
 	}
 
-	function storePanelInLocalStorage() {
-		localStorage.setItem('seeDebugPanel', viewportStore.seeDebugPanel.toString());
+	async function logout() {
+		nProgress.start();
+		pb.authStore.clear();
+		await invalidateAll();
+		nProgress.done();
 	}
 </script>
 
@@ -56,19 +59,6 @@
 									>{$t('admin.session.createSession')}</a
 								>
 							</li>
-							<li>
-								<label>
-									{$t('admin.debugPanel')}
-									<input
-										class=" cursor-pointer"
-										type="checkbox"
-										name="seeDebugPane"
-										id="debugPaneCheck"
-										onchange={storePanelInLocalStorage}
-										bind:checked={viewportStore.seeDebugPanel}
-									/>
-								</label>
-							</li>
 						</ul>
 					</li>
 				{/if}
@@ -87,7 +77,7 @@
 		{#if viewportStore.actualBreakpoint !== 'sm'}
 			<select bind:value={$locale} class="select select-ghost">
 				{#each $locales as loc}
-					<option value={loc}>{loc.split('-')[1]}</option>
+					<option value={loc}>{loc.split('-')[0]}</option>
 				{/each}
 			</select>
 		{/if}
@@ -116,20 +106,8 @@
 								<span class="badge">{$t('misc.soon')}</span>
 							</a>
 						</li>
-						<form
-							action="/logout?/logout"
-							use:enhance={() => {
-								nProgress.start();
-								return async ({ update }) => {
-									await update({ reset: false });
-									nProgress.done();
-								};
-							}}
-							onsubmit={(e) => e.preventDefault()}
-							method="post"
-						>
-							<button class="z-50 w-full" type="submit">{$t('nav.logout')}</button>
-						</form>
+
+						<button onclick={logout} class="z-50 w-full" type="submit">{$t('nav.logout')}</button>
 					</ul>
 				</div>
 			</div>

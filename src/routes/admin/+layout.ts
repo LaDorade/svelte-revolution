@@ -1,13 +1,17 @@
+import { pb } from '$lib/client/pocketbase';
 import type { Session } from '$types/pocketBase/TableTypes';
-import { redirect, type ServerLoad } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 
-export const load: ServerLoad = async ({ locals }) => {
-	const pb = locals.pb;
-	const user = pb.authStore.model;
-	if (!user) {
+export const ssr = false; // We don't need server-side rendering for admin pages
+// plus, it causes weird loops with the pb.authStore
+
+export const load = async ({ url }) => {
+	if (!pb.authStore.isValid || !pb.authStore.record) {
 		pb.authStore.clear();
-		redirect(303, '/login');
+		return redirect(303, '/login');
 	}
+	const user = pb.authStore.record;
+
 	const sessions = await pb.collection('Session').getFullList({
 		filter: pb.filter('author = {:user}', { user: user.id }),
 		expand: 'scenario'
@@ -22,6 +26,8 @@ export const load: ServerLoad = async ({ locals }) => {
 
 	return {
 		sessions,
-		otherSessions
+		otherSessions,
+		user: user,
+		route: url.pathname
 	};
 };

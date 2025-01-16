@@ -9,7 +9,6 @@
 	import graph1 from '$lib/assets/graphe1.png';
 	import { viewportStore } from '$stores/ui/index.svelte';
 	import type { User } from '$types/pocketBase/TableTypes';
-	import DebugPane from '$components/admin/DebugPane.svelte';
 	import BackToTop from '$components/BackToTop.svelte';
 	import Navigation from '$components/nav/Navigation.svelte';
 
@@ -33,7 +32,6 @@
 
 	onMount(() => {
 		viewportStore.updateViewport(window);
-		viewportStore.seeDebugPanel = localStorage.getItem('seeDebugPanel') === 'true';
 	});
 </script>
 

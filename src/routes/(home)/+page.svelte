@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { quintOut } from 'svelte/easing';
 	import { fade, scale } from 'svelte/transition';
 	import { replaceState } from '$app/navigation';
@@ -39,8 +39,9 @@
 		}
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		visible = true;
+		await tick();
 
 		const url = new URL(window.location.href);
 		const newUrl = url.toString().split('#');

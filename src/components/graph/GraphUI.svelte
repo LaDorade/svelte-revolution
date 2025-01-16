@@ -22,11 +22,13 @@
 	import { watch } from '$lib/runes/watch.svelte';
 	import { pb } from '$lib/client/pocketbase';
 	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
+	import type { RecordModel } from 'pocketbase';
+	import { viewportStore } from '$stores/ui/index.svelte';
 
 	interface Props {
 		graph: MainGraph | null;
 		session: Session;
-		user?: User | null;
+		user?: RecordModel | null;
 		admin?: boolean;
 		events?: GraphEvent[];
 		ends?: End[];
@@ -70,6 +72,10 @@
 	});
 
 	let treeView = $state(false);
+
+	function storePanelInLocalStorage() {
+		localStorage.setItem('seeDebugPanel', viewportStore.seeDebugPanel.toString());
+	}
 
 	/**
 	 * Set the state of the UI
@@ -116,17 +122,6 @@
 		nProgress.done();
 	}
 
-	$effect(() => {
-		watch(() => {
-			if (!graph?.selectedNode) {
-				states.nodeInfo = false;
-				return;
-			}
-			if (states.nodeInfo) return;
-			setCheck('nodeInfo');
-		}, [graph?.selectedNode]);
-	});
-
 	async function handleSessionEnd() {
 		// Listen for session completion
 		await pb.collection('Session').subscribe(session.id, async (res) => {
@@ -150,6 +145,17 @@
 			}
 		});
 	}
+
+	$effect(() => {
+		watch(() => {
+			if (!graph?.selectedNode) {
+				states.nodeInfo = false;
+				return;
+			}
+			if (states.nodeInfo) return;
+			setCheck('nodeInfo');
+		}, [graph?.selectedNode]);
+	});
 
 	onMount(async () => {
 		await handleSessionEnd();
@@ -176,10 +182,7 @@
 		class="flex flex-col gap-2 p-x-4 cursor-default text-primary-500 w-full items-center"
 	>
 		<label class="form-control w-full max-w-xs">
-			<!-- <div class="label">
-				<span class="label-text text-inherit">{trad}</span>
-			</div> -->
-			<select {name} id={name} class="select select-accent appearance-none bg-black select-sm">
+			<select {name} id={name} class="bg-black rounded-md">
 				<option disabled selected>{trad}</option>
 				{#each values as value}
 					<option value={value.id}>{value.title}</option>
@@ -187,6 +190,7 @@
 			</select>
 		</label>
 		<input type="hidden" name="session" value={session.id} />
+		<input type="hidden" name="pb_cookie" value={pb.authStore.exportToCookie()} />
 		<button type="submit" class="self-center btn btn-sm btn-accent">
 			{trad}
 		</button>
@@ -374,12 +378,8 @@
 						<div class="label p-0">
 							<span class="label-text text-inherit">{$t('side.yourSide')}</span>
 						</div>
-						<select
-							bind:value={userSideId}
-							name="side"
-							class="select select-accent text-primary-500 bg-gray-950 select-sm select-bordered"
-						>
-							<option disabled selected>{$t('side.chooseSide')}</option>
+						<select bind:value={userSideId} name="side" class="text-primary-500">
+							<option value={null} disabled selected>{$t('side.chooseSide')}</option>
 							{#each sides as side}
 								<option value={side.id}>{side.name}</option>
 							{/each}
@@ -438,6 +438,19 @@
 				}}
 				class="flex flex-col items-center gap-4 p-2 text-primary-500 z-10"
 			>
+				<div>
+					<label>
+						{$t('admin.debugPanel')}
+						<input
+							class=" cursor-pointer"
+							type="checkbox"
+							name="seeDebugPane"
+							id="debugPaneCheck"
+							onchange={storePanelInLocalStorage}
+							bind:checked={viewportStore.seeDebugPanel}
+						/>
+					</label>
+				</div>
 				{@render formTemplate(events, 'addEvent', 'eventId', $t('admin.event.triggerEvent'))}
 				{@render formTemplate(ends, 'endSession', 'endId', $t('admin.session.endSession'))}
 			</div>

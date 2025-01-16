@@ -15,13 +15,13 @@
 	import MainGraph from '$components/graph/MainGraph.svelte';
 	import { viewportStore } from '$stores/ui/index.svelte';
 	import DebugPane from '$components/admin/DebugPane.svelte';
-	import type { LayoutServerData, LayoutServerParentData } from './$types';
+	import type { LayoutData } from './$types';
 
 	interface Props {
-		data: LayoutServerData & LayoutServerParentData;
+		data: LayoutData;
 	}
 	let { data }: Props = $props();
-	let { events = [], user = null, ends = [], sides, iaConnected = false, scenario } = data;
+	let { events = [], user = null, ends = [], sides, aiConnected = false, scenario } = data;
 
 	let sessionData = $state(data.sessionData);
 
@@ -38,6 +38,7 @@
 
 	// ? wierd hack to make the admin reactive on page reload
 	let admin = $derived($page.data.isAdmin as boolean);
+
 	let sessionTitle = $derived.by(() => {
 		return (admin ? 'ADMIN - ' : '') + data.sessionData.name;
 	});
@@ -64,7 +65,7 @@
 
 	onMount(async () => {
 		titleStore.setNavTitle(sessionTitle);
-		if (scenario?.ai && iaConnected) {
+		if (scenario?.ai && aiConnected) {
 			toast.success($t('ia.connected'), {
 				position: 'top-left'
 			});
@@ -78,6 +79,7 @@
 			pseudoLocked = true;
 		}
 		await manageSearchParams();
+		viewportStore.seeDebugPanel = localStorage.getItem('seeDebugPanel') === 'true';
 	});
 </script>
 
@@ -92,7 +94,7 @@
 </svelte:head>
 
 {#if (data.isSuperAdmin || data.user?.id === sessionData.author) && viewportStore.seeDebugPanel}
-	<DebugPane {graph} />
+	<DebugPane {graph} session={sessionData} />
 {/if}
 
 {#await data.nodesPromise}
