@@ -32,8 +32,8 @@ jobs:
               run: |
                   ssh -o StrictHostKeyChecking=no $USERNAME@$SERVER_IP << 'EOF'
                   cd ./app
+                  git stash -u -a
                   git checkout staging
-                  git stash -a
                   git pull origin staging
                   docker-compose down
                   docker-compose up -d --build

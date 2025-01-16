@@ -1,4 +1,4 @@
-import values from '$lib/mainGraph/values';
+import * as values from '$lib/mainGraph/values';
 import Graph, { defaultGraphOptions, type GraphOptions } from './Graph.svelte';
 import { t } from 'svelte-i18n';
 import { get } from 'svelte/store';
@@ -57,7 +57,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 
 	getNodeIcon = (node: GraphNode) => {
 		if (node.type === 'startNode' || node.type === 'event' || node.type === 'hidden') {
-			return values.graphIconEvent;
+			return values.eventIcon;
 		} else {
 			return values.graphIcons[node.sideNumber];
 		}
@@ -99,7 +99,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 		}
 	};
 	getNodeScale = (d: GraphNode) => {
-		const selected = this.selectedNode && this.selectedNode.id === d.id;
+		const selected = this.selectedNode?.id === d.id;
 		if (d.type === 'startNode') {
 			if (selected) return values.nodeScale.start.selected;
 			return values.nodeScale.start.default;

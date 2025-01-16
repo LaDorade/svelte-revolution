@@ -1,4 +1,4 @@
-import values from '$lib/mainGraph/values';
+import * as values from '$lib/mainGraph/values';
 import Graph, { defaultGraphOptions, type GraphOptions } from './Graph.svelte';
 import type { LinkMessage } from '$types/graph';
 import type { PreviewNode, Side } from '$types/pocketBase/TableTypes';
@@ -70,5 +70,9 @@ export class PreviewGraph extends Graph<PreviewNode, LinkMessage> {
 		} else {
 			return values.nodeRadius.default;
 		}
+	};
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	getNodeScale = (_node: PreviewNode) => {
+		return 1;
 	};
 }
