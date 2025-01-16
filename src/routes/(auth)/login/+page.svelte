@@ -16,11 +16,15 @@
 		onsubmit={async (e) => {
 			e.preventDefault();
 			nProgress.start();
-			await pb.collection('Users').authWithPassword(username, password);
-			if (pb.authStore.isValid) {
-				toast.success('Logged in');
-				invalidateAll(); // * Important to avoid infinite loop
-			} else {
+			try {
+				await pb.collection('Users').authWithPassword(username, password);
+				if (pb.authStore.isValid) {
+					toast.success('Logged in');
+					invalidateAll(); // * Important to avoid infinite loop
+				} else {
+					toast.error('Invalid credentials', { position: 'bottom-center' });
+				}
+			} catch {
 				toast.error('Invalid credentials', { position: 'bottom-center' });
 			}
 			nProgress.done();
@@ -56,44 +60,4 @@
 			</div>
 		</div>
 	</form>
-	<!-- <div class="flex flex-col gap-4">
-		<h3 class="">
-			{$t('misc.or')}
-		</h3>
-		{@render authWithOAuth2('github')}
-		{@render authWithOAuth2('discord')}
-	</div> -->
 </div>
-
-{#snippet authWithOAuth2(provider: 'github' | 'discord')}
-	<form
-		action="?/loginWithProvider"
-		method="post"
-		onsubmit={async (e) => {
-			e.preventDefault();
-		}}
-		use:enhance={async (e) => {
-			nProgress.start();
-			let authData;
-			try {
-				authData = await pb.collection('users').authWithOAuth2({
-					provider,
-					createData: {
-						role: 'user'
-					}
-				});
-			} catch (error) {
-				console.error(error);
-				nProgress.done();
-				return;
-			}
-			e.formData.set('cookie', pb.authStore.exportToCookie());
-			return async ({ update }) => {
-				await update({ reset: false });
-				nProgress.done();
-			};
-		}}
-	>
-		<button type="submit" class="btn btn-primary">Or connect with {provider}</button>
-	</form>
-{/snippet}
