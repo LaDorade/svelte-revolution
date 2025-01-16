@@ -19,14 +19,15 @@ const graphColors = {
 
 // ne pas exporter
 const icons = {
-	circle: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNpcmNsZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48L3N2Zz4=",
-	square: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXNxdWFyZSI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIvPjwvc3ZnPg==",
-	triangle: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXRyaWFuZ2xlIj48cGF0aCBkPSJNMTMuNzMgNGEyIDIgMCAwIDAtMy40NiAwbC04IDE0QTIgMiAwIDAgMCA0IDIxaDE2YTIgMiAwIDAgMCAxLjczLTNaIi8+PC9zdmc+",
-	pentagon: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXBlbnRhZ29uIj48cGF0aCBkPSJNMTAuODMgMi4zOGEyIDIgMCAwIDEgMi4zNCAwbDggNS43NGEyIDIgMCAwIDEgLjczIDIuMjVsLTMuMDQgOS4yNmEyIDIgMCAwIDEtMS45IDEuMzdINy4wNGEyIDIgMCAwIDEtMS45LTEuMzdMMi4xIDEwLjM3YTIgMiAwIDAgMSAuNzMtMi4yNXoiLz48L3N2Zz4=",
-	diamond: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWRpYW1vbmQiPjxwYXRoIGQ9Ik0yLjcgMTAuM2EyLjQxIDIuNDEgMCAwIDAgMCAzLjQxbDcuNTkgNy41OWEyLjQxIDIuNDEgMCAwIDAgMy40MSAwbDcuNTktNy41OWEyLjQxIDIuNDEgMCAwIDAgMC0zLjQxbC03LjU5LTcuNTlhMi40MSAyLjQxIDAgMCAwLTMuNDEgMFoiLz48L3N2Zz4="
+	circle: 'M12 0a12 12 0 1 0 0 24a12 12 0 1 0 0 -24z',
+	square: 'M-12 -12h24v24h-24z',
+	triangle: 'M0 -12L12 12H-12z',
+	hexagon: 'M12 2.31l9.8 5.66a2 2 0 0 1 1 1.73v11.32a2 2 0 0 1-1 1.73l-9.8 5.66a2 2 0 0 1-2 0l-9.8-5.66a2 2 0 0 1-1-1.73V9.7a2 2 0 0 1 1-1.73l9.8-5.66a2 2 0 0 1 2 0z',
+	diamond: 'M0 -12L12 0L0 12L-12 0z'
 }
 
-const graphIcons = [icons.circle, icons.square, icons.triangle, icons.pentagon, icons.diamond];
+const graphIcons = [icons.square, icons.triangle, icons.hexagon, icons.diamond, icons.circle];
+const graphIconEvent = icons.circle;
 
 const labels = {
 	default: 'white',
@@ -45,11 +46,28 @@ const nodeRadius = {
 	event: 25
 };
 
+const nodeScale = {
+	default: {
+		default: 1.2,
+		selected: 1.6
+	},
+	start: {
+		default: 2.5,
+		selected: 2.9
+	},
+	event: {
+		default: 2,
+		selected: 2.4
+	}
+};
+
 export default {
 	graphColors,
 	graphIcons,
+	graphIconEvent,
 	cssSidePrefix,
 	labels,
 	strokeDashArray,
-	nodeRadius
+	nodeRadius,
+	nodeScale
 };

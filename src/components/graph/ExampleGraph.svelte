@@ -22,6 +22,7 @@
 	import { scale } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { t } from 'svelte-i18n';
+	import values from '$lib/mainGraph/values';
 
 	const width = 300;
 	const forces = {
@@ -158,21 +159,27 @@
 			});
 
 		// background / cercle du noeud
-		node.append('circle')
+		/*node.append('circle')
 			.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))
-			.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'yellow' : 'green'));
+			.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'yellow' : 'green'));*/
 
 		// image du noeud
-		let cube =
+		/*let cube =
 			'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWJveCI+PHBhdGggZD0iTTIxIDhhMiAyIDAgMCAwLTEtMS43M2wtNy00YTIgMiAwIDAgMC0yIDBsLTcgNEEyIDIgMCAwIDAgMyA4djhhMiAyIDAgMCAwIDEgMS43M2w3IDRhMiAyIDAgMCAwIDIgMGw3LTRBMiAyIDAgMCAwIDIxIDE2WiIvPjxwYXRoIGQ9Im0zLjMgNyA4LjcgNSA4LjctNSIvPjxwYXRoIGQ9Ik0xMiAyMlYxMiIvPjwvc3ZnPg==';
 		node.append('image')
 			.attr('xlink:href', cube)
 			.attr('width', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))
 			.attr('height', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))
 			.attr('x', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5))
-			.attr('y', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5));
+			.attr('y', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5));*/
 
-		simulation.on('tick', () => {
+		node.append('path')
+			.attr('d', values.graphIconEvent)
+			.attr('fill', 'white')
+			.attr('stroke', 'black')
+			.attr('stroke-width', 1);
+
+		/*simulation.on('tick', () => {
 			if (!node || !link || !label) return;
 
 			// Déplacer le groupe entier (image + cercle) à la position du nœud
@@ -191,6 +198,36 @@
 				.attr('height', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15)); // Taille de l'image
 
 			// Mettre à jour les liens entre les nœuds
+			link.attr('x1', (d) => d.source.x ?? 0)
+				.attr('y1', (d) => Number(d.source.y) ?? 0)
+				.attr('x2', (d) => Number(d.target.x) ?? 0)
+				.attr('y2', (d) => Number(d.target.y) ?? 0);
+
+			// Mettre à jour la position des labels
+			label.attr('x', (d) => d.x).attr('y', (d) => d.y);
+		});*/
+		simulation.on('tick', () => {
+			if (!node || !link || !label) return;
+
+			node.attr('transform', (d) => `translate(${d.x},${d.y})`);
+
+			// Mettre à jour la taille et la couleur du cercle
+			node.select('circle')
+				.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))
+				.attr('fill', 'transparent');
+
+			// Mettre à jour la taille et la position de l'image
+			node.select('path')
+				.attr('transform', (d) => {
+					if (d.id === homeStore.selectedNode?.id) {
+						return 'translate(-18,-18) scale(1.5)';
+					} else {
+						return 'translate(-12,-12) scale(1)';
+					}
+				})
+				.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'black' : 'white'))
+				.attr('stroke', (d) => (d.id === homeStore.selectedNode?.id ? 'white' : 'black'));
+
 			link.attr('x1', (d) => d.source.x ?? 0)
 				.attr('y1', (d) => Number(d.source.y) ?? 0)
 				.attr('x2', (d) => Number(d.target.x) ?? 0)
