@@ -8,7 +8,7 @@
 	import type { ActionResult } from '@sveltejs/kit';
 	import { blur, fade, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import values from '$lib/mainGraph/values';
+	import * as values from '$lib/mainGraph/values';
 	import {
 		Codesandbox,
 		Ellipsis,

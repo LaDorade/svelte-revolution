@@ -1,6 +1,4 @@
-const cssSidePrefix = 'side-';
-
-const graphColors = {
+export const graphColors = {
 	nodes: {
 		// hex colors or color names
 		sides: '#9ef2bd',
@@ -18,38 +16,40 @@ const graphColors = {
 };
 
 // ne pas exporter
-const icons = {
-	circle: 'M12 0a12 12 0 1 0 0 24a12 12 0 1 0 0 -24z',
-	square: 'M-12 -12h24v24h-24z',
-	triangle: 'M0 -12L12 12H-12z',
-	hexagon: 'M12 2.31l9.8 5.66a2 2 0 0 1 1 1.73v11.32a2 2 0 0 1-1 1.73l-9.8 5.66a2 2 0 0 1-2 0l-9.8-5.66a2 2 0 0 1-1-1.73V9.7a2 2 0 0 1 1-1.73l9.8-5.66a2 2 0 0 1 2 0z',
-	diamond: 'M0 -12L12 0L0 12L-12 0z'
-}
+// ne pas exporter
+export const icons = {
+	circle: 'M0 -12 a12 12 0 1 0 0 24 a12 12 0 1 0 0 -24 z',
+	diamond: 'M0 -12 L12 0 L0 12 L-12 0 z',
+	hexagon: 'M12 0 L6 10.3923 L-6 10.3923 L-12 0 L-6 -10.3923 L6 -10.3923 Z',
+	square: 'M-12 -12 h24 v24 h-24 z',
+	triangle: 'M0 -12 L12 12 H-12 z'
+};
+export const graphIcons = Object.values(icons);
 
-const graphIcons = [icons.square, icons.triangle, icons.hexagon, icons.diamond, icons.circle];
-const graphIconEvent = icons.circle;
+export const eventIcon = icons.circle;
+export const exampleIcon = icons.diamond;
 
-const labels = {
+export const labels = {
 	default: 'white',
 	hidden: 'transparent'
 };
 
-const strokeDashArray = {
+export const strokeDashArray = {
 	default: '5, 15',
 	hover: 'none'
 };
 
-const nodeRadius = {
+export const nodeRadius = {
 	default: 20,
 	selected: 25,
 	start: 30,
 	event: 25
 };
 
-const nodeScale = {
+export const nodeScale = {
 	default: {
-		default: 1.2,
-		selected: 1.6
+		default: 1.6,
+		selected: 2
 	},
 	start: {
 		default: 2.5,
@@ -59,15 +59,4 @@ const nodeScale = {
 		default: 2,
 		selected: 2.4
 	}
-};
-
-export default {
-	graphColors,
-	graphIcons,
-	graphIconEvent,
-	cssSidePrefix,
-	labels,
-	strokeDashArray,
-	nodeRadius,
-	nodeScale
 };

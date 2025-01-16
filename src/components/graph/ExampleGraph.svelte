@@ -22,7 +22,7 @@
 	import { scale } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { t } from 'svelte-i18n';
-	import values from '$lib/mainGraph/values';
+	import * as graphAssets from '$lib/mainGraph/values';
 
 	const width = 300;
 	const forces = {
@@ -159,47 +159,11 @@
 			});
 
 		node.append('path')
-			.attr(
-				'd',
-				'M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z'
-			)
+			.attr('d', graphAssets.exampleIcon)
 			.attr('fill', 'white')
 			.attr('stroke', 'black')
 			.attr('stroke-width', 1);
 
-		node.append('path')
-			.attr('d', values.graphIconEvent)
-			.attr('fill', 'white')
-			.attr('stroke', 'black')
-			.attr('stroke-width', 1);
-
-		/*simulation.on('tick', () => {
-			if (!node || !link || !label) return;
-			// Mettre à jour la taille et la position de l'image
-			node.select('path')
-				.attr('transform', (d) => {
-					if (d.id === homeStore.selectedNode?.id) {
-						// La value de translate doit être adaptée à la scale que l'on met pour rester au centre
-						return 'translate(-18,-18) scale(1.5)';
-					} else {
-						return 'translate(-12,-12) scale(1)';
-					}
-				})
-				.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'black' : 'white'))
-				.attr('stroke', (d) => (d.id === homeStore.selectedNode?.id ? 'white' : 'black'));
-
-			// Déplacer le groupe entier (image + cercle) à la position du nœud
-			node.attr('transform', (d) => `translate(${d.x},${d.y})`);
-
-			// Mettre à jour les liens entre les nœuds
-			link.attr('x1', (d) => d.source.x ?? 0)
-				.attr('y1', (d) => Number(d.source.y) ?? 0)
-				.attr('x2', (d) => Number(d.target.x) ?? 0)
-				.attr('y2', (d) => Number(d.target.y) ?? 0);
-
-			// Mettre à jour la position des labels
-			label.attr('x', (d) => d.x).attr('y', (d) => d.y);
-		});*/
 		simulation.on('tick', () => {
 			if (!node || !link || !label) return;
 
@@ -214,9 +178,9 @@
 			node.select('path')
 				.attr('transform', (d) => {
 					if (d.id === homeStore.selectedNode?.id) {
-						return 'translate(-18,-18) scale(1.5)';
+						return 'scale(1.5)';
 					} else {
-						return 'translate(-12,-12) scale(1)';
+						return 'scale(1)';
 					}
 				})
 				.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'black' : 'white'))

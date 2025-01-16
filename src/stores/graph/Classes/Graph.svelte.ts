@@ -9,7 +9,7 @@ import {
 	zoom as d3Zoom,
 	forceCollide
 } from 'd3';
-import values from '$lib/mainGraph/values';
+import * as graphAssets from '$lib/mainGraph/values';
 import type { BaseType, Selection, Simulation, SimulationLinkDatum } from 'd3';
 import type { BaseNode } from '$types/graph';
 
@@ -182,15 +182,20 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 					.attr('y1', (d) => String(d.source.y))
 					.attr('x2', (d) => String(d.target.x))
 					.attr('y2', (d) => String(d.target.y));
-				//this.#nodesInGraph?.attr('cx', (d) => String(d.x)).attr('cy', (d) => String(d.y));
+				this.#labelsInGraph?.attr('x', (d) => String(d.x)).attr('y', (d) => String(d.y));
+
+				// Mettre à jour la taille et la position de l'image
 				this.#nodesInGraph?.attr('transform', (d) => {
 					const scale = this.getNodeScale(d);
 					return `translate(${d.x},${d.y}) scale(${scale})`;
 				});
-				this.#labelsInGraph?.attr('x', (d) => String(d.x)).attr('y', (d) => String(d.y));
-				/*this.#iconsInGraph
-					?.attr('x', (d) => String(Number(d.x) - (this.getNodeRadius(d) * 1.2) / 2))
-					.attr('y', (d) => String(Number(d.y) - (this.getNodeRadius(d) * 1.2) / 2));*/
+				this.#nodesInGraph?.select('path').attr('transform', (d) => {
+					if (d.id === this.selectedNode?.id) {
+						return 'translate(-18,-18) scale(1.5)';
+					} else {
+						return 'translate(-12,-12) scale(1)';
+					}
+				});
 			})
 			.restart();
 	};
@@ -216,54 +221,41 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 			.attr('stroke-linecap', 'round')
 			.attr('stroke-linejoin', 'round')
 			.attr('stroke-dashoffset', 0)
-			.attr('stroke-dasharray', values.strokeDashArray.default) as Selection<SVGLineElement, V, SVGGElement, T>;
+			.attr('stroke-dasharray', graphAssets.strokeDashArray.default) as Selection<
+			SVGLineElement,
+			V,
+			SVGGElement,
+			T
+		>;
 	};
 	#updateNodesInGraph = () => {
-		return this.#nodeLayer
-			.selectAll('path')
-			.data(this._nodes)
-			.join('path')
-			.attr('draggable', true)
-			.attr('d', (d: T) => this.getNodeIcon(d))
-			.style('cursor', 'pointer')
-			.style('fill', (d: T) => {
-				return this.getNodeFill(d);
-			})
-			.attr('stroke', (d: T) => this.getNodeStroke(d))
-			.attr('stroke-width', 4)
-			.on('mouseover', (_, d) => this.handleMouseOver(d))
-			.on('mouseout', () => this.handleMouseOut())
-			.call(
-				// @ts-expect-error d3....
-				//drag<BaseType | SVGCircleElement, T>()
-				drag<BaseType | SVGPathElement, T>()
-					.on('start', (event, d) => this.handleDragStart(event, d))
-					.on('drag', (event, d) => this.handleDrag(event, d))
-					.on('end', (event, d) => this.handleDragEnd(event, d))
-			)
-			//.on('click', (_, d) => this.#selectNode(d)) as Selection<SVGCircleElement, T, SVGGElement, T>;
-			.on('click', (_, d) => this.#selectNode(d)) as Selection<SVGPathElement, T, SVGGElement, T>;
+		return (
+			this.#nodeLayer
+				.selectAll('path')
+				.data(this._nodes)
+				.join('path')
+				.attr('draggable', true)
+				.attr('d', (d: T) => this.getNodeIcon(d))
+				.style('cursor', 'pointer')
+				.style('fill', (d: T) => {
+					return this.getNodeFill(d);
+				})
+				.attr('stroke', (d: T) => this.getNodeStroke(d))
+				.attr('stroke-width', 4)
+				.on('mouseover', (_, d) => this.handleMouseOver(d))
+				.on('mouseout', () => this.handleMouseOut())
+				.call(
+					// @ts-expect-error d3....
+					//drag<BaseType | SVGCircleElement, T>()
+					drag<BaseType | SVGPathElement, T>()
+						.on('start', (event, d) => this.handleDragStart(event, d))
+						.on('drag', (event, d) => this.handleDrag(event, d))
+						.on('end', (event, d) => this.handleDragEnd(event, d))
+				)
+				//.on('click', (_, d) => this.#selectNode(d)) as Selection<SVGCircleElement, T, SVGGElement, T>;
+				.on('click', (_, d) => this.#selectNode(d)) as Selection<SVGPathElement, T, SVGGElement, T>
+		);
 	};
-	/*#updateIconsInGraph = () => {
-		return this.#iconLayer
-			.selectAll('image')
-			.data(this._nodes)
-			.join('image')
-			.attr('width', (d) => String(this.getNodeRadius(d) * 1.2))
-			.attr('height', (d) => String(this.getNodeRadius(d) * 1.2))
-			.attr('xlink:href', (d) => this.getNodeIcon(d))
-			.style('cursor', 'pointer')
-			.on('click', (_, d) => this.#selectNode(d))
-			.on('mouseover', (_, d) => this.handleMouseOver(d))
-			.on('mouseout', () => this.handleMouseOut())
-			.call(
-				// @ts-expect-error d3....
-				drag<BaseType | SVGImageElement, T>()
-					.on('start', (event, d) => this.handleDragStart(event, d))
-					.on('drag', (event, d) => this.handleDrag(event, d))
-					.on('end', (event, d) => this.handleDragEnd(event, d))
-			) as Selection<SVGImageElement, T, SVGGElement, T>;
-	};*/
 	#updateLabelsInGraph = () => {
 		return this.#labelLayer
 			.selectAll('text')
@@ -275,9 +267,9 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 			})
 			.style('fill', (n) => {
 				if (n.type === 'hidden') {
-					return values.labels.hidden;
+					return graphAssets.labels.hidden;
 				}
-				return values.labels.default;
+				return graphAssets.labels.default;
 			})
 			.style('font-size', (d) => {
 				return this.getNodeRadius(d) + 'px';
@@ -309,22 +301,24 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 		this.#linksInGraph
 			?.attr('stroke', (l) => {
 				if (l.source === d || l.target === d) {
-					return values.graphColors.links.hover;
+					return graphAssets.graphColors.links.hover;
 				}
-				return this.getLinkStroke(l) ?? values.graphColors.links.default;
+				return this.getLinkStroke(l) ?? graphAssets.graphColors.links.default;
 			})
 			.attr('stroke-dasharray', (l) =>
-				l.source === d || l.target === d ? values.strokeDashArray.hover : values.strokeDashArray.default
+				l.source === d || l.target === d
+					? graphAssets.strokeDashArray.hover
+					: graphAssets.strokeDashArray.default
 			)
 			.attr('stroke-width', (l) => (l.source === d || l.target === d ? 2 : 1));
 
 		this.#nodesInGraph?.style('fill', (n): string => {
 			if (n === d) {
-				return values.graphColors.nodes.selected;
+				return graphAssets.graphColors.nodes.selected;
 			} else if (
 				this.#links.some((l) => (l.source === d && l.target === n) || (l.target === d && l.source === n))
 			) {
-				return values.graphColors.nodes.connected;
+				return graphAssets.graphColors.nodes.connected;
 			} else {
 				return this.getNodeFill(n);
 			}
@@ -335,12 +329,12 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 			?.attr('stroke', (l) => {
 				return this.getLinkStroke(l);
 			})
-			.attr('stroke-dasharray', values.strokeDashArray.default)
+			.attr('stroke-dasharray', graphAssets.strokeDashArray.default)
 			.attr('stroke-width', 1);
 
 		this.#nodesInGraph?.style('fill', (n) => {
 			if (n === this.selectedNode) {
-				return values.graphColors.nodes.selected;
+				return graphAssets.graphColors.nodes.selected;
 			} else {
 				return this.getNodeFill(n);
 			}
