@@ -21,15 +21,10 @@
 	};
 
 	function checkAuth() {
-		if (
-			session.author !== pb.authStore.record?.id ||
-			pb.authStore.record?.role !== 'superAdmin' ||
-			!pb.authStore.isValid
-		) {
-			console.log(pb.authStore.record);
-
-			throw new Error('Not authenticated');
+		if (session.author === pb.authStore.record?.id || pb.authStore.record?.role === 'superAdmin') {
+			return;
 		}
+		throw new Error('Not authenticated');
 	}
 
 	async function addRandomNode() {

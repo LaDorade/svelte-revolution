@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-ARG PB_VERSION=0.24.2
+ARG PB_VERSION=0.22.27
 
 WORKDIR /app
 
@@ -18,4 +18,4 @@ RUN unzip /tmp/pb.zip -d /
 
 # start PocketBase
 EXPOSE 8090
-CMD ["/pocketbase", "serve", "--http=0.0.0.0:8090"]
+CMD ["/pocketbase", "serve", "--http=127.0.0.1:8090"]

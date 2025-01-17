@@ -160,8 +160,6 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 					})
 					.iterations(2)
 			)
-			// .force('center', forceCenter(currentWidth / 2, currentHeight / 2))
-			// .force('centerNode', forceRadial(100, currentWidth / 2, currentHeight / 2).strength(0.02))
 			.force('charge', forceManyBody().strength(this.options.chargeStrength).theta(1).distanceMax(700))
 			.force(
 				'x',
@@ -188,13 +186,6 @@ export abstract class Graph<T extends BaseNode, V extends SimulationLinkDatum<T>
 				this.#nodesInGraph?.attr('transform', (d) => {
 					const scale = this.getNodeScale(d);
 					return `translate(${d.x},${d.y}) scale(${scale})`;
-				});
-				this.#nodesInGraph?.select('path').attr('transform', (d) => {
-					if (d.id === this.selectedNode?.id) {
-						return 'translate(-18,-18) scale(1.5)';
-					} else {
-						return 'translate(-12,-12) scale(1)';
-					}
 				});
 			})
 			.restart();

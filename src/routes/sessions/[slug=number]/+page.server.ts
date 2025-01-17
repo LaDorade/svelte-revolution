@@ -10,61 +10,67 @@ import { type Actions, fail } from '@sveltejs/kit';
 
 export const actions: Actions = {
 	addNode: async ({ request }) => {
-		const data = await request.formData();
+		try {
+			const data = await request.formData();
 
-		const pb = new PocketBase(DB_URL);
-		// * no needs to authenticate, as the session is public
+			const pb = new PocketBase(DB_URL);
 
-		let nodeData = {
-			title: data.get('title') as string,
-			text: data.get('text') as string,
-			author: data.get('author') as string,
-			parent: data.get('parent') as string,
-			session: data.get('session') as string,
-			side: data.get('side') as string
-		};
+			// * no needs to authenticate, as the session is public
 
-		const validation = addNodeSchema.safeParse(nodeData);
-		if (!validation.success) {
-			return fail(422, { success: false, error: validation.error.format() });
-		}
+			let nodeData = {
+				title: data.get('title') as string,
+				text: data.get('text') as string,
+				author: data.get('author') as string,
+				parent: data.get('parent') as string,
+				session: data.get('session') as string,
+				side: data.get('side') as string
+			};
 
-		const censorResponse = await censorNode(nodeData);
-		nodeData = censorResponse.node;
-
-		const node = await createNode(
-			pb,
-			nodeData.title,
-			nodeData.text,
-			nodeData.author,
-			nodeData.session,
-			nodeData.parent,
-			'contribution',
-			nodeData.side
-		);
-
-		if (censorResponse.triggerEvent && censorResponse.events) {
-			try {
-				await createNewEvents(pb, nodeData.session, censorResponse.events, node);
-			} catch (e) {
-				// TODO: Handle error
-				console.log(e);
+			const validation = addNodeSchema.safeParse(nodeData);
+			if (!validation.success) {
+				return fail(422, { success: false, error: validation.error.format() });
 			}
-		}
 
-		if (censorResponse.triggerEnd) {
-			try {
-				await triggerEnd(pb, nodeData.session, censorResponse.triggerEnd);
-			} catch (e) {
-				console.log(e);
+			const censorResponse = await censorNode(nodeData);
+			nodeData = censorResponse.node;
+
+			const node = await createNode(
+				pb,
+				nodeData.title,
+				nodeData.text,
+				nodeData.author,
+				nodeData.session,
+				nodeData.parent,
+				'contribution',
+				nodeData.side
+			);
+
+			if (censorResponse.triggerEvent && censorResponse.events) {
+				try {
+					await createNewEvents(pb, nodeData.session, censorResponse.events, node);
+				} catch (e) {
+					// TODO: Handle error
+					console.log(e);
+				}
 			}
-		}
 
-		return {
-			status: 200,
-			success: true,
-			body: { message: 'Node added', node: JSON.stringify(node) }
-		};
+			if (censorResponse.triggerEnd) {
+				try {
+					await triggerEnd(pb, nodeData.session, censorResponse.triggerEnd);
+				} catch (e) {
+					console.log(e);
+				}
+			}
+
+			return {
+				status: 200,
+				success: true,
+				body: { message: 'Node added', node: JSON.stringify(node) }
+			};
+		} catch (e) {
+			console.log(e);
+			return fail(500, { success: false, error: 'Error while adding node' });
+		}
 	},
 	// Admin only
 	addEvent: async ({ request }) => {
