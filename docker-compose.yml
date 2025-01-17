@@ -5,16 +5,6 @@ services:
         ports:
             - '8080:8080'
 
-    pocketbase:
-        build: ./db
-        restart: unless-stopped
-        container_name: pocketbase_c
-        ports:
-            - 8090:8090
-        volumes:
-            - pocketbase-data:/pb_data
-            - pocketbase-migration:/pb_migrations
-
     iaserver:
         build: ./ia_server
         container_name: iaserver_c
