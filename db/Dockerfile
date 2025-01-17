@@ -1,21 +1,23 @@
-FROM alpine:latest
+# FROM alpine:latest
 
-ARG PB_VERSION=0.22.27
+# ARG PB_VERSION=0.22.27
 
-WORKDIR /app
+# WORKDIR /app
 
-RUN apk add --no-cache \
-    unzip \
-    ca-certificates
+# RUN apk add --no-cache \
+#     unzip \
+#     ca-certificates
 
-# download and unzip PocketBase
-ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip /tmp/pb.zip
-RUN unzip /tmp/pb.zip -d /
+# # download and unzip PocketBase
+# ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip /tmp/pb.zip
+# RUN unzip /tmp/pb.zip -d /
 
-# run migrations
-# COPY pb_migrations/ /pb_migrations/
-# RUN /pocketbase migrate
+# # run migrations
+# # COPY pb_migrations/ /pb_migrations/
+# # RUN /pocketbase migrate
 
-# start PocketBase
-EXPOSE 8090
-CMD ["/pocketbase", "serve", "--http=127.0.0.1:8090"]
+# # start PocketBase
+# EXPOSE 8090
+# CMD ["/pocketbase", "serve", "--http=127.0.0.1:8090"]
+
+FROM elestio/pocketbase:latest
