@@ -1,7 +1,7 @@
 export const graphColors = {
 	nodes: {
 		// hex colors or color names
-		sides: '#9ef2bd',
+		sides: ['#9ef2bd','#86efac','#b6f5cd','#cff9de','#6bbf8a'],
 		selected: '#ffed7a',
 		start: '#ff7a7a',
 		event: '#ff7a7a',

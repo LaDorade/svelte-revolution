@@ -45,7 +45,7 @@ export class PreviewGraph extends Graph<PreviewNode, LinkMessage> {
 		} else if (node.type === 'hidden') {
 			return values.graphColors.nodes.hidden;
 		} else {
-			return values.graphColors.nodes.sides;
+			return values.graphColors.nodes.sides[node.sideNumber];
 		}
 	};
 	getLinkStroke = (l: LinkMessage) => {

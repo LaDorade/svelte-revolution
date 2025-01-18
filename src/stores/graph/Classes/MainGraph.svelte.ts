@@ -72,7 +72,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 		} else if (node.type === 'hidden') {
 			return values.graphColors.nodes.hidden;
 		} else {
-			return values.graphColors.nodes.sides; //[node.sideNumber];
+			return values.graphColors.nodes.sides[node.sideNumber];
 		}
 	};
 	getLinkStroke = (l: LinkMessage) => {
