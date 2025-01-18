@@ -82,9 +82,9 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 		return values.graphColors.links.default;
 	};
 	getNodeStroke = (d: GraphNode) => {
-		if (this.selectedNode?.type === 'contribution' && d.id === this.selectedNode?.id) {
-			return values.graphColors.nodes.sides[d.sideNumber];
-		}
+		/*if (this.selectedNode?.type === 'contribution' && d.id === this.selectedNode?.id) {
+			return values.graphColors.nodes.selected;
+		}*/
 		return 'transparent';
 	};
 	getNodeRadius = (d: GraphNode) => {
