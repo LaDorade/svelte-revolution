@@ -27,6 +27,13 @@
 
 	let svg: SVGElement | null = $state(null);
 
+	function updateSVGSize() {
+		if (svg) {
+			svg.setAttribute('width', window.innerWidth.toString());
+			svg.setAttribute('height', window.innerHeight.toString());
+		}
+	}
+
 	const realTimeActions = {
 		create: (record: NodeMessage) => {
 			if (!admin && iaConnected && record?.type === 'event' && record.side) {
@@ -61,6 +68,10 @@
 
 	onMount(async () => {
 		if (!svg) return;
+
+		updateSVGSize();
+		window.addEventListener('resize', updateSVGSize);
+
 		graph = new MainGraph(svg, nodes, sides, {
 			width: window.innerWidth,
 			height: window.innerHeight
@@ -77,6 +88,7 @@
 			graph.selectedNode = null;
 		}
 		pb.collection('Node').unsubscribe();
+		window.removeEventListener('resize', updateSVGSize);
 	});
 </script>
 
@@ -88,4 +100,7 @@
 		})}
 />
 
-<svg bind:this={svg} class="bg-black z-10 cursor-grab bg-dotted-40 bg-dotted-gray"> </svg>
+<svg 
+	bind:this={svg} 
+	class="bg-black z-10 cursor-grab bg-dotted-40 bg-dotted-gray">
+</svg>

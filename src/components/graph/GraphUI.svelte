@@ -305,12 +305,9 @@
 							</div>
 							<div class="text-green-400 flex items-center">
 								{#if graph?.selectedNode?.side}
-									<img
-										src={sides.find((side) => side.id === graph?.selectedNode?.side)?.icon}
-										alt={'icon'}
-										class="w-4 h-4 mr-1 filter invert"
-										style={'filter: invert(51%) sepia(73%) saturate(352%) hue-rotate(90deg);'}
-									/>
+									<svg class="w-4 h-4 mr-1" viewBox="-12 -12 24 24">
+										<path d={sides.find((side) => side.id === graph?.selectedNode?.side)?.icon} fill="rgb(74 222 128)"/>
+									</svg>
 								{/if}
 								{sides.find((side) => side.id === graph?.selectedNode?.side)?.name}
 							</div>
