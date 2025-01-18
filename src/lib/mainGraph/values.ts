@@ -16,18 +16,17 @@ export const graphColors = {
 };
 
 // ne pas exporter
-// ne pas exporter
 export const icons = {
-	circle: 'M0 -12 a12 12 0 1 0 0 24 a12 12 0 1 0 0 -24 z',
+	triangle: 'M0 -12 L12 12 H-12 z',
 	diamond: 'M0 -12 L12 0 L0 12 L-12 0 z',
-	hexagon: 'M12 0 L6 10.3923 L-6 10.3923 L-12 0 L-6 -10.3923 L6 -10.3923 Z',
 	square: 'M-12 -12 h24 v24 h-24 z',
-	triangle: 'M0 -12 L12 12 H-12 z'
+	hexagon: 'M12 0 L6 10.3923 L-6 10.3923 L-12 0 L-6 -10.3923 L6 -10.3923 Z',
+	circle: 'M0 -12 a12 12 0 1 0 0 24 a12 12 0 1 0 0 -24 z'
 };
 export const graphIcons = Object.values(icons);
 
 export const eventIcon = icons.circle;
-export const exampleIcon = icons.diamond;
+export const exampleIcon = icons.circle;
 
 export const labels = {
 	default: 'white',
