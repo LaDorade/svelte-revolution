@@ -378,9 +378,9 @@
 							<span class="label-text text-inherit">{$t('side.yourSide')}</span>
 						</div>
 						<select bind:value={userSideId} name="side" class="text-primary-500">
-							<option value={null} disabled selected>{$t('side.chooseSide')}</option>
+							<option value={null} disabled selected class="text-gray-700">{$t('side.chooseSide')}</option>
 							{#each sides as side}
-								<option value={side.id}>{side.name}</option>
+								<option value={side.id} class="text-gray-600">{side.name}</option>
 							{/each}
 						</select>
 					</label>
