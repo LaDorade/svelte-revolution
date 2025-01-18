@@ -64,7 +64,7 @@
 						placeholder="Snoup mange des pommes tous les matins"
 						type="password"
 						name="password"
-						class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
+						class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white bg-black/0"
 					/>
 				</div>
 			</div>

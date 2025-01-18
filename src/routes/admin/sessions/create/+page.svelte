@@ -89,14 +89,14 @@
 					required
 				>
 					<option value="" disabled selected>{$t('admin.session.selectScenario')}</option>
-					<optgroup label={$t('scenario.scenarios')}>
+					<optgroup label={$t('scenario.scenarios')} class="text-gray-600">
 						{#each data.scenarios.filter((s) => !s.ai) as scenario}
-							<option value={scenario.id}>{scenario.title}</option>
+							<option value={scenario.id} class="text-gray-600">{scenario.title}</option>
 						{/each}
 					</optgroup>
-					<optgroup label={$t('admin.session.aiScenarios')}>
+					<optgroup label={$t('admin.session.aiScenarios')} class="text-gray-600">
 						{#each data.scenarios.filter((s) => s.ai) as scenario}
-							<option value={scenario.id}>{scenario.title}</option>
+							<option value={scenario.id} class="text-gray-600">{scenario.title}</option>
 						{/each}
 					</optgroup>
 				</select>

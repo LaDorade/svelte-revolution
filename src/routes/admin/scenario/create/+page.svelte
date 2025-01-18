@@ -446,11 +446,11 @@
 					</div>
 				</div>
 			{:else}
-				<div class="bg-green-500 h-full w-full p-4 rounded-md flex flex-col justify-center items-center">
+				<div class="bg-green-500 w-full p-4 rounded-md flex flex-col justify-center items-center mt-5">
 					<h3 class=" font-semibold text-xl flex items-center gap-2">
-						<Sparkles class="w-8 h-8" />
+						<Sparkles class="w-7 h-7" />
 						<div>{$t('admin.scenario.scenarioIsValide')}</div>
-						<Sparkles class="w-8 h-8" />
+						<Sparkles class="w-7 h-7" />
 					</h3>
 				</div>
 			{/if}
