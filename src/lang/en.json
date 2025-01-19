@@ -112,7 +112,7 @@
   },
   "home": {
     "home": "Home",
-    "intro": "BⱯBEL RËVOLUㅏION is a platform for creating participatory stories. It is both an ever-evolving work, completed creations, and an interface for creating participatory sessions and scenarios. This site invites you to dive into a digital writing space where everyone can contribute and co-create in their own way.",
+    "intro": "BⱯBEL RËVOLUㅏION is a platform for creating participatory stories. It is both an ever-evolving work, completed creations, and an interface for creating participatory sessions and scenarios. This site invites you to dive into a digital writing space where everyone can contribute and co-create in their own way (previous version: https://babel.utc.fr/).",
     "introHighlight": "Join an ongoing session or create and lead your own session, your ",
     "introHyperHighlight": "BⱯBEL RËVOLUㅏION.",
     "writeMessage": "Write a message",
@@ -131,7 +131,7 @@
     "footer": {
       "citation": "An expression that, just a moment ago, was still alive and seemed even unshakable, could suddenly vanish: it disappeared with the situation that generated it and will one day testify as a fossil.",
       "ciationInfos": "",
-      "mainText": "BⱯBEL RËVOLUㅏION is an interactive, collaborative, multilingual dystopian story. This creation seeks to explore the link between the degradation of biodiversity and the degradation of linguistic and cultural diversity.",
+      "mainText": "BⱯBEL RËVOLUㅏION is an interactive, collaborative, multilingual dystopian story. The original scenario invited us to reflect on the link between the degradation of biodiversity and the degradation of linguistic and cultural diversity.",
       "techUsed": "Technologies used",
       "devAndDesign": "Development and design",
       "credits": "Credits"
