@@ -1,4 +1,5 @@
 <script lang="ts">
+	//TODO: Refactor this component to use the new Graph class
 	import { onDestroy, onMount, untrack } from 'svelte';
 	import {
 		zoom as d3Zoom,
@@ -21,6 +22,7 @@
 	import { scale } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { t } from 'svelte-i18n';
+	import * as graphAssets from '$lib/mainGraph/values';
 
 	const width = 300;
 	const forces = {
@@ -43,9 +45,9 @@
 	});
 
 	let svg: SVGElement;
-	let svgElement: Selection<SVGSVGElement, unknown, null, undefined>;
-	let nodeLayer: Selection<SVGGElement, ExampleNode, null, undefined>;
-	let labelLayer: Selection<SVGGElement, ExampleNode, null, undefined>;
+	let svgElement: Selection<SVGElement, unknown, null, undefined>;
+	let nodeLayer: Selection<SVGGElement, unknown, null, undefined>;
+	let labelLayer: Selection<SVGGElement, unknown, null, undefined>;
 
 	let link: { source: ExampleNode; target: ExampleNode }[];
 	let node: ExampleNode[];
@@ -63,11 +65,11 @@
 		.force('centerNode', forceRadial(forces.radius, width / 2, width / 2).strength(forces.radialStrength))
 		.force(
 			'x',
-			forceX(width).strength((d) => (d.id === homeStore.selectedNode?.id ? forces.forceX : 0))
+			forceX<ExampleNode>(width).strength((d) => (d.id === homeStore.selectedNode?.id ? forces.forceX : 0))
 		)
 		.force(
 			'y',
-			forceY(width).strength((d) => (d.id === homeStore.selectedNode?.id ? forces.forceY : 0))
+			forceY<ExampleNode>(width).strength((d) => (d.id === homeStore.selectedNode?.id ? forces.forceY : 0))
 		);
 
 	function dragstarted(event: D3DragEvent<SVGElement, SimulationNodeDatum, undefined>, d: SimulationNodeDatum) {
@@ -91,110 +93,109 @@
 				simulation
 					.force(
 						'x',
-						forceX(width / 2).strength((d) => (d.id === homeStore.selectedNode?.id ? forces.forceX : 0))
+						forceX<ExampleNode>(width / 2).strength((d) =>
+							d.id === homeStore.selectedNode?.id ? forces.forceX : 0
+						)
 					)
 					.force(
 						'y',
-						forceY(width / 2).strength((d) => (d.id === homeStore.selectedNode?.id ? forces.forceY : 0))
+						forceY<ExampleNode>(width / 2).strength((d) =>
+							d.id === homeStore.selectedNode?.id ? forces.forceY : 0
+						)
 					);
 				simulation.alpha(0.1).restart();
 			});
 		}
 		if (homeStore.selectedNode?.id === 5) {
+			//@ts-expect-error d3...
 			svgElement?.call(zoom).call(zoom.transform, zoomIdentity);
 		}
 	});
 
 	onMount(() => {
-		untrack(() => {
-			svgElement = select(svg);
-			nodeLayer = svgElement.append('g');
-			labelLayer = svgElement.append('g');
+		svgElement = select(svg);
+		nodeLayer = svgElement.append('g');
+		labelLayer = svgElement.append('g');
 
-			label = labelLayer
-				.append('g')
-				.selectAll('text')
-				.data(homeStore.nodes)
-				.enter()
-				.append('text')
-				.text((d) => $t(d.title))
-				.attr('dy', () => -18)
-				.attr('fill', 'white')
-				.attr('font-size', 12)
-				.attr('text-anchor', 'middle')
-				.attr('alignment-baseline', 'middle')
-				.style('cursor', 'pointer')
-				.call(drag().on('start', dragstarted).on('drag', dragged).on('end', dragended))
-				.on('click', (event, d) => {
-					homeStore.selectedNode = d;
-				});
-
-			link = nodeLayer
-				.append('g')
-				.selectAll('line')
-				.data(homeStore.links)
-				.enter()
-				.append('line')
-				.attr('stroke', '#999')
-				.attr('stroke-width', 2);
-
-			node = nodeLayer
-				.append('g')
-				.selectAll('g')
-				.data(homeStore.nodes)
-				.enter()
-				.append('g')
-				.style('cursor', 'pointer')
-				.call(drag().on('start', dragstarted).on('drag', dragged).on('end', dragended))
-				.on('click', (event, d) => {
-					homeStore.selectedNode = d;
-				});
-
-			// background / cercle du noeud
-			node.append('circle')
-				.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))
-				.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'yellow' : 'green'));
-
-			// image du noeud
-			let cube = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWJveCI+PHBhdGggZD0iTTIxIDhhMiAyIDAgMCAwLTEtMS43M2wtNy00YTIgMiAwIDAgMC0yIDBsLTcgNEEyIDIgMCAwIDAgMyA4djhhMiAyIDAgMCAwIDEgMS43M2w3IDRhMiAyIDAgMCAwIDIgMGw3LTRBMiAyIDAgMCAwIDIxIDE2WiIvPjxwYXRoIGQ9Im0zLjMgNyA4LjcgNSA4LjctNSIvPjxwYXRoIGQ9Ik0xMiAyMlYxMiIvPjwvc3ZnPg==";
-			node.append('image')
-				.attr('xlink:href', cube)
-				.attr('width', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))
-				.attr('height', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))
-				.attr('x', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5))
-				.attr('y', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5));
-
-			simulation.on('tick', () => {
-				if (!node || !link || !label) return;
-
-				// Déplacer le groupe entier (image + cercle) à la position du nœud
-				node.attr('transform', (d) => `translate(${d.x},${d.y})`);
-
-				// Mettre à jour la taille et la couleur du cercle
-				node.select('circle')
-					.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))  // Taille du cercle
-					.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? '#ffed7a' : '#9ef2bd'));  // Couleur du cercle
-
-				// Mettre à jour la taille et la position de l'image
-				node.select('image')
-					.attr('x', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5))  // Décalage horizontal pour centrer l'image
-					.attr('y', (d) => (d.id === homeStore.selectedNode?.id ? -11 : -7.5))  // Décalage vertical pour centrer l'image
-					.attr('width', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15))  // Taille de l'image
-					.attr('height', (d) => (d.id === homeStore.selectedNode?.id ? 22 : 15));  // Taille de l'image
-
-				// Mettre à jour les liens entre les nœuds
-				link.attr('x1', (d) => d.source.x ?? 0)
-					.attr('y1', (d) => Number(d.source.y) ?? 0)
-					.attr('x2', (d) => Number(d.target.x) ?? 0)
-					.attr('y2', (d) => Number(d.target.y) ?? 0);
-
-				// Mettre à jour la position des labels
-				label.attr('x', (d) => d.x)
-					.attr('y', (d) => d.y);
+		label = labelLayer
+			.append('g')
+			.selectAll('text')
+			.data(homeStore.nodes)
+			.enter()
+			.append('text')
+			.text((d) => $t(d.title))
+			.attr('dy', () => -18)
+			.attr('fill', 'white')
+			.attr('font-size', 12)
+			.attr('text-anchor', 'middle')
+			.attr('alignment-baseline', 'middle')
+			.style('cursor', 'pointer')
+			// @ts-expect-error d3...
+			.call(drag().on('start', dragstarted).on('drag', dragged).on('end', dragended))
+			.on('click', (event, d) => {
+				homeStore.selectedNode = d;
 			});
 
-			simulation.alpha(1).restart();
+		link = nodeLayer
+			.append('g')
+			.selectAll('line')
+			.data(homeStore.links)
+			.enter()
+			.append('line')
+			.attr('stroke', '#999')
+			.attr('stroke-width', 2);
+
+		node = nodeLayer
+			.append('g')
+			.selectAll('g')
+			.data(homeStore.nodes)
+			.enter()
+			.append('g')
+			.style('cursor', 'pointer')
+			// @ts-expect-error d3...
+			.call(drag().on('start', dragstarted).on('drag', dragged).on('end', dragended))
+			.on('click', (event, d) => {
+				homeStore.selectedNode = d;
+			});
+
+		node.append('path')
+			.attr('d', graphAssets.exampleIcon)
+			.attr('fill', 'white')
+			.attr('stroke', 'black')
+			.attr('stroke-width', 1);
+
+		simulation.on('tick', () => {
+			if (!node || !link || !label) return;
+
+			node.attr('transform', (d) => `translate(${d.x},${d.y})`);
+
+			// Mettre à jour la taille et la couleur du cercle
+			node.select('circle')
+				.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))
+				.attr('fill', 'transparent');
+
+			// Mettre à jour la taille et la position de l'image
+			node.select('path')
+				.attr('transform', (d) => {
+					if (d.id === homeStore.selectedNode?.id) {
+						return 'scale(1.5)';
+					} else {
+						return 'scale(1)';
+					}
+				})
+				.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'black' : 'white'))
+				.attr('stroke', (d) => (d.id === homeStore.selectedNode?.id ? 'white' : 'black'));
+
+			link.attr('x1', (d) => d.source.x ?? 0)
+				.attr('y1', (d) => Number(d.source.y) ?? 0)
+				.attr('x2', (d) => Number(d.target.x) ?? 0)
+				.attr('y2', (d) => Number(d.target.y) ?? 0);
+
+			// Mettre à jour la position des labels
+			label.attr('x', (d) => d.x).attr('y', (d) => d.y);
 		});
+
+		simulation.alpha(1).restart();
 	});
 
 	onDestroy(() => {
@@ -210,5 +211,5 @@
 	}}
 	class="bg-black border-4 rounded-full w-fit bg-dotted-gray bg-dotted-20"
 >
-	<svg bind:this={svg} {width} height={width} class="rounded-full"></svg>
+	<svg bind:this={svg} {width} height={width} class="rounded-full"> </svg>
 </div>

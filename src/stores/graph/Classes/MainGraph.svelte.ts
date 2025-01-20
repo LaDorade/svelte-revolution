@@ -1,4 +1,4 @@
-import values from '$lib/mainGraph/values';
+import * as values from '$lib/mainGraph/values';
 import Graph, { defaultGraphOptions, type GraphOptions } from './Graph.svelte';
 import { t } from 'svelte-i18n';
 import { get } from 'svelte/store';
@@ -32,10 +32,6 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 	};
 
 	addNode = (node: GraphNode) => {
-		const selectedNode = this.selectedNode;
-		if (!selectedNode) {
-			return false;
-		}
 		node.sideNumber = this.sides.find((s: Side) => s.id === node.side)?.number ?? 0;
 		super.addNode(node);
 		return true;
@@ -48,7 +44,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 	filterNodeBySide(userSideId: number | string | null) {
 		// Hide events from other side if it's an AI scenario
 		const filteredText = get(t)('inSession.eventHidden');
-		this._nodes = this._nodes.map((node) => {
+		this._nodes = this._nodes?.map((node) => {
 			if (node.type === 'event' && node.side && node.side !== userSideId) {
 				node.text = filteredText;
 				node.title = filteredText;
@@ -61,7 +57,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 
 	getNodeIcon = (node: GraphNode) => {
 		if (node.type === 'startNode' || node.type === 'event' || node.type === 'hidden') {
-			return '';
+			return values.eventIcon;
 		} else {
 			return values.graphIcons[node.sideNumber];
 		}
@@ -76,7 +72,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 		} else if (node.type === 'hidden') {
 			return values.graphColors.nodes.hidden;
 		} else {
-			return values.graphColors.nodes.sides; //[node.sideNumber];
+			return values.graphColors.nodes.sides[node.sideNumber];
 		}
 	};
 	getLinkStroke = (l: LinkMessage) => {
@@ -86,9 +82,9 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 		return values.graphColors.links.default;
 	};
 	getNodeStroke = (d: GraphNode) => {
-		if (this.selectedNode?.type === 'contribution' && d.id === this.selectedNode?.id) {
-			return values.graphColors.nodes.sides[d.sideNumber];
-		}
+		/*if (this.selectedNode?.type === 'contribution' && d.id === this.selectedNode?.id) {
+			return values.graphColors.nodes.selected;
+		}*/
 		return 'transparent';
 	};
 	getNodeRadius = (d: GraphNode) => {
@@ -100,6 +96,19 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 			return values.nodeRadius.selected;
 		} else {
 			return values.nodeRadius.default;
+		}
+	};
+	getNodeScale = (d: GraphNode) => {
+		const selected = this.selectedNode?.id === d.id;
+		if (d.type === 'startNode') {
+			if (selected) return values.nodeScale.start.selected;
+			return values.nodeScale.start.default;
+		} else if (d.type === 'event') {
+			if (selected) return values.nodeScale.event.selected;
+			return values.nodeScale.event.default;
+		} else {
+			if (selected) return values.nodeScale.default.selected;
+			return values.nodeScale.default.default;
 		}
 	};
 }

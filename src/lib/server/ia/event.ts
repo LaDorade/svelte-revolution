@@ -1,6 +1,6 @@
 import type { AICensorResponse } from '$types/ai';
 import type { GraphNode } from '$types/pocketBase/TableTypes';
-import { createNode } from '../nodes';
+import { createNode } from '../../nodes';
 import { type MyPocketBase } from '../../../types/pocketBase/index';
 
 /**

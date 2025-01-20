@@ -31,7 +31,7 @@ func (rsa *ServerAgent) DoIsCensored(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		w.WriteHeader(http.StatusConflict)
 		msg := "The session " + req.Session + " doesn't exists. Please create a session first"
-		fmt.Print(msg)
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
 	}
@@ -54,14 +54,14 @@ func (rsa *ServerAgent) DoIsCensored(w http.ResponseWriter, r *http.Request) {
 		Events:          libs.Events{},
 		TriggerEnd:      ""}
 
-	fmt.Print(req.Side)
-	fmt.Print(session.IdTerrain)
+	fmt.Println(req.Side)
+	fmt.Println(session.IdTerrain)
 	if req.Side == session.IdTerrain {
 		is_message_performative := censor.IsActionPerformed(req.Title)
 
 		if is_message_performative || session.Step == 0 {
 			//déclencer evt
-			fmt.Print("triggered")
+			fmt.Println("triggered")
 			resp.TriggerNewEvent = true
 
 			next := session.NextStep()

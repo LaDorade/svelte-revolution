@@ -101,7 +101,7 @@
 					<input
 						disabled={pseudoLocked}
 						type="text"
-						class="p-4 border h-12 border-gray-100 rounded w-fit disabled:opacity-50"
+						class="p-4 border h-12 border-gray-100 text-gray-500 rounded w-fit disabled:opacity-50"
 						placeholder={$t('user.pseudo')}
 						bind:value={pseudo}
 					/>

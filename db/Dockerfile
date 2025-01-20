@@ -1,1 +1,21 @@
-FROM ghcr.io/muchobien/pocketbase:latest
+FROM alpine:latest
+
+ARG PB_VERSION=0.22.27
+
+WORKDIR /app
+
+RUN apk add --no-cache \
+    unzip \
+    ca-certificates
+
+# download and unzip PocketBase
+ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip /tmp/pb.zip
+RUN unzip /tmp/pb.zip -d /
+
+# run migrations
+# COPY pb_migrations/ /pb_migrations/
+# RUN /pocketbase migrate
+
+# start PocketBase
+EXPOSE 8090
+CMD ["/pocketbase", "serve", "--http=127.0.0.1:8090"]

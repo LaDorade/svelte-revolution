@@ -27,9 +27,16 @@
 
 	let svg: SVGElement | null = $state(null);
 
+	function updateSVGSize() {
+		if (svg) {
+			svg.setAttribute('width', window.innerWidth.toString());
+			svg.setAttribute('height', window.innerHeight.toString());
+		}
+	}
+
 	const realTimeActions = {
 		create: (record: NodeMessage) => {
-			if (iaConnected && record?.type === 'event' && record.side) {
+			if (!admin && iaConnected && record?.type === 'event' && record.side) {
 				const userSide = localStorage.getItem('side_' + sessionId);
 				if (userSide !== record.side) {
 					return;
@@ -41,7 +48,6 @@
 			graph?.updateNode(record);
 		},
 		delete: async (record: GraphNode) => {
-			// const newNodes = await pb.collection('Node').getFullList({ filter: `session="${sessionId}"` });
 			graph?.deleteNode(record);
 		}
 	};
@@ -62,6 +68,10 @@
 
 	onMount(async () => {
 		if (!svg) return;
+
+		updateSVGSize();
+		window.addEventListener('resize', updateSVGSize);
+
 		graph = new MainGraph(svg, nodes, sides, {
 			width: window.innerWidth,
 			height: window.innerHeight
@@ -78,6 +88,7 @@
 			graph.selectedNode = null;
 		}
 		pb.collection('Node').unsubscribe();
+		window.removeEventListener('resize', updateSVGSize);
 	});
 </script>
 
@@ -89,8 +100,7 @@
 		})}
 />
 
-<svg
-	bind:this={svg}
-	class="mainGraph fixed top-0 left-0 w-screen h-screen z-10 cursor-grab bg-black bg-opacity-100 bg-dotted-40 bg-dotted-gray"
->
+<svg 
+	bind:this={svg} 
+	class="bg-black z-10 cursor-grab bg-dotted-40 bg-dotted-gray">
 </svg>

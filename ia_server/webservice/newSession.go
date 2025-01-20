@@ -43,7 +43,7 @@ func (rsa *ServerAgent) DoNewSession(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rsa.Sessions[req.SessionID] = new_session
-	fmt.Print(new_session.IdTerrain)
+	fmt.Println(new_session.IdTerrain)
 	//sauvegarder la nouvelle sessions
 	rsa.Saver.SaveSessionData(rsa.Sessions)
 

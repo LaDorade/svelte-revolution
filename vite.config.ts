@@ -3,5 +3,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [sveltekit()],
-	envPrefix: 'PUBLIC_'
+	envPrefix: 'PUBLIC_',
+	build: {
+		sourcemap: true
+	}
 });

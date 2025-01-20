@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, setContext, tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { page } from '$app/stores';
 	import { replaceState } from '$app/navigation';
 	import { LoaderPinwheel } from 'lucide-svelte';
@@ -15,14 +15,13 @@
 	import MainGraph from '$components/graph/MainGraph.svelte';
 	import { viewportStore } from '$stores/ui/index.svelte';
 	import DebugPane from '$components/admin/DebugPane.svelte';
-	import type { PageServerData } from './$types';
-	import type { LayoutServerData } from '../../$types';
+	import type { LayoutData } from './$types';
 
 	interface Props {
-		data: PageServerData & LayoutServerData;
+		data: LayoutData;
 	}
 	let { data }: Props = $props();
-	let { events = [], user = null, ends = [], sides, iaConnected = false, scenario } = data;
+	let { events = [], user = null, ends = [], sides, aiConnected = false, scenario } = data;
 
 	let sessionData = $state(data.sessionData);
 
@@ -31,10 +30,7 @@
 	// Intro related
 	let prologueSeen = $state(false);
 	let userSideId: string | null = $state(null);
-	let validSide = $derived.by(() => {
-		const side = sides.find((side) => side.id === userSideId)?.id;
-		return !!side;
-	});
+	let validSide = $derived(!!sides.find((side) => side.id === userSideId)?.id);
 	let sideLocked = $state(false);
 	let pseudo: string | null = $state(null);
 	let validPseudo = $derived(pseudoSchema.safeParse(pseudo).success);
@@ -42,6 +38,7 @@
 
 	// ? wierd hack to make the admin reactive on page reload
 	let admin = $derived($page.data.isAdmin as boolean);
+
 	let sessionTitle = $derived.by(() => {
 		return (admin ? 'ADMIN - ' : '') + data.sessionData.name;
 	});
@@ -68,7 +65,7 @@
 
 	onMount(async () => {
 		titleStore.setNavTitle(sessionTitle);
-		if (scenario?.ai && iaConnected) {
+		if (scenario?.ai && aiConnected) {
 			toast.success($t('ia.connected'), {
 				position: 'top-left'
 			});
@@ -81,15 +78,15 @@
 		if (validPseudo) {
 			pseudoLocked = true;
 		}
-		setContext('nodes', graph?._nodes);
 		await manageSearchParams();
+		viewportStore.seeDebugPanel = localStorage.getItem('seeDebugPanel') === 'true';
 	});
 </script>
 
 <svelte:head>
 	<title>{sessionTitle}</title>
 	<meta content={sessionData.expand?.scenario?.prologue} property="description" />
-	<meta content={sessionData.image ? pb.files.getUrl(sessionData, sessionData.image) : graph1} property="og:image" />
+	<meta content={sessionData.image ? pb.files.getURL(sessionData, sessionData.image) : graph1} property="og:image" />
 	<meta content={sessionData.name} property="og:title" />
 	<meta content={sessionData.expand?.scenario?.prologue} property="og:description" />
 	<meta content="Babel Révolution" property="og:site_name" />
@@ -97,7 +94,7 @@
 </svelte:head>
 
 {#if (data.isSuperAdmin || data.user?.id === sessionData.author) && viewportStore.seeDebugPanel}
-	<DebugPane {graph} />
+	<DebugPane {graph} session={sessionData} />
 {/if}
 
 {#await data.nodesPromise}

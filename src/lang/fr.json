@@ -20,7 +20,8 @@
       "creationSuccess": "Session créée avec succés",
       "createTheSession": "Créer la session",
       "goto": "Aller à la session",
-      "preview": "Prévisulation d'une session"
+      "preview": "Prévisulation d'une session",
+      "aiScenarios": "Scénarios avec IA"
     },
     "scenario": {
       "language": "Langue",
@@ -105,7 +106,7 @@
     "sides": "Camps",
     "chooseSide": "Choisir un camp",
     "sideChosen": "Vous avez choisi votre camp",
-    "choose": "Choisissez votre camp",
+    "choose": "Validez votre camp",
     "yourSide": "Ton camp",
     "sideSaved": "Camp sauvegardé",
     "title": "Titre du camp"
@@ -119,7 +120,7 @@
   },
   "home": {
     "home": "Accueil",
-    "intro": "BⱯBEL RËVOLUㅏION est une plateforme de création de récits participatifs. C'est à la fois une œuvre en continuelle évolution, des créations achevées et une interface de création de sessions et de scénarios participatifs. Ce site invite à plonger dans un espace d’écriture numérique où chacun peut contribuer et co-créer à sa façon.",
+    "intro": "BⱯBEL RËVOLUㅏION est une plateforme de création de récits participatifs. C'est à la fois une œuvre en continuelle évolution, des créations achevées et une interface de création de sessions et de scénarios participatifs. Ce site invite à plonger dans un espace d’écriture numérique où chacun peut contribuer et co-créer à sa façon (version précédente : https://babel.utc.fr/).",
     "introHighlight": "Venez participer à une session en cours ou bien créer et animer votre propre session, votre ",
     "introHyperHighlight": "BⱯBEL RËVOLUㅏION.",
     "writeMessage": "Ecris un message",
@@ -138,7 +139,7 @@
     "footer": {
       "citation": "Une expression qui, il y a un instant à peine, vivait encore et semblait même indéracinable, pouvait brusquement s’évanouir : elle a disparu avec la situation qui l’avait engendrée et dont elle témoignera un jour tel un fossile.",
       "ciationInfos": "",
-      "mainText": "BⱯBEL RËVOLUㅏION est un récit dystopique interactif, collaboratif et plurilingue. Cette création cherche à penser le lien entre la dégradation de la biodiversité et la dégradation de la diversité linguistique et culturelle. Ce projet de recherche-création transdisciplinaire, en processus et sans cesse à renouveler, à l’instar de toute révolution, implique des chercheuses et chercheurs de disciplines diverses (didactique des langues, littérature, design, sciences de l'information et de la communication) et des élèves-ingénieur·es en informatique. Mais BⱯBEL RËVOLUㅏION vous invite à entrer, vous aussi, dans l’œuvre pour en être l’auteur·rice.",
+      "mainText": "BⱯBEL RËVOLUㅏION est un récit dystopique interactif, collaboratif et plurilingue. Le scénario originel invitait à réfléchir au lien entre la dégradation de la biodiversité et la dégradation de la diversité linguistique et culturelle. Ce projet de recherche-création transdisciplinaire, en processus et sans cesse à renouveler, à l’instar de toute révolution, implique des chercheuses et chercheurs de disciplines diverses (didactique des langues, littérature, design, sciences de l'information et de la communication) et des élèves-ingénieur·es en informatique. Mais BⱯBEL RËVOLUㅏION vous invite à entrer, vous aussi, dans l’œuvre pour en être l’auteur·rice.",
       "techUsed": "Technologies utilisées",
       "devAndDesign": "Développement et design",
       "credits": "Crédits"
@@ -223,5 +224,10 @@
     },
     "internalError": "Erreur interne",
     "unauthorized": "Non autorisé"
+  },
+  "print": {
+    "print": "Imprimer",
+    "returnToGraph": "Retourner au graphe",
+    "printTitle": "Imprimer"
   }
 }

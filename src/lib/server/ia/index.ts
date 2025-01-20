@@ -8,20 +8,27 @@ const URLs = {
 	associate: '/api/newSession'
 };
 
-function getURL(url: keyof typeof URLs) {
+export function getURL(url: keyof typeof URLs) {
 	return iaServerUrl ? `${iaServerUrl}${URLs[url]}` : null;
 }
 
 export async function apiHealthy() {
-	if (!iaServerUrl) return false;
+	if (!iaServerUrl) {
+		console.error('IA server URL not defined');
+		return false;
+	}
 	const url = getURL('health');
+
 	if (!url) return false;
 
 	try {
 		const response = await fetch(url);
 		return response.ok;
 	} catch (e) {
-		console.error(e);
+		const err = e as Error;
+		console.error(import.meta.url);
+		console.error('IA server not reachable:', err.message);
+		console.log('IA server URL:', iaServerUrl);
 		return false;
 	}
 }
@@ -48,7 +55,7 @@ export async function censorNode<T extends { title: string; text: string; sessio
 	if (!response.ok) return returnValue;
 
 	const data = (await response.json()) as AICensorResponse;
-	console.log('Censor response:', data);
+
 	const newNode = node;
 	if (data.isCensored) {
 		newNode.title = data.title;
@@ -60,19 +67,4 @@ export async function censorNode<T extends { title: string; text: string; sessio
 		events: data.events,
 		triggerEnd: data.triggerEnd
 	};
-}
-
-export async function createAIAssociateSession(sessionId: string) {
-	const url = getURL('associate');
-	if (!(await apiHealthy()) || !url) return false;
-
-	const response = await fetch(url, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({ session: sessionId })
-	});
-
-	return response.ok;
 }

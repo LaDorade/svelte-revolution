@@ -1,20 +1,25 @@
 import { fail, type Actions } from '@sveltejs/kit';
-import { createEventsAndEnds, createScenario } from '$lib/server/scenario';
+import { createEventsAndEnds, createScenario } from '$lib/scenario';
 import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
-import type { MyPocketBase } from '$types/pocketBase';
 import type { z } from 'zod';
+import PocketBase from 'pocketbase';
+import { DB_URL } from '$env/static/private';
 
 // TODO: Refacto to use zod schema, errors and translations
 export const actions = {
-	createScenario: async ({ request, locals }) => {
-		const pb = locals.pb as MyPocketBase;
+	createScenario: async ({ request }) => {
+		const data = await request.formData();
+
+		const pb = new PocketBase(DB_URL);
+		const pb_cookie = data.get('pb_cookie') as string;
+		pb.authStore.loadFromCookie(pb_cookie);
+
 		if (!pb || !pb.authStore) {
 			return fail(500, { error: 'Database not connected' });
-		} else if (!pb.authStore.isValid || !pb.authStore.model) {
+		} else if (!pb.authStore.isValid || !pb.authStore.record) {
+			// TODO better auth check
 			return fail(401, { error: 'Unauthorized' });
 		}
-
-		const data = await request.formData();
 
 		const { scenarioData, firstNode, sides, events, ends } = parseFormData(data);
 

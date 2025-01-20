@@ -8,7 +8,7 @@
 	import type { ActionResult } from '@sveltejs/kit';
 	import { blur, fade, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import values from '$lib/mainGraph/values';
+	import * as values from '$lib/mainGraph/values';
 	import {
 		Codesandbox,
 		Ellipsis,
@@ -22,11 +22,13 @@
 	import { watch } from '$lib/runes/watch.svelte';
 	import { pb } from '$lib/client/pocketbase';
 	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
+	import type { RecordModel } from 'pocketbase';
+	import { viewportStore } from '$stores/ui/index.svelte';
 
 	interface Props {
 		graph: MainGraph | null;
 		session: Session;
-		user?: User | null;
+		user?: RecordModel | null;
 		admin?: boolean;
 		events?: GraphEvent[];
 		ends?: End[];
@@ -70,6 +72,10 @@
 	});
 
 	let treeView = $state(false);
+
+	function storePanelInLocalStorage() {
+		localStorage.setItem('seeDebugPanel', viewportStore.seeDebugPanel.toString());
+	}
 
 	/**
 	 * Set the state of the UI
@@ -116,17 +122,6 @@
 		nProgress.done();
 	}
 
-	$effect(() => {
-		watch(() => {
-			if (!graph?.selectedNode) {
-				states.nodeInfo = false;
-				return;
-			}
-			if (states.nodeInfo) return;
-			setCheck('nodeInfo');
-		}, [graph?.selectedNode]);
-	});
-
 	async function handleSessionEnd() {
 		// Listen for session completion
 		await pb.collection('Session').subscribe(session.id, async (res) => {
@@ -150,6 +145,17 @@
 			}
 		});
 	}
+
+	$effect(() => {
+		watch(() => {
+			if (!graph?.selectedNode) {
+				states.nodeInfo = false;
+				return;
+			}
+			if (states.nodeInfo) return;
+			setCheck('nodeInfo');
+		}, [graph?.selectedNode]);
+	});
 
 	onMount(async () => {
 		await handleSessionEnd();
@@ -176,10 +182,7 @@
 		class="flex flex-col gap-2 p-x-4 cursor-default text-primary-500 w-full items-center"
 	>
 		<label class="form-control w-full max-w-xs">
-			<!-- <div class="label">
-				<span class="label-text text-inherit">{trad}</span>
-			</div> -->
-			<select {name} id={name} class="select select-accent appearance-none bg-black select-sm">
+			<select {name} id={name} class="bg-black rounded-md">
 				<option disabled selected>{trad}</option>
 				{#each values as value}
 					<option value={value.id}>{value.title}</option>
@@ -187,6 +190,7 @@
 			</select>
 		</label>
 		<input type="hidden" name="session" value={session.id} />
+		<input type="hidden" name="pb_cookie" value={pb.authStore.exportToCookie()} />
 		<button type="submit" class="self-center btn btn-sm btn-accent">
 			{trad}
 		</button>
@@ -202,9 +206,9 @@
 			onclick={() => (stateActive ? setCheck('close') : setCheck('nodeInfo'))}
 		>
 			{#if type === 'dots'}
-				<Ellipsis strokeWidth={1.5} color="white" />
+				<Ellipsis strokeWidth={2} color="white" />
 			{:else if type === 'cross'}
-				<X strokeWidth={1.5} color="white" />
+				<X strokeWidth={2} color="white" />
 			{/if}
 		</button>
 	{/snippet}
@@ -264,12 +268,12 @@
 </div>
 
 <!-- Sides legend -->
-<div
-	class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 pr-10 m-6 bottom-0 left-0 bg-black bg-opacity-30 align-right"
->
+<div class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 bottom-0 left-0 bg-black bg-opacity-30">
 	{#each sides as side}
 		<div class="text-white flex items-center">
-			<img src={side.icon} alt={'icon'} class="w-4 h-4 mr-1 filter invert" draggable="false" />
+			<svg class="w-4 h-4 mr-1" viewBox="-12 -12 24 24">
+				<path d={side.icon} fill="white"/>
+			</svg>
 			{side.name}
 		</div>
 	{/each}
@@ -280,7 +284,7 @@
 	<!-- affichage détails message -->
 	<div
 		class="fixed w-1/2 max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl
-			p-4 m-6 bottom-0 left-0 bg-black bg-opacity-75"
+			p-2 m-4 bottom-0 left-0 bg-black bg-opacity-75"
 		transition:fade={{ duration: 200 }}
 	>
 		{#if states.nodeInfo}
@@ -301,12 +305,9 @@
 							</div>
 							<div class="text-green-400 flex items-center">
 								{#if graph?.selectedNode?.side}
-									<img
-										src={sides.find((side) => side.id === graph?.selectedNode?.side)?.icon}
-										alt={'icon'}
-										class="w-4 h-4 mr-1 filter invert"
-										style={'filter: invert(51%) sepia(73%) saturate(352%) hue-rotate(90deg);'}
-									/>
+									<svg class="w-4 h-4 mr-1" viewBox="-12 -12 24 24">
+										<path d={sides.find((side) => side.id === graph?.selectedNode?.side)?.icon} fill="rgb(74 222 128)"/>
+									</svg>
 								{/if}
 								{sides.find((side) => side.id === graph?.selectedNode?.side)?.name}
 							</div>
@@ -376,14 +377,10 @@
 						<div class="label p-0">
 							<span class="label-text text-inherit">{$t('side.yourSide')}</span>
 						</div>
-						<select
-							bind:value={userSideId}
-							name="side"
-							class="select select-accent text-primary-500 bg-gray-950 select-sm select-bordered"
-						>
-							<option disabled selected>{$t('side.chooseSide')}</option>
+						<select bind:value={userSideId} name="side" class="text-primary-500">
+							<option value={null} disabled selected class="text-gray-700">{$t('side.chooseSide')}</option>
 							{#each sides as side}
-								<option value={side.id}>{side.name}</option>
+								<option value={side.id} class="text-gray-600">{side.name}</option>
 							{/each}
 						</select>
 					</label>
@@ -440,6 +437,19 @@
 				}}
 				class="flex flex-col items-center gap-4 p-2 text-primary-500 z-10"
 			>
+				<div>
+					<label>
+						{$t('admin.debugPanel')}
+						<input
+							class=" cursor-pointer"
+							type="checkbox"
+							name="seeDebugPane"
+							id="debugPaneCheck"
+							onchange={storePanelInLocalStorage}
+							bind:checked={viewportStore.seeDebugPanel}
+						/>
+					</label>
+				</div>
 				{@render formTemplate(events, 'addEvent', 'eventId', $t('admin.event.triggerEvent'))}
 				{@render formTemplate(ends, 'endSession', 'endId', $t('admin.session.endSession'))}
 			</div>
@@ -463,9 +473,9 @@
 {/if}
 
 <!-- Graph Tree -->
-<div class=" fixed m-4 left-0 top-16 z-50">
+<div class=" fixed m-4 left-0 top-16 z-30">
 	<button
-		class=" p-2 flex justify-center shadow-2xl items-center border border-white z-50 rounded-full bg-black bg-opacity-90"
+		class="p-2 flex justify-center shadow-2xl items-center border border-white rounded-full bg-black bg-opacity-90"
 		onclick={() => (treeView = !treeView)}
 	>
 		<GitPullRequest strokeWidth={1.5} color="white" />

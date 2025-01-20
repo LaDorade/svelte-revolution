@@ -55,7 +55,7 @@
     "otherSessions": "Other sessions",
     "sessionIsOver": "The session is over!",
     "openSessions": "Open sessions",
-    "endedSessions": "Ended sessions"
+    "endedSessions": "Completed public sessions"
   },
   "inSession": {
     "writeMessage": "Write a message",
@@ -112,7 +112,7 @@
   },
   "home": {
     "home": "Home",
-    "intro": "BⱯBEL RËVOLUㅏION is a platform for creating participatory stories. It is both an ever-evolving work, completed creations, and an interface for creating participatory sessions and scenarios. This site invites you to dive into a digital writing space where everyone can contribute and co-create in their own way.",
+    "intro": "BⱯBEL RËVOLUㅏION is a platform for creating participatory stories. It is both an ever-evolving work, completed creations, and an interface for creating participatory sessions and scenarios. This site invites you to dive into a digital writing space where everyone can contribute and co-create in their own way (previous version: https://babel.utc.fr/).",
     "introHighlight": "Join an ongoing session or create and lead your own session, your ",
     "introHyperHighlight": "BⱯBEL RËVOLUㅏION.",
     "writeMessage": "Write a message",
@@ -131,10 +131,22 @@
     "footer": {
       "citation": "An expression that, just a moment ago, was still alive and seemed even unshakable, could suddenly vanish: it disappeared with the situation that generated it and will one day testify as a fossil.",
       "ciationInfos": "",
-      "mainText": "BⱯBEL RËVOLUㅏION is an interactive, collaborative, multilingual dystopian story. This creation seeks to explore the link between the degradation of biodiversity and the degradation of linguistic and cultural diversity.",
+      "mainText": "BⱯBEL RËVOLUㅏION is an interactive, collaborative, multilingual dystopian story. The original scenario invited us to reflect on the link between the degradation of biodiversity and the degradation of linguistic and cultural diversity.",
       "techUsed": "Technologies used",
       "devAndDesign": "Development and design",
       "credits": "Credits"
+    },
+    "exampleGraph": {
+      "title1": "Contemplate the network",
+      "text1": "The graph appears with several interconnected nodes. Each node contains a title, text, and author, serving as an entry point to a message. Observe the whole, feel the connections, and discover the relationships between each message.",
+      "title2": "Dive into the words",
+      "text2": "Click on a node to reveal the details: the author and the content of the message. Each interaction unveils a new step in understanding the exchanges that precede your intervention.",
+      "title3": "Add your voice",
+      "text3": "By clicking on a node, you can add your contribution. Write your own message, which will be added to the network, creating a new link or continuing the conversation.",
+      "title4": "Manipulate the whole",
+      "text4": "Grab a node and move it to see the links react. Move the entire graph, reorganize your view, and play with the gravity that binds the messages together.",
+      "title5": "Explore your way",
+      "text5": "Use the zoom to enlarge or shrink your view of the graph. Whether you want to delve into the details of a specific section or get an overview, it's up to you to choose the angle that suits you."
     }
   },
   "nav": {

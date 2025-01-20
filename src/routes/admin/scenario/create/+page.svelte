@@ -170,7 +170,7 @@
 		<div class=" flex flex-col w-full gap-2">
 			<label class="standardLabel">
 				<input
-					class="appearance-none rounded w-full h-full p-4"
+					class="appearance-none rounded w-full h-full p-4 bg-black/0"
 					type="text"
 					bind:value={formData.title}
 					placeholder={$t('scenario.title')}
@@ -179,7 +179,7 @@
 			</label>
 			<label class="standardLabel">
 				<textarea
-					class="appearance-none block rounded w-full h-full p-4"
+					class="appearance-none block rounded w-full h-full p-4 bg-black/0"
 					placeholder="Prologue"
 					bind:value={formData.prologue}
 					name="prologue"
@@ -234,7 +234,7 @@
 		<div class="flex flex-col gap-4 items-center w-full">
 			<label class="standardLabel">
 				<input
-					class="rounded w-full h-full p-2"
+					class="rounded w-full h-full p-2 bg-black/0"
 					type="text"
 					bind:value={formData.firstNode.title}
 					placeholder={$t('scenario.firstNode.firstNodeTitle')}
@@ -243,7 +243,7 @@
 			</label>
 			<label class="standardLabel">
 				<textarea
-					class=" rounded block w-full h-full p-2"
+					class="rounded block w-full h-full p-2 bg-black/0"
 					placeholder={$t('scenario.firstNode.firstNodeText')}
 					bind:value={formData.firstNode.text}
 					name="firstNodeText"
@@ -252,7 +252,7 @@
 			<label class="standardLabel">
 				<input
 					type="text"
-					class=" rounded w-full h-full p-2"
+					class="rounded w-full h-full p-2 bg-black/0"
 					bind:value={formData.firstNode.author}
 					placeholder={$t('scenario.firstNode.firstNodeAuthor')}
 					name="firstNodeAuthor"
@@ -272,7 +272,7 @@
 						<div class="flex gap-2 items-center">
 							<label class="standardLabel">
 								<input
-									class=" w-full h-full p-2 rounded"
+									class="w-full h-full p-2 rounded bg-black/0"
 									type="text"
 									bind:value={side.title}
 									placeholder={$t('side.title')}
@@ -318,7 +318,7 @@
 							<h2 class="p-4 text-2xl font-bold">{$t('scenario.event.event')} {i + 1}</h2>
 							<label class="standardLabel">
 								<input
-									class=" w-full h-full p-2 rounded"
+									class="w-full h-full p-2 rounded bg-black/0"
 									type="text"
 									bind:value={event.title}
 									placeholder={$t('scenario.event.title')}
@@ -327,7 +327,7 @@
 							</label>
 							<label class="standardLabel">
 								<textarea
-									class=" appearance-none block w-full h-full p-2 rounded"
+									class="appearance-none block w-full h-full p-2 rounded bg-black/0"
 									bind:value={event.text}
 									placeholder={$t('scenario.event.text')}
 									name="eventText"
@@ -335,7 +335,7 @@
 							</label>
 							<label class="standardLabel">
 								<input
-									class=" w-full h-full p-2 rounded"
+									class="w-full h-full p-2 rounded bg-black/0"
 									type="text"
 									bind:value={event.author}
 									placeholder={$t('scenario.event.author')}
@@ -370,7 +370,7 @@
 		</div>
 
 		<!-- Ends -->
-		<h3 class=" text-white text-3xl text-center w-full mt-5">
+		<h3 class="text-white text-3xl text-center w-full mt-5">
 			{$t('scenario.end.ends')}
 		</h3>
 		<div class="standardLabel flex flex-col items-center gap-4 justify-center">
@@ -380,7 +380,7 @@
 						<h2 class="p-4 text-2xl font-bold">{$t('scenario.end.end')} {i + 1}</h2>
 						<label class="standardLabel">
 							<input
-								class="w-full h-full p-2 rounded"
+								class="w-full h-full p-2 rounded bg-black/0"
 								type="text"
 								bind:value={end.title}
 								placeholder={$t('scenario.end.title')}
@@ -446,11 +446,11 @@
 					</div>
 				</div>
 			{:else}
-				<div class="bg-green-500 h-full w-full p-4 rounded-md flex flex-col justify-center items-center">
+				<div class="bg-green-500 w-full p-4 rounded-md flex flex-col justify-center items-center mt-5">
 					<h3 class=" font-semibold text-xl flex items-center gap-2">
-						<Sparkles class="w-8 h-8" />
+						<Sparkles class="w-7 h-7" />
 						<div>{$t('admin.scenario.scenarioIsValide')}</div>
-						<Sparkles class="w-8 h-8" />
+						<Sparkles class="w-7 h-7" />
 					</h3>
 				</div>
 			{/if}
