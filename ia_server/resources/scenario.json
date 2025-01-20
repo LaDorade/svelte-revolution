@@ -1,6 +1,6 @@
 {
     "ends": [
-        "Fichtres, on l'a fait !",
+        "Fichtre, on l'a fait !",
         "Et #####, on est ######."
     ],
     "steps": [
@@ -26,12 +26,12 @@
                 "qg": {
                     "title": "Ordre de mission",
                     "text": "[Ce message n'est visible que par les membres de votre équipe] \n Vous faites partie de l'équipe qg. Votre but est de transmettre les instructions de neutralisation à l'équipe terrain qui se trouve dans le data center où l'IA est stockée.  Lisez la procédure de neutralisation de la machine puis attendez les observations de l'équipe terrain afin de leur transmettre les actions à réaliser pour stopper les dérives de l'IA. Lorsqu'elle aura réalisé l'action nécessaire, vous aurez accès aux nouvelles instructions afin d'avancer à l'étape suivante. Astuce : n'hésitez pas à partager vos indices aussi pour que tout le monde puisse y réfléchir \n \n Procédure de neutralisation [Page 1] La machine qui stocke l'IA se trouve dans la salle au fond à droite.",
-                    "author": "Groupe d'intervention internationnal"
+                    "author": "Groupe d'intervention international"
                 },
                 "terrain": {
                     "title": "Ordre de mission",
-                    "text": "[Ce message n'est visible que par les membres de votre équipe] \nVous faites parti de l'équipe terrain. Votre but est d'éxecuter les instructions que la team qg vous envoie. Par exemple si elle vous dit d'appuyer sur le bouton bleu, vous devrez envoyer un text avec pour title : \"Appuyer sur le bouton bleu\" . Si c'était la bonne action à réaliser, un nouvel évennement se déclenchera. Mais attention, l'équipe qg ne pourra vous aider que si vous décrivez ce que vous avez sous les yeux. Et justement : \n Description de l'environnement [Corridor]\n Face à vous, un grand couloir avec 4 portes, deux de chaque côté.",
-                    "author": "Groupe d'intervention internationnal"
+                    "text": "[Ce message n'est visible que par les membres de votre équipe] \nVous faites partie de l'équipe terrain. Votre but est d'exécuter les instructions que la team qg vous envoie. Par exemple si elle vous dit d'appuyer sur le bouton bleu, vous devrez envoyer un text avec pour title : \"Appuyer sur le bouton bleu\" . Si c'était la bonne action à réaliser, un nouvel évènement se déclenchera. Mais attention, l'équipe qg ne pourra vous aider que si vous décrivez ce que vous avez sous les yeux. Et justement : \n Description de l'environnement [Corridor]\n Face à vous, un grand couloir avec 4 portes, deux de chaque côté.",
+                    "author": "Groupe d'intervention international"
                 }
             },
             "BannedWords": [
@@ -61,7 +61,7 @@
                 },
                 "terrain": {
                     "title": "Description de l'environnement [Porte]",
-                    "text": "\n Vous essayez d'ouvrir la porte mais vous appercevez qu'elle est protégée par un mot de passe. Un clavier miniature est accroché au mur. Sur celui-ci, les touches M-A-B-I sont plus abimées que les autres.",
+                    "text": "\n Vous essayez d'ouvrir la porte mais vous apercevez qu'elle est protégée par un mot de passe. Un clavier miniature est accroché au mur. Sur celui-ci, les touches M-A-B-I sont plus abimées que les autres.",
                     "author": "Scribe de l'expédition"
                 }
             },
@@ -72,7 +72,7 @@
             ],
             "ActionToPerform": [
                 "framboise",
-                "tapper framboise"
+                "taper framboise"
             ],
             "KeyWords": [
                 "framboise"
@@ -82,7 +82,7 @@
             "events": {
                 "qg": {
                     "title": "Procédure de neutralisation [Page 3]",
-                    "text": "Cable-Management 101 :\n *Décrire des manières de ranger les cables*\n Attention, un câble ne peut fonctionner à sa pleine capacité que entre 5 et 35°C.",
+                    "text": "Cable-Management 101 :\n *Décrire des manières de ranger les câbles*\n Attention, un câble ne peut fonctionner à sa pleine capacité qu’entre 5 et 35°C.",
                     "author": "SOPHIA inc."
                 },
                 "terrain": {
@@ -140,7 +140,7 @@
                 },
                 "qg": {
                     "title": "Extinction",
-                    "text": "Le chef de brigader poste un sobriquet taquin sur Internet et.. Ce n'est pas croyable ! Il n'a pas été censuré ! L'équipe Terrain a réussi !!",
+                    "text": "Le chef de brigade poste un sobriquet taquin sur Internet et... Ce n'est pas croyable ! Il n'a pas été censuré ! L'équipe Terrain a réussi !!",
                     "author": "Chef de brigade"
                 }
             },
