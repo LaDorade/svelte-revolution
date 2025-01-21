@@ -56,27 +56,27 @@ func (rsa *ServerAgent) DoIsCensored(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(req.Side)
 	fmt.Println(session.IdTerrain)
-	//if req.Side == session.IdTerrain {
-	is_message_performative := censor.IsActionPerformed(req.Title)
+	if req.Side == session.IdTerrain {
+		is_message_performative := censor.IsActionPerformed(req.Title)
 
-	if is_message_performative || session.Step == 0 {
-		//déclencer evt
-		fmt.Println("triggered")
-		resp.TriggerNewEvent = true
+		if is_message_performative || session.Step == 0 {
+			//déclencer evt
+			fmt.Println("triggered")
+			resp.TriggerNewEvent = true
 
-		next := session.NextStep()
+			next := session.NextStep()
 
-		if next {
-			resp.Events = session.Scenario.Steps[session.Step].Events
+			if next {
+				resp.Events = session.Scenario.Steps[session.Step].Events
 
-			//Sauvegarde de l'état de la session
-			rsa.Saver.SaveSessionData(rsa.Sessions)
-		} else {
-			resp.TriggerEnd = session.IdGoodEnd
+				//Sauvegarde de l'état de la session
+				rsa.Saver.SaveSessionData(rsa.Sessions)
+			} else {
+				resp.TriggerEnd = session.IdGoodEnd
+			}
 		}
-	}
 
-	//}
+	}
 	if !resp.TriggerNewEvent {
 		is_message_censored, censored_message, err := censor.CensordMessage(req.Message)
 		is_title_censored, censored_title, err1 := censor.CensordMessage(req.Title)
