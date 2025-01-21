@@ -67,13 +67,16 @@ export async function createSession(
 
 	if (scenario.ai) {
 		const cookies = pb.authStore.exportToCookie();
-		await fetch('/api/newAiSession', {
+		const result = await fetch('/api/ai/newAiSession', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({ sessionId: session.id, scenarioId, cookies })
 		});
+		if (!result.ok) {
+			console.error('Error creating AI session:', result);
+		}
 	}
 
 	return session;
