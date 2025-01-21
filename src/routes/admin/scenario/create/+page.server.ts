@@ -14,12 +14,13 @@ export const actions = {
 		const pb_cookie = data.get('pb_cookie') as string;
 		pb.authStore.loadFromCookie(pb_cookie);
 
-		if (!pb || !pb.authStore) {
-			return fail(500, { error: 'Database not connected' });
-		} else if (!pb.authStore.isValid || !pb.authStore.record) {
-			// TODO better auth check
-			return fail(401, { error: 'Unauthorized' });
-		}
+		// if (!pb || !pb.authStore) {
+		// 	return fail(500, { error: 'Database not connected' });
+		// } else if (!pb.authStore.isValid || !pb.authStore.record) {
+		// 	// TODO better auth check
+		// 	return fail(401, { error: 'Unauthorized' });
+		// }
+		// TODO : gérer ça dans pocketbase
 
 		const { scenarioData, firstNode, sides, events, ends } = parseFormData(data);
 
