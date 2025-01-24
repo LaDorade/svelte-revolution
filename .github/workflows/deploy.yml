@@ -18,12 +18,12 @@ jobs:
               with:
                   ssh-private-key: ${{ secrets.SSH_KEY }}
 
-            # - name: Copy project files to server
-            #   env:
-            #       SERVER_IP: ${{ secrets.SERVER_IP }}
-            #       USERNAME: ${{ secrets.USERNAME }}
-            #   run: |
-            #       rsync -avz -e "ssh -o StrictHostKeyChecking=no" --exclude '.git' ./ $USERNAME@$SERVER_IP:~/app/
+            - name: Copy project files to server
+              env:
+                  SERVER_IP: ${{ secrets.SERVER_IP }}
+                  USERNAME: ${{ secrets.USERNAME }}
+              run: |
+                  rsync -avz -e "ssh -o StrictHostKeyChecking=no" --exclude '.git' ./ $USERNAME@$SERVER_IP:~/app/
 
             - name: Deploy on server
               env:

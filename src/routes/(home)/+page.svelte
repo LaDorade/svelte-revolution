@@ -70,7 +70,7 @@
 			{/if}
 		</h1>
 		<div class="text-lg text-pretty text-gray-100">
-			{$t('home.intro')}
+			{@html $t('home.intro')}
 			<p class="text-white">
 				{$t('home.introHighlight')}
 				<span class="text-primary-500 text-nowrap">{$t('home.introHyperHighlight')}</span>
