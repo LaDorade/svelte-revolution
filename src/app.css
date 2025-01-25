@@ -10,6 +10,13 @@
 		font-style: normal;
 	}
 
+	@font-face {
+		font-family: 'AlterType';
+		src: url('/fonts/Altertype/Altertype.otf');
+		font-weight: normal;
+		font-style: normal;
+	}
+
 	h1 {
 		@apply p-4 text-5xl text-center;
 	}

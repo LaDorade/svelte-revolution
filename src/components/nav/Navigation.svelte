@@ -71,7 +71,7 @@
 				{/if}
 			</ul>
 		</div>
-		<a href="/" class="text-xl btn btn-ghost">{titleStore.navTitle}</a>
+		<a href="/" class="text-xl btn btn-ghost font-alterType">{titleStore.navTitle}</a>
 	</div>
 	<div class="navbar-end">
 		{#if viewportStore.actualBreakpoint !== 'sm'}

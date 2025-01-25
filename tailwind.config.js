@@ -34,7 +34,8 @@ export default {
 				'dark-bg': '#1a202c' // Couleur de fond sombre
 			},
 			fontFamily: {
-				redditSans: ['RedditSans', 'cursive']
+				redditSans: ['RedditSans', 'cursive'],
+				alterType: ['AlterType', 'cursive']
 			},
 			colors: {
 				primary: {

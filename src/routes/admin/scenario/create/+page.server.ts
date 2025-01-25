@@ -55,11 +55,11 @@ export const actions = {
 								.create({ scenario: scenario.id, name: side.title }, { requestKey: null });
 						});
 					} catch {
-						pb.collection('scenario').delete(scenario.id);
+						pb.collection('Scenario').delete(scenario.id);
 						return fail(500, { error: 'Fail creating sides' });
 					}
 				} catch {
-					pb.collection('scenario').delete(scenario.id);
+					pb.collection('Scenario').delete(scenario.id);
 					return fail(500, { error: 'Fail creating events and ends' });
 				}
 
