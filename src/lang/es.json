@@ -112,7 +112,7 @@
   },
   "home": {
     "home": "Inicio",
-    "intro": "BⱯBEL RËVOLUㅏION es una plataforma de creación de relatos participativos. Es a la vez una obra en constante evolución, creaciones terminadas y una interfaz para crear sesiones y escenarios participativos. Este sitio invita a sumergirse en un espacio de escritura digital donde cada uno puede contribuir y co-crear a su manera (versión anterior:https://babel.utc.fr/ ).",
+    "intro": "BⱯBEL RËVOLUㅏION es una plataforma de creación de relatos participativos. Es a la vez una obra en constante evolución, creaciones terminadas y una interfaz para crear sesiones y escenarios participativos. Este sitio invita a sumergirse en un espacio de escritura digital donde cada uno puede contribuir y co-crear a su manera (versión anterior: <a href='https://babel.utc.fr/' target='_blank'>https://babel.utc.fr/</a>).",
     "introHighlight": "Únete a una sesión en curso o crea y dirige tu propia sesión, tu ",
     "introHyperHighlight": "BⱯBEL RËVOLUㅏION.",
     "writeMessage": "Escribe un mensaje",
