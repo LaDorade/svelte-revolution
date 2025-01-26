@@ -61,7 +61,7 @@
 
 <div class="flex flex-col items-center w-full gap-12 px-4">
 	<section class="flex flex-col items-center w-full gap-6 p-8 pb-0 md:w-2/3">
-		<h1 class="pb-0 text-nowrap max-md:text-4xl">
+		<h1 class="sm:text-nowrap sm:text-5xl sm:pb-0 font-bold sm:font-normal pb-4 text-2xl">
 			{#if visible}
 				<span in:typewriter|global={{ text: 'BⱯBEL RËVOLUㅏION' }} class="text-white"></span>
 				<span class="blinking-underscore">_</span>
@@ -69,7 +69,7 @@
 				<span class="invisible">BABEL REVOLUTION</span>
 			{/if}
 		</h1>
-		<div class="text-lg text-pretty text-gray-100">
+		<div class="tradStyle text-lg text-pretty text-gray-100">
 			{@html $t('home.intro')}
 			<p class="text-white">
 				{$t('home.introHighlight')}
@@ -206,6 +206,15 @@
 <style>
 	.blinking-underscore {
 		animation: blink 1s step-start infinite 2s;
+	}
+
+	.tradStyle {
+		:global(a) {
+			color: cyan;
+		}
+		:global(a:hover) {
+			text-decoration: underline;
+		}
 	}
 
 	@keyframes blink {
