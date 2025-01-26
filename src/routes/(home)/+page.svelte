@@ -73,7 +73,7 @@
 			{@html $t('home.intro')}
 			<p class="text-white">
 				{$t('home.introHighlight')}
-				<span class="text-primary-600 text-nowrap">{$t('home.introHyperHighlight')}</span>
+				<span class="text-nowrap">{$t('home.introHyperHighlight')}</span>
 			</p>
 		</div>
 		<div id="intro" class="grid grid-cols-2 grid-rows-2 gap-4">
@@ -210,7 +210,7 @@
 
 	.tradStyle {
 		:global(a) {
-			color: cyan;
+			color: #6bbf8a;
 		}
 		:global(a:hover) {
 			text-decoration: underline;
