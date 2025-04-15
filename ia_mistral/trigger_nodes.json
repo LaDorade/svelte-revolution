@@ -1,0 +1,18 @@
+[
+  {
+    "id": "si28",
+    "trigger": "trahison",
+    "text": "Quelqu’un a menti dans l’ombre..."
+  },
+  {
+    "id": "si29",
+    "condition": "si28",
+    "text": "Les tensions montent, et une voix perce la nuit..."
+  },
+  {
+    "id": "si_final",
+    "condition": "si29",
+    "is_final": true,
+    "text": "La vérité éclate enfin..."
+  }
+]
