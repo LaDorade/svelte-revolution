@@ -2,17 +2,25 @@
   {
     "id": "si28",
     "trigger": "trahison",
-    "text": "Quelqu’un a menti dans l’ombre..."
+    "title": "si28",
+    "text": "Quelqu’un a menti dans l’ombre...",
+    "author": "Mistral"
   },
   {
     "id": "si29",
     "condition": "si28",
-    "text": "Les tensions montent, et une voix perce la nuit..."
+    "trigger": "tension",
+    "title": "si29",
+    "text": "Les tensions montent, et une voix perce la nuit...",
+    "author": "Mistral"
   },
   {
     "id": "si_final",
     "condition": "si29",
+    "trigger": "verite",
     "is_final": true,
-    "text": "La vérité éclate enfin..."
+    "title": "si_final",
+    "text": "La vérité éclate enfin...",
+    "author": "Mistral"
   }
 ]

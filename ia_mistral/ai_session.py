@@ -14,7 +14,7 @@ class AISession:
         self.session_file = os.path.join(DATA_FOLDER, f"{session_id}.json")
 
         self.known_node_ids = set()
-        self.triggered_nodes = []  # IA nodes already posted
+        self.triggered_nodes = []  # Identifiants des noeuds IA déjà envoyés
         self.trigger_chain = self.load_trigger_chain()
 
         self.load_state()
@@ -26,7 +26,7 @@ class AISession:
                 print(f"✅ {len(data)} déclencheurs IA chargés depuis trigger_nodes.json")
                 return data
         except Exception as e:
-            print(f"⚠️ Impossible de charger les déclencheurs IA : {e}")
+            print(f"⚠️ Erreur chargement des déclencheurs IA : {e}")
             return []
 
     def load_state(self):
@@ -50,13 +50,13 @@ class AISession:
         print(f"🛑 Session IA {self.session_id} arrêtée.")
 
     def start(self):
-        print(f"🤖 Démarrage IA pour la session {self.session_id}")
+        print(f"🤖 IA activée pour la session {self.session_id} — {self.scenario_title}")
         while self.active:
             try:
                 self.check_new_nodes()
                 time.sleep(3)
             except Exception as e:
-                print(f"❌ Erreur session IA {self.session_id} : {e}")
+                print(f"❌ Erreur IA session {self.session_id} : {e}")
                 time.sleep(5)
 
     def check_new_nodes(self):
@@ -70,49 +70,71 @@ class AISession:
 
             self.known_node_ids.add(node.id)
             self.save_state()
-            print(f"🧾 Nouveau nœud lu : {node.title}")
+            print(f"🧾 Nouveau nœud : {node.title}")
 
-            self.check_triggers(node.title)
+            self.check_triggers(node.id, node.title, node.text)
 
-    def check_triggers(self, text):
+    def check_triggers(self, node_id, title, text):
+        lower_title = title.lower()
         lower_text = text.lower()
 
         for step in self.trigger_chain:
             if step["id"] in self.triggered_nodes:
                 continue
 
-            if "trigger" in step and step["trigger"] in lower_text:
-                self.trigger_node(step)
-                break
+            # Vérifie le déclencheur de mot-clé
+            if "trigger" in step:
+                if self.text_matches_trigger(step["trigger"], lower_text):
+                    self.trigger_node(node_id, step)
+                    break
 
+            # Vérifie une condition de chaîne logique (ex : après un autre nœud IA)
             if "condition" in step and step["condition"] in self.triggered_nodes:
-                self.trigger_node(step)
-                break
+                if "trigger" not in step or self.text_matches_trigger(step["trigger"], lower_text):
+                    self.trigger_node(node_id, step)
+                    break
 
-    def trigger_node(self, step):
-        print(f"⚡ Déclenchement IA: {step['id']}")
+    def text_matches_trigger(self, trigger, text):
+        prompt = f"""
+    Le message suivant contient-il une référence directe ou indirecte (même par synonyme ou traduction en chinois) au mot ou à l'idée suivante : "{trigger}" ?
+    Message : "{text}"
+
+    Réponds simplement par : oui ou non.
+    """
+        try:
+            response = ask_mistral(prompt).strip().lower()
+            return "oui" in response
+        except Exception as e:
+            print(f"⚠️ Erreur Mistral lors du matching de trigger : {e}")
+            return False
+
+    def trigger_node(self, node_id, step):
+        print(f"⚡ Déclenchement IA : {step['id']}")
+        title = step["title"]
         text = step["text"]
-        self.add_node(text)
+        author = step["author"]
+        self.add_node(node_id, title, text, author)
         self.triggered_nodes.append(step["id"])
         self.save_state()
 
         if step.get("is_final"):
             self.handle_final_node()
 
-    def add_node(self, text):
+    def add_node(self, node_id, title, text, author):
         self.pb.collection("node").create({
+            "title": title,
+            "text": text,
+            "author": author,
+            "type": "contribution",
             "session": self.session_id,
-            "title": text,
-            "from_ai": True
+            "parent": node_id
         })
-        print(f"🤖 Noeud IA ajouté: {text[:40]}...")
+        print(f"🤖 Noeud IA posté : {text[:40]}...")
 
     def handle_final_node(self):
-        print("🔚 Dernier nœud déclenché, en attente des réponses...")
-        # Attend les réponses utilisateur au dernier nœud
+        print("🔚 Dernier nœud IA. Attente des réponses joueurs...")
         target_count = 3
-        previous_known = len(self.known_node_ids)
-        timeout = 30  # secondes max d'attente
+        timeout = 30
         waited = 0
 
         while waited < timeout:
@@ -127,15 +149,17 @@ class AISession:
             time.sleep(3)
             waited += 3
 
-        # 📖 Collecte des textes
-        user_responses = [n.title for n in nodes if n.id not in self.known_node_ids]
+        new_nodes = [n for n in nodes if n.id not in self.known_node_ids]
+        user_responses = [n.title for n in new_nodes]
+        one_node_id = new_nodes[0].id if new_nodes else None
+
         if not user_responses:
-            print("⚠️ Pas de réponse utilisateur, aucune histoire générée.")
+            print("⚠️ Aucune réponse reçue après le nœud final.")
             return
 
         prompt = self.build_final_prompt(user_responses)
         final_story = ask_mistral(prompt)
-        self.add_node(final_story)
+        self.add_node(one_node_id, "END", final_story, "Mistral")
         self.stop()
 
     def build_final_prompt(self, responses):
