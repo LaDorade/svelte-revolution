@@ -6,9 +6,9 @@ from mistral_client import ask_mistral
 DATA_FOLDER = "session_data"
 
 class AISession:
-    def __init__(self, session_id, scenario_title, pb_client):
+    def __init__(self, session_id, scenario_id, pb_client):
         self.session_id = session_id
-        self.scenario_title = scenario_title
+        self.scenario_id = scenario_id
         self.pb = pb_client
         self.active = True
         self.session_file = os.path.join(DATA_FOLDER, f"{session_id}.json")
@@ -50,7 +50,7 @@ class AISession:
         print(f"🛑 Session IA {self.session_id} arrêtée.")
 
     def start(self):
-        print(f"🤖 IA activée pour la session {self.session_id} — {self.scenario_title}")
+        print(f"🤖 IA activée pour la session {self.session_id} — Scénario: {self.scenario_id}")
         while self.active:
             try:
                 self.check_new_nodes()
