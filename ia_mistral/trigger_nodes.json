@@ -1,26 +1,42 @@
 [
   {
-    "id": "id1",
+    "id": "1",
     "condition" : "first",
-    "trigger": "pizza",
-    "title": "title1",
-    "text": "Tu veux une pizza?",
+    "trigger": "weapon",
+    "title": "The Summons of the Monkey King",
+    "text": "The disciples were summoned by Sun Wukong himself, high atop the Mountain of Flowers and Fruit. A mysterious gleam shimmered in his eyes—he was seeking a weapon, one worthy of his newfound powers. Without revealing more, he invited his followers to reflect and act. Thus began their journey, carried by sacred winds and ancient echoes.",
     "author": "Narrator"
   },
   {
-    "id": "id2",
-    "condition": "id1",
-    "trigger": "omelette",
-    "title": "title2",
-    "text": "Et maintenant une omelette?",
+    "id": "2",
+    "condition": "1",
+    "trigger": "explore mountain",
+    "title": "The Celestial Cavern",
+    "text": "Guided by whispers and the wisdom of legends, the disciples ventured toward the Mountain of Flowers and Fruit. There, hidden deep within its rocky heart, lay the Celestial Cavern. What would the monkeys do next ?",
     "author": "Narrator"
   },
   {
-    "id": "id3",
-    "condition": "id2",
-    "trigger": "bouchardon",
-    "title": "title3",
-    "text": "Il faut en parler à M. Bouchardon.",
+    "id": "3",
+    "condition": "2",
+    "trigger": "explore cavern",
+    "title": "The Old Monkey's Revelation",
+    "text": "In the warm shadows of the cavern, an elder monkey with a misty beard spoke in riddles. He hinted that the sacred staff was not of earth or sky, but rested beneath the waves of the Eastern Sea. Undeterred, the disciples gazed toward the horizon, ready to brave the depths and awaken the secrets of the ocean.",
+    "author": "Narrator"
+  },
+  {
+    "id": "4",
+    "condition": "3",
+    "trigger": "cross the Eastern Sea",
+    "title": "The Dragon King's Court",
+    "text": "The sea parted, and within the shimmering halls of his underwater palace, the majestic Dragon King Ao Guang welcomed Wukong and his followers. One by one, ancient weapons were presented. But only when the name of a certain weapon passed the lips of the disciples did the palace stir. Which weapon will Sun Wukong choose ?",
+    "author": "Narrator"
+  },
+  {
+    "id": "5",
+    "condition": "4",
+    "trigger": "Ruyi Jingu Bang (如意金箍棒)",
+    "title": "The Mighty Staff",
+    "text": "Before Wukong stood the colossal golden staff. As he reached out, it shrank in an instant, folding its grandeur into the palm of his hand. The disciples watched, awe-struck. Their quest had reached its climax. The power had returned to its rightful bearer. And now, a silence settled—what would they choose to do next?",
     "author": "Narrator",
     "is_final": true
   }
