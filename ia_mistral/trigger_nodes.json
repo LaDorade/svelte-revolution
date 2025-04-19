@@ -1,26 +1,25 @@
 [
   {
-    "id": "si28",
-    "trigger": "trahison",
-    "title": "si28",
-    "text": "Quelqu’un a menti dans l’ombre...",
-    "author": "Mistral"
+    "id": "id1",
+    "trigger": "pizza",
+    "title": "title1",
+    "text": "Tu veux une pizza?",
+    "author": "author1"
   },
   {
-    "id": "si29",
-    "condition": "si28",
-    "trigger": "tension",
-    "title": "si29",
-    "text": "Les tensions montent, et une voix perce la nuit...",
-    "author": "Mistral"
+    "id": "id2",
+    "condition": "id1",
+    "trigger": "omelette",
+    "title": "title2",
+    "text": "Et maintenant une omelette?",
+    "author": "author2"
   },
   {
-    "id": "si_final",
-    "condition": "si29",
-    "trigger": "verite",
-    "is_final": true,
-    "title": "si_final",
-    "text": "La vérité éclate enfin...",
-    "author": "Mistral"
+    "id": "id3",
+    "condition": "id2",
+    "trigger": "bouchardon",
+    "title": "title3",
+    "text": "Il faut en parler à M. Bouchardon.",
+    "author": "author3"
   }
 ]
