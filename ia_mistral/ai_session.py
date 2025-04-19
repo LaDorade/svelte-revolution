@@ -78,21 +78,17 @@ class AISession:
         lower_title = title.lower()
         lower_text = text.lower()
 
-        for step in self.trigger_chain:
-            if step["id"] in self.triggered_nodes:
+        for trigger_node in self.trigger_chain:
+            if trigger_node["id"] in self.triggered_nodes:
                 continue
 
-            # Vérifie le déclencheur de mot-clé
-            if "trigger" in step:
-                if self.text_matches_trigger(step["trigger"], lower_text):
-                    self.trigger_node(node_id, step)
+            if "condition" in trigger_node and trigger_node["condition"] in self.triggered_nodes:
+                if "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
+                    self.trigger_node(node_id, trigger_node)
                     break
-
-            # Vérifie une condition de chaîne logique (ex : après un autre nœud IA)
-            if "condition" in step and step["condition"] in self.triggered_nodes:
-                if "trigger" not in step or self.text_matches_trigger(step["trigger"], lower_text):
-                    self.trigger_node(node_id, step)
-                    break
+            elif "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
+                self.trigger_node(node_id, trigger_node)
+                break
 
     def text_matches_trigger(self, trigger, text):
         prompt = f"""
@@ -108,16 +104,16 @@ class AISession:
             print(f"⚠️ Erreur Mistral lors du matching de trigger : {e}")
             return False
 
-    def trigger_node(self, node_id, step):
-        print(f"⚡ Déclenchement IA : {step['id']}")
-        title = step["title"]
-        text = step["text"]
-        author = step["author"]
+    def trigger_node(self, node_id, trigger_node):
+        print(f"⚡ Déclenchement de l'IA par le trigger: {trigger_node["trigger"]}")
+        title = trigger_node["title"]
+        text = trigger_node["text"]
+        author = trigger_node["author"]
         self.add_node(node_id, title, text, author)
-        self.triggered_nodes.append(step["id"])
+        self.triggered_nodes.append(trigger_node["id"])
         self.save_state()
 
-        if step.get("is_final"):
+        if trigger_node.get("is_final"):
             self.handle_final_node()
 
     def add_node(self, node_id, title, text, author):
@@ -129,7 +125,7 @@ class AISession:
             "session": self.session_id,
             "parent": node_id
         })
-        print(f"🤖 Noeud IA posté : {text[:40]}...")
+        print(f"🤖 Noeud IA posté : {title} avec auteur {author}")
 
     def handle_final_node(self):
         print("🔚 Dernier nœud IA. Attente des réponses joueurs...")
