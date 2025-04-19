@@ -16,6 +16,7 @@ HEADERS = {
 def ask_mistral(prompt: str, history: list = [], model: str = "mistral-tiny") -> str:
     """
     Envoie un prompt à l'API Mistral, avec option d'historique (mode chat).
+    Renvoie le contenu de la réponse.
     """
     messages = history + [{"role": "user", "content": prompt}]
 
@@ -36,10 +37,4 @@ def ask_mistral(prompt: str, history: list = [], model: str = "mistral-tiny") ->
     except Exception as e:
         print(f"❌ Erreur Mistral : {e}")
         return ""
-
-
-"""
-prompt = "Raconte moi l'histoire de sun wukong"
-response = ask_mistral(prompt)
-print("🧠 Réponse Mistral :", response)
-"""
+    
