@@ -111,7 +111,7 @@ def update_instances_AISession(pb_client: PocketBase):
     # Ajoute les nouvelles instances
     for session in sesssions_ia_actives:
         if session.id not in existing_session_ids:
-            print(f"✅ Création d'une instance AISession pour la session {session.id}")
+            # print(f"✅ Création d'une instance AISession pour la session {session.id}")
             ai_instance = AISession(session.id, session.scenario, pb_client)
             instances_AISession.append(ai_instance)
             threading.Thread(target=ai_instance.start).start()
@@ -119,9 +119,13 @@ def update_instances_AISession(pb_client: PocketBase):
     # Supprimer les instances pour les sessions qui ne sont plus actives
     for instance in instances_AISession[:]:
         if instance.session_id not in active_session_ids:
-            print(f"🛑 Suppression de l'instance AISession pour la session {instance.session_id}")
+            # print(f"🛑 Suppression de l'instance AISession pour la session {instance.session_id}")
             instance.stop()
             instances_AISession.remove(instance)
+            continue
+        if instance.active == False:
+            instances_AISession.remove(instance)
+            continue
 
 
 def display_active_ai_sessions():
@@ -142,15 +146,16 @@ def main_loop(client):
     """Boucle principale pour surveiller les sessions IA actives."""
     while True:
         try:
+            print("🔄 Vérification des sessions IA actives...")
             update_active_ai_sessions(client)
-            display_active_ai_sessions()
-            time.sleep(2)
+            print(f"✅ {len(sesssions_ia_actives)} sessions IA actives trouvées.")
+            print("🔄 Vérification des instances AISession...")
             update_instances_AISession(client)
-            display_instances_AISession()
+            print(f"✅ {len(instances_AISession)} instances AISession actives trouvées.")
         except Exception as e:
             print(f"❌ Erreur dans le script : {e}")
 
-        time.sleep(5)
+        time.sleep(10)
 
 
 def main():
