@@ -86,19 +86,27 @@ class AISession:
                 if "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
                     self.trigger_node(node_id, trigger_node)
                     break
-            elif "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
-                self.trigger_node(node_id, trigger_node)
-                break
+
+            elif "condition" in trigger_node and trigger_node["condition"] == "first":
+                if "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
+                    self.trigger_node(node_id, trigger_node)
+                    break
+
+            #Laisse à mistral le temps de soufler
+            time.sleep(3)
 
     def text_matches_trigger(self, trigger, text):
+        print("trigger", trigger)
+        print('text', text)
         prompt = f"""
-    Le message suivant contient-il une référence directe ou indirecte (même par synonyme ou traduction en chinois) au mot ou à l'idée suivante : "{trigger}" ?
+    Le message suivant contient-il une référence directe ou indirecte ou est le synonyme ou est le même mot tout simplement (a une lettre pres) (fais le même raisonnement en traduisant en chinois ou en anglais et vise versa) au mot ou à l'idée suivante : "{trigger}" ?
     Message : "{text}"
 
     Réponds simplement par : oui ou non.
     """
         try:
             response = ask_mistral(prompt).strip().lower()
+            print("response", response)
             return "oui" in response
         except Exception as e:
             print(f"⚠️ Erreur Mistral lors du matching de trigger : {e}")

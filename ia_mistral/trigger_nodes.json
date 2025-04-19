@@ -1,6 +1,7 @@
 [
   {
     "id": "id1",
+    "condition" : "first",
     "trigger": "pizza",
     "title": "title1",
     "text": "Tu veux une pizza?",
