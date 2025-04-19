@@ -15,18 +15,18 @@ class AISession:
 
         self.known_node_ids = set()
         self.triggered_nodes = []  # Identifiants des noeuds IA déjà envoyés
-        self.trigger_chain = self.load_trigger_chain()
+        self.trigger_nodes = self.load_trigger_nodes()
 
         self.load_state()
 
-    def load_trigger_chain(self):
+    def load_trigger_nodes(self):
         try:
             with open("trigger_nodes.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
-                print(f"✅ {len(data)} déclencheurs IA chargés depuis trigger_nodes.json")
+                print(f"✅ {len(data)} triggers nodes chargés depuis trigger_nodes.json")
                 return data
         except Exception as e:
-            print(f"⚠️ Erreur chargement des déclencheurs IA : {e}")
+            print(f"⚠️ Erreur chargement des trigger nodes : {e}")
             return []
 
     def load_state(self):
@@ -47,16 +47,16 @@ class AISession:
 
     def stop(self):
         self.active = False
-        print(f"🛑 Session IA {self.session_id} arrêtée.")
+        print(f"🛑 Instance AISession {self.session_id} arrêtée.")
 
     def start(self):
-        print(f"🤖 IA activée pour la session {self.session_id} — Scénario: {self.scenario_id}")
+        print(f"🤖 Instance AISession lancée pour la session {self.session_id} — Scénario: {self.scenario_id}")
         while self.active:
             try:
                 self.check_new_nodes()
                 time.sleep(3)
             except Exception as e:
-                print(f"❌ Erreur IA session {self.session_id} : {e}")
+                print(f"❌ Erreur AISession {self.session_id} : {e}")
                 time.sleep(5)
 
     def check_new_nodes(self):
@@ -67,27 +67,37 @@ class AISession:
         for node in nodes:
             if node.id in self.known_node_ids:
                 continue
+            
+            # Ignore les noeuds du narrateur
+            if node.author == "Narrator" or node.author == "SOPHIA":
+                self.known_node_ids.add(node.id)
+                continue
 
             self.known_node_ids.add(node.id)
             self.save_state()
-            print(f"🧾 Nouveau nœud : {node.title}")
+            print(f"🧾 Nouveau nœud détecté : {node.title} (ID: {node.id})")
 
             self.check_triggers(node.id, node.title, node.text)
 
-    def check_triggers(self, node_id, title, text):
+    def check_triggers(self, node_id, title: str, text: str):
         lower_title = title.lower()
         lower_text = text.lower()
 
-        for trigger_node in self.trigger_chain:
+        for trigger_node in self.trigger_nodes:
+            # Vérifie si le noeud a déjà été déclenché
             if trigger_node["id"] in self.triggered_nodes:
                 continue
 
+            # Vérifie si le noeud a une condition (ex: il faut qu'un autre noeud soit déclenché avant)
             if "condition" in trigger_node and trigger_node["condition"] in self.triggered_nodes:
+                # Vérifie si le trigger est présent dans le contenu du noeud
                 if "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
                     self.trigger_node(node_id, trigger_node)
                     break
 
+            # Si c'est le tout premier trigger, il n'a pas de condition
             elif "condition" in trigger_node and trigger_node["condition"] == "first":
+                # Vérifie si le trigger est présent dans le contenu du noeud
                 if "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
                     self.trigger_node(node_id, trigger_node)
                     break
@@ -96,24 +106,24 @@ class AISession:
             time.sleep(3)
 
     def text_matches_trigger(self, trigger, text):
-        print("trigger", trigger)
-        print('text', text)
+        print("Trigger actuel:", trigger)
+        print("Contenu du noeud traité:", text)
         prompt = f"""
-    Le message suivant contient-il une référence directe ou indirecte ou est le synonyme ou est le même mot tout simplement (a une lettre pres) (fais le même raisonnement en traduisant en chinois ou en anglais et vise versa) au mot ou à l'idée suivante : "{trigger}" ?
+    Le message suivant contient-il une référence directe ou indirecte ou est le synonyme ou est le même mot tout simplement (à une lettre pres) (fais le même raisonnement en traduisant en chinois ou en anglais et vise versa) au mot ou à l'idée suivante : "{trigger}" ?
     Message : "{text}"
 
     Réponds simplement par : oui ou non.
     """
         try:
             response = ask_mistral(prompt).strip().lower()
-            print("response", response)
+            print("Réponse de Mistral:", response)
             return "oui" in response
         except Exception as e:
             print(f"⚠️ Erreur Mistral lors du matching de trigger : {e}")
             return False
 
     def trigger_node(self, node_id, trigger_node):
-        print(f"⚡ Déclenchement de l'IA par le trigger: {trigger_node["trigger"]}")
+        print(f"⚡ Trigger détecté: {trigger_node["trigger"]}. Création du noeud...")
         title = trigger_node["title"]
         text = trigger_node["text"]
         author = trigger_node["author"]
@@ -133,28 +143,26 @@ class AISession:
             "session": self.session_id,
             "parent": node_id
         })
-        print(f"🤖 Noeud IA posté : {title} avec auteur {author}")
+        print(f"🤖 Noeud IA posté (ID: {node_id}) : {title} avec auteur '{author}'")
 
     def handle_final_node(self):
-        print("🔚 Dernier nœud IA. Attente des réponses joueurs...")
-        target_count = 3
-        timeout = 30
+        timeout = 120 # faire un timeout plus long
         waited = 0
+        print(f"🔚 Dernier trigger node enclenché. Attente des réponses joueurs... ({timeout} sec)")
 
+        # Récupère les nouveaux noeuds jusqu'à ce que le temps soit écoulé
         while waited < timeout:
             nodes = self.pb.collection("node").get_full_list(query_params={
                 "filter": f"session = '{self.session_id}'"
             })
             new_nodes = [n for n in nodes if n.id not in self.known_node_ids]
 
-            if len(new_nodes) >= target_count:
-                break
-
-            time.sleep(3)
-            waited += 3
+            time.sleep(10)
+            waited += 10
+            print(f"⏳ Attente... {waited}/{timeout} sec")
 
         new_nodes = [n for n in nodes if n.id not in self.known_node_ids]
-        user_responses = [n.title for n in new_nodes]
+        user_responses = [(n.title, n.text, n.author) for n in new_nodes if n.side != ""]
         one_node_id = new_nodes[0].id if new_nodes else None
 
         if not user_responses:
@@ -167,11 +175,21 @@ class AISession:
         self.stop()
 
     def build_final_prompt(self, responses):
-        joined = "\n".join(f"- {r}" for r in responses)
-        return f"""
-Tu es une IA qui clôture une histoire mystérieuse. Voici les dernières réponses des personnages :
+        reponses_joueurs = "\n".join(f"- Titre du message: {title} / Nom du disciple: {author} / Contenu (action/intention/choix): {text}" for title, text, author in responses)
 
-{joined}
+        print(reponses_joueurs)
 
-Rédige une courte conclusion dramatique et poétique qui résume la fin de cette histoire. Pas plus de 4 lignes.
-"""
+        return f"""Tu es une IA narratrice qui clôture une session de récit interactif dans l'univers mythologique de Sun Wukong.
+        Le scénario raconte comment Wukong et ses disciples (les joueurs) ont traversé plusieurs épreuves pour récupérer
+        le Rúyì Jīngū Bàng, le bâton magique, auprès du Roi Dragon dans l'océan de la Mer de l'Est.
+
+        Voici les dernières actions et intentions exprimées par les disciples :
+        {reponses_joueurs}
+
+        Ta mission est de rédiger un court paragraphe immersif concluant cette session. Cette conclusion :
+            -doit être cohérente avec les choix et intentions des disciples,
+            -doit servir de dernier nœud dans la session, et donc apporter une sensation de fermeture au récit.
+            -peut avoir une tournure humoristique ou absurde selon les choix des disciples.
+
+        Ne formule pas de questions ouvertes ni d'invitations à poursuivre : cette conclusion marque la fin de l'aventure.
+        La réponse doit être concise, entre 3 et 5 phrases maximum."""
