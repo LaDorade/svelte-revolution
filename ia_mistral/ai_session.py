@@ -69,7 +69,7 @@ class AISession:
                 continue
             
             # Ignore les noeuds du narrateur
-            if node.author == "Narrator" or node.author == "SOPHIA":
+            if node.author == "Narrator":
                 self.known_node_ids.add(node.id)
                 continue
 
@@ -108,12 +108,11 @@ class AISession:
     def text_matches_trigger(self, trigger, text):
         print("Trigger actuel:", trigger)
         print("Contenu du noeud traité:", text)
-        prompt = f"""
-    Le message suivant contient-il une référence directe ou indirecte ou est le synonyme ou est le même mot tout simplement (à une lettre pres) (fais le même raisonnement en traduisant en chinois ou en anglais et vise versa) au mot ou à l'idée suivante : "{trigger}" ?
-    Message : "{text}"
+        prompt = f"""Le message suivant contient-il une référence directe ou indirecte ou est le synonyme ou est identique
+        au mot ou à l'idée suivante (fais le même raisonnement en traduisant en chinois ou en anglais et vise versa): "{trigger}" ?
+        Message : "{text}"
 
-    Réponds simplement par : oui ou non.
-    """
+        Réponds simplement par : oui ou non."""
         try:
             response = ask_mistral(prompt).strip().lower()
             print("Réponse de Mistral:", response)
@@ -192,4 +191,5 @@ class AISession:
             -peut avoir une tournure humoristique ou absurde selon les choix des disciples.
 
         Ne formule pas de questions ouvertes ni d'invitations à poursuivre : cette conclusion marque la fin de l'aventure.
+        La réponse doit être en anglais.
         La réponse doit être concise, entre 3 et 5 phrases maximum."""
