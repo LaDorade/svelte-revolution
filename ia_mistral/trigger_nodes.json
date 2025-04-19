@@ -5,7 +5,7 @@
     "trigger": "pizza",
     "title": "title1",
     "text": "Tu veux une pizza?",
-    "author": "author1"
+    "author": "Narrator"
   },
   {
     "id": "id2",
@@ -13,7 +13,7 @@
     "trigger": "omelette",
     "title": "title2",
     "text": "Et maintenant une omelette?",
-    "author": "author2"
+    "author": "Narrator"
   },
   {
     "id": "id3",
@@ -21,6 +21,7 @@
     "trigger": "bouchardon",
     "title": "title3",
     "text": "Il faut en parler à M. Bouchardon.",
-    "author": "author3"
+    "author": "Narrator",
+    "is_final": true
   }
 ]
