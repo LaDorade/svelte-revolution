@@ -1,6 +1,7 @@
 import os
 import requests
 from dotenv import load_dotenv
+import time
 
 load_dotenv()
 
@@ -29,6 +30,7 @@ def ask_mistral(prompt: str, history: list = [], model: str = "mistral-tiny") ->
         res = requests.post(MISTRAL_API_URL, headers=HEADERS, json=body)
         res.raise_for_status()
         data = res.json()
+        time.sleep(2)
         return data["choices"][0]["message"]["content"]
 
     except Exception as e:
