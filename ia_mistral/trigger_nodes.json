@@ -36,8 +36,51 @@
     "condition": "4",
     "trigger": "Ruyi Jingu Bang (如意金箍棒)",
     "title": "The Mighty Staff",
-    "text": "Before Wukong stood the colossal golden staff. As he reached out, it shrank in an instant, folding its grandeur into the palm of his hand. The disciples watched, awe-struck. Their quest had reached its climax. The power had returned to its rightful bearer. And now, a silence settled—what would they choose to do next?",
+    "text": "Before Wukong stood the colossal golden staff. As he reached out, it shrank in an instant, folding its grandeur into the palm of his hand. The disciples watched, awe-struck. Their quest had reached its climax. The power had returned to its rightful bearer. And now, a silence settled: what would they choose to do next?",
     "author": "Narrator",
     "is_final": true
+  },
+
+  {
+    "id": "6",
+    "trigger": "go to France",
+    "title": "The Wrong Path",
+    "text": "The disciples, in their excitement, took a wrong turn and ended up in France. The Eiffel Tower loomed above them, a stark contrast to the mountains they were used to. They realized they had to find their way back to where they were before. Where was it again?",
+    "author": "Narrator"
+  },
+  {
+    "id": "7",
+    "trigger": "take a nap",
+    "title": "Laziness",
+    "text": "The disciples, tired from their journey, decided to take a nap. They found a cozy spot under a tree and closed their eyes. But when they woke up, they realized they hadn't advanced at all.",
+    "author": "Narrator"
+  },
+  {
+    "id": "8",
+    "trigger": "eat bananas",
+    "title": "Banana Feast",
+    "text": "One of the disciples discovered a hidden grove filled with golden bananas. Unable to resist, they called everyone for a grand feast. Bellies full and spirits high, they forgot entirely what they were supposed to be doing. Ah well, at least they were happy.",
+    "author": "Narrator"
+  },
+  {
+    "id": "9",
+    "trigger": "dance",
+    "title": "The Monkey Dance",
+    "text": "Someone played a flute, and without warning, the disciples broke into an impromptu monkey dance. Even Wukong tapped his foot for a moment before regaining his royal composure. Was it important? No. Was it magnificent? Absolutely.",
+    "author": "Narrator"
+  },
+  {
+    "id": "10",
+    "trigger": "ask for directions",
+    "title": "Mortal Confusion",
+    "text": "A well-meaning disciple asked a mortal farmer for directions to the Eastern Sea. The man looked confused, pointed vaguely toward the sunrise, and walked away muttering about 'cosplayers'. The disciples decided to just trust their instincts instead.",
+    "author": "Narrator"
+  },
+  {
+    "id": "12",
+    "trigger": "look at the sky",
+    "title": "Philosophical Pause",
+    "text": "As they marched onward, one disciple paused to look at the clouds. 'What if the weapon... is a metaphor?' they mused. Everyone stared at them in silence, unsure if they were wise or just sleep-deprived.",
+    "author": "Narrator"
   }
 ]
