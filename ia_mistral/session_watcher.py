@@ -129,9 +129,12 @@ def update_instances_AISession(pb_client: PocketBase):
     active_session_ids = [session.id for session in sesssions_ia_actives]
     existing_session_ids = [instance.session_id for instance in instances_AISession]
 
+    # BRUTE FORCE SCENARIO WUKONG ; LES AUTRES SCENARIOS SONT IGNORES
+    id_scenario_wukong = "5s484p3jw9ndesl"
+
     # Ajoute les nouvelles instances
     for session in sesssions_ia_actives:
-        if session.id not in existing_session_ids:
+        if session.id not in existing_session_ids and session.scenario == id_scenario_wukong:
             # print(f"✅ Création d'une instance AISession pour la session {session.id}")
             ai_instance = AISession(session.id, session.scenario, pb_client)
             instances_AISession.append(ai_instance)
@@ -167,10 +170,10 @@ def main_loop(client):
     """Boucle principale pour surveiller les sessions IA actives."""
     while True:
         try:
-            print("🔄 Vérification des sessions IA actives...")
+            # print("🔄 Vérification des sessions IA actives...")
             update_active_ai_sessions(client)
             print(f"✅ {len(sesssions_ia_actives)} sessions IA actives trouvées.")
-            print("🔄 Vérification des instances AISession...")
+            # print("🔄 Vérification des instances AISession...")
             update_instances_AISession(client)
             print(f"✅ {len(instances_AISession)} instances AISession actives trouvées.")
         except Exception as e:
