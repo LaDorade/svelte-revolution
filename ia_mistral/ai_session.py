@@ -171,6 +171,41 @@ class AISession:
         prompt = self.build_final_prompt(user_responses)
         final_story = ask_mistral(prompt)
         self.add_node(one_node_id, "END", final_story, "Mistral")
+
+        ## LOGIQUE POUR FICHIER SESSION
+        # ✅ Ajout : mise à jour du fichier JSON unique pour toutes les sessions
+        status_file = "sessions_status.json"
+        session_status = {
+            "session_id": self.session_id,
+            "etat": "terminée"
+        }
+
+        # Charger les données existantes ou créer une nouvelle liste
+        if os.path.exists(status_file):
+            with open(status_file, "r", encoding="utf-8") as f:
+                try:
+                    all_statuses = json.load(f)
+                except json.JSONDecodeError:
+                    all_statuses = []
+        else:
+            all_statuses = []
+
+        # Met à jour ou ajoute l'entrée de la session actuelle
+        updated = False
+        for entry in all_statuses:
+            if entry["session_id"] == self.session_id:
+                entry["etat"] = "terminée"
+                updated = True
+                break
+
+        if not updated:
+            all_statuses.append(session_status)
+
+        # Sauvegarder
+        with open(status_file, "w", encoding="utf-8") as f:
+            json.dump(all_statuses, f, ensure_ascii=False, indent=4)
+
+
         self.stop()
 
     def build_final_prompt(self, responses):

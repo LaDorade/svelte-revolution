@@ -3,6 +3,8 @@ import time
 from pocketbase import PocketBase
 from datetime import datetime, timedelta, timezone
 import threading
+import os
+import json
 
 """
 Ce script permet de maintenir la liste des sessions IA actives.
@@ -60,6 +62,24 @@ def fetch_recent_nodes(client) -> list:
         print(f"❌ Erreur lors de la récupération des noeuds récents : {e}")
         return []
 
+def is_session_terminated(session_id):
+    status_file = "sessions_status.json"
+
+    if not os.path.exists(status_file):
+        return False  # Le fichier n'existe pas, donc la session n'est pas terminée
+
+    with open(status_file, "r", encoding="utf-8") as f:
+        try:
+            all_statuses = json.load(f)
+        except json.JSONDecodeError:
+            return False  # Fichier vide ou corrompu
+
+    for entry in all_statuses:
+        if entry.get("session_id") == session_id:
+            return entry.get("etat") == "terminée"
+
+    return False  # session_id non trouvé
+
 
 def is_recently_updated(node) -> bool:
     """Vérifie si un noeud a été mis à jour dans les 10 dernières minutes."""
@@ -88,7 +108,8 @@ def update_active_ai_sessions(client):
 
     for session in sessions_ia:
         if session not in sesssions_ia_actives and session.id in sessions_actives_id:
-            sesssions_ia_actives.append(session)
+            if not is_session_terminated(session):
+                sesssions_ia_actives.append(session)
 
 
 def start_ai_for_session(session, pb_client: PocketBase):
