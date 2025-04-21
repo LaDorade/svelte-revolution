@@ -54,7 +54,7 @@ class AISession:
         while self.active:
             try:
                 self.check_new_nodes()
-                time.sleep(3)
+                time.sleep(2)
             except Exception as e:
                 print(f"❌ Erreur AISession {self.session_id} : {e}")
                 time.sleep(5)
@@ -88,6 +88,11 @@ class AISession:
             if trigger_node["id"] in self.triggered_nodes:
                 continue
 
+            if "condition" not in trigger_node:
+                if "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
+                    self.trigger_node(node_id, trigger_node)
+                    break
+
             # Vérifie si le noeud a une condition (ex: il faut qu'un autre noeud soit déclenché avant)
             if "condition" in trigger_node and trigger_node["condition"] in self.triggered_nodes:
                 # Vérifie si le trigger est présent dans le contenu du noeud
@@ -103,7 +108,7 @@ class AISession:
                     break
 
             #Laisse à mistral le temps de soufler
-            time.sleep(3)
+            time.sleep(1)
 
     def text_matches_trigger(self, trigger, text):
         print("Trigger actuel:", trigger)
@@ -134,11 +139,12 @@ class AISession:
             self.handle_final_node()
 
     def add_node(self, node_id, title, text, author):
+        node_type = "contribution" if author != "Narrator" else "event"
         self.pb.collection("node").create({
             "title": title,
             "text": text,
             "author": author,
-            "type": "contribution",
+            "type": node_type,
             "session": self.session_id,
             "parent": node_id
         })
@@ -170,7 +176,7 @@ class AISession:
 
         prompt = self.build_final_prompt(user_responses)
         final_story = ask_mistral(prompt)
-        self.add_node(one_node_id, "END", final_story, "Mistral")
+        self.add_node(one_node_id, "THE END", final_story, "Narrator")
 
         ## LOGIQUE POUR FICHIER SESSION
         # ✅ Ajout : mise à jour du fichier JSON unique pour toutes les sessions
