@@ -2,52 +2,45 @@
   {
     "id": "1",
     "condition" : "first",
-    "trigger": "weapon",
-    "title": "The Summons of the Monkey King",
-    "text": "The disciples were summoned by Sun Wukong himself, high atop the Mountain of Flowers and Fruit. A mysterious gleam shimmered in his eyes—he was seeking a weapon, one worthy of his newfound powers. Without revealing more, he invited his followers to reflect and act. Thus began their journey, carried by sacred winds and ancient echoes.",
+    "trigger": "stick (as in, a wooden staff)",
+    "title": "Atop the Mountain of Flowers and Fruits (Step 1/5)",
+    "text": "“Perhaps, Great Sage, something as humble as a staff might yet prove matchless in the right hands.” suggested one of Sun Wukong's followers. The Monkey King's grin spread, while his tail curled with amusement. “A staff, you say…?” His gaze drifted to the untamed mountains. “Very well.” With a laugh that scatters blossoms, he left a wordless dare hanging in the air. Left to ponder, the disciples exchanged glances. “What now?” one asked. “We need to find the staff!” another exclaimed. “But where?” a third chimed in. The air was thick with anticipation, and the quest had only just begun.",
     "author": "Narrator"
   },
   {
     "id": "2",
     "condition": "1",
     "trigger": "explore mountain",
-    "title": "The Celestial Cavern",
-    "text": "Guided by whispers and the wisdom of legends, the disciples ventured toward the Mountain of Flowers and Fruit. There, hidden deep within its rocky heart, lay the Celestial Cavern. What would the monkeys do next ?",
+    "title": "The Celestial Cavern's entrance (Step 2/5)",
+    "text": "Guided by whispers and the wisdom of legends, the disciples ventured around the Mountain of Flowers and Fruit. There, hidden deep within its rocky heart, lay the Celestial Cavern. What would the monkeys do next ?",
     "author": "Narrator"
   },
   {
     "id": "3",
     "condition": "2",
     "trigger": "explore cavern",
-    "title": "The Old Monkey's Revelation",
-    "text": "In the warm shadows of the cavern, an elder monkey with a misty beard spoke in riddles. He hinted that the sacred staff was not of earth or sky, but rested beneath the waves of the Eastern Sea. Undeterred, the disciples gazed toward the horizon, ready to brave the depths and awaken the secrets of the ocean.",
+    "title": "The Old Monkey's Revelation (Step 3/5)",
+    "text": "In the warm shadows of the cavern, an elder monkey with a misty beard spoke in riddles. He hinted that a sacred staff that was not of earth or sky rested beneath the waves on the other side of the Eastern Sea. Undeterred, the disciples gazed toward the horizon, ready to brave the depths and awaken the secrets of the ocean.",
     "author": "Narrator"
   },
   {
     "id": "4",
     "condition": "3",
-    "trigger": "cross the Eastern Sea",
-    "title": "The Dragon King's Court",
-    "text": "The sea parted, and within the shimmering halls of his underwater palace, the majestic Dragon King Ao Guang welcomed Wukong and his followers. One by one, ancient weapons were presented. But only when the name of a certain weapon passed the lips of the disciples did the palace stir. Which weapon will Sun Wukong choose ?",
+    "trigger": "cross sea",
+    "title": "The Dragon King's Court (Step 4/5)",
+    "text": "After braving the swells of the Eastern Sea and plunging beneath its jade-green depths, the monkeys reached the shimmering halls of the Dragon King Ao Guang. Explaining their quest for a weapon worthy of their master, they watched as Ao Guang unveiled a succession of ancient arms. Yet only when a certain weapon's name left the disciples' lips did the palace itself seem to awaken. Which weapon will Sun Wukong choose?",
     "author": "Narrator"
   },
   {
     "id": "5",
     "condition": "4",
     "trigger": "Ruyi Jingu Bang (如意金箍棒)",
-    "title": "The Mighty Staff",
-    "text": "Before Wukong stood the colossal golden staff. As he reached out, it shrank in an instant, folding its grandeur into the palm of his hand. The disciples watched, awe-struck. Their quest had reached its climax. The power had returned to its rightful bearer. And now, a silence settled: what would they choose to do next?",
+    "title": "The Mighty Staff (Step 5/5)",
+    "text": "Before Wukong stood the colossal golden staff known as 如意金箍棒. As he reached out, it shrank in an instant, folding its grandeur into the palm of his hand. The disciples watched, awe-struck. Their quest had reached its ending. A silence settled: what would they choose to do next? (Hint: you have 5 minutes to write whatever you want!)",
     "author": "Narrator",
     "is_final": true
   },
 
-  {
-    "id": "6",
-    "trigger": "go to France",
-    "title": "The Wrong Path",
-    "text": "The disciples, in their excitement, took a wrong turn and ended up in France. The Eiffel Tower loomed above them, a stark contrast to the mountains they were used to. They realized they had to find their way back to where they were before. Where was it again?",
-    "author": "Narrator"
-  },
   {
     "id": "7",
     "trigger": "take a nap",
@@ -57,7 +50,7 @@
   },
   {
     "id": "8",
-    "trigger": "eat bananas",
+    "trigger": "eat banana",
     "title": "Banana Feast",
     "text": "One of the disciples discovered a hidden grove filled with golden bananas. Unable to resist, they called everyone for a grand feast. Bellies full and spirits high, they forgot entirely what they were supposed to be doing. Ah well, at least they were happy.",
     "author": "Narrator"
@@ -71,13 +64,6 @@
   },
   {
     "id": "10",
-    "trigger": "ask for directions",
-    "title": "Mortal Confusion",
-    "text": "A well-meaning disciple asked a mortal farmer for directions to the Eastern Sea. The man looked confused, pointed vaguely toward the sunrise, and walked away muttering about 'cosplayers'. The disciples decided to just trust their instincts instead.",
-    "author": "Narrator"
-  },
-  {
-    "id": "12",
     "trigger": "look at the sky",
     "title": "Philosophical Pause",
     "text": "As they marched onward, one disciple paused to look at the clouds. 'What if the weapon... is a metaphor?' they mused. Everyone stared at them in silence, unsure if they were wise or just sleep-deprived.",
