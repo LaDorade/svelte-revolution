@@ -1,6 +1,8 @@
 import time
 import json
 import os
+
+from mistralresponseformat import MistralResponseFormatter
 from mistral_client import ask_mistral
 
 DATA_FOLDER = "session_data"
@@ -16,6 +18,7 @@ class AISession:
         self.known_node_ids = set()
         self.triggered_nodes = []  # Identifiants des noeuds IA déjà envoyés
         self.trigger_nodes = self.load_trigger_nodes()
+        self.pending_nodes = []
 
         self.load_state()
 
@@ -54,7 +57,8 @@ class AISession:
         while self.active:
             try:
                 self.check_new_nodes()
-                time.sleep(2)
+                self.process_pending_nodes_batch()
+                time.sleep(20)
             except Exception as e:
                 print(f"❌ Erreur AISession {self.session_id} : {e}")
                 time.sleep(5)
@@ -74,10 +78,81 @@ class AISession:
                 continue
 
             self.known_node_ids.add(node.id)
-            self.save_state()
-            print(f"🧾 Nouveau nœud détecté : {node.title} (ID: {node.id})")
+            self.pending_nodes.append({
+                "id" : node.id,
+                "title" : node.title,
+                "text" : node.text,
+            })
 
-            self.check_triggers(node.id, node.title, node.text)
+            self.save_state()
+
+            print(f"🧾 Nouveau nœud détecté et ajouté au batch : {node.title} (ID: {node.id})")
+
+            #self.check_triggers(node.id, node.title, node.text)
+
+        return
+
+    def process_pending_nodes_batch(self):
+        if not self.pending_nodes:
+            return
+
+        print(f"Noeuds du batch : {self.pending_nodes}")
+
+        prompts = {}
+        for node in self.pending_nodes:
+            # On ne prend que les triggers activables maintenant
+            available_triggers = []
+            for trigger in self.trigger_nodes:
+                if trigger["id"] in self.triggered_nodes:
+                    continue
+                if "condition" not in trigger or trigger["condition"] == "first" or trigger["condition"] in self.triggered_nodes:
+                    available_triggers.append(trigger)
+
+            prompts[node["id"]] = {
+                "title": node["title"],
+                "text": node["text"],
+                "available_triggers": available_triggers
+            }
+
+        mistral_prompt = """Tu es une IA qui aide à détecter si certains noeuds textuels déclenchent des noeuds IA narratifs (appelés "trigger_nodes").
+
+        Pour chaque message (appelé "node"), analyse si son texte contient une intention ou correspond à un des triggers listés pour lui.S'il contient 
+        une référence directe ou indirecte, ou est le synonyme, ou est identique
+        au mot ou à l'idée suivante (fais le même raisonnement en traduisant en chinois ou en anglais et vise versa) dans les available_triggers.
+    
+        Voici le format de réponse que tu dois produire, en JSON uniquement :
+        { "node_id": { "trigger" : "true/false", "justification text" : "ta justification" } }
+    
+        Voici les noeuds à traiter :
+        """
+        mistral_prompt = mistral_prompt + str({json.dumps(prompts, ensure_ascii=False, indent=2)})
+
+        try:
+            response = ask_mistral(mistral_prompt)
+            results = json.loads(response)
+            for node in self.pending_nodes:
+                node_id = node["id"]
+                if node_id in results and results[node_id].get("trigger") in [True, 'true', 'True']:
+                    justification = results[node_id].get("justification text", "")
+                    # Trouver le trigger qui correspond, parmi ceux autorisés
+                    matched_trigger = self.find_matching_trigger_in_node(node["text"],prompts[node_id]["available_triggers"])
+                    #print(f"node_text : {node["text"]}")
+                    #print(f"available_triggers : {prompts[node_id]["available_triggers"]}")
+                    #print(f"matched_trigger : {matched_trigger}")
+                    if matched_trigger:
+                        self.trigger_node(node_id, matched_trigger)
+        except Exception as e:
+            print(f"❌ Erreur Mistral batch : {e}")
+
+        self.pending_nodes = []
+
+    def find_matching_trigger_in_node(self, text, available_triggers):
+        lower_text = text.lower()
+        for trigger_node in available_triggers:
+            if "trigger" in trigger_node and lower_text in trigger_node["trigger"].lower():
+                return trigger_node
+        return None
+
 
     def check_triggers(self, node_id, title: str, text: str):
         lower_title = title.lower()
