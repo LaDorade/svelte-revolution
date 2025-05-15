@@ -2,7 +2,6 @@ import time
 import json
 import os
 
-from mistralresponseformat import MistralResponseFormatter
 from mistral_client import ask_mistral
 
 DATA_FOLDER = "session_data"
@@ -136,9 +135,9 @@ class AISession:
                     justification = results[node_id].get("justification text", "")
                     # Trouver le trigger qui correspond, parmi ceux autorisés
                     matched_trigger = self.find_matching_trigger_in_node(node["text"],prompts[node_id]["available_triggers"])
-                    #print(f"node_text : {node["text"]}")
-                    #print(f"available_triggers : {prompts[node_id]["available_triggers"]}")
-                    #print(f"matched_trigger : {matched_trigger}")
+                    print(f"node_text : {node["text"]}")
+                    print(f"available_triggers : {prompts[node_id]["available_triggers"]}")
+                    print(f"matched_trigger : {matched_trigger}")
                     if matched_trigger:
                         self.trigger_node(node_id, matched_trigger)
         except Exception as e:
