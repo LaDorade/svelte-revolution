@@ -95,12 +95,13 @@ class AISession:
         if not self.pending_nodes:
             return
 
-        print(f"Noeuds du batch : {self.pending_nodes}")
+        print(f"🧾 Traitement du batch en cours... (n={len(self.pending_nodes)})")
 
         batch = {}
         for pending_node in self.pending_nodes:
             # On ne prend que les triggers activables maintenant
             available_triggers = {}
+            # format {"trigger_id" : "trigger"}
             for trigger in self.trigger_nodes:
                 if trigger["id"] in self.triggered_nodes:
                     continue
@@ -187,6 +188,7 @@ class AISession:
 
         # on vide le batch
         self.pending_nodes = []
+        print(f"🧾 Le batch a été traité. En attente de nouveaux nodes...")
 
     def check_triggers(self, node_id, title: str, text: str):
         lower_title = title.lower()

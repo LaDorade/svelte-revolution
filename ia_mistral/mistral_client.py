@@ -22,7 +22,7 @@ def ask_mistral(prompt: str, history: list = [], model: str = "open-mistral-nemo
     """
     client = Mistral(api_key=MISTRAL_API_KEY)
     try:
-        print("Envoi du batch au client Mistral...", end=" ")
+        print("🧾 Envoi du batch au client Mistral...", end=" ")
         chat_response = client.chat.complete(
             model=model,
             response_format={"type": "json_object"},
