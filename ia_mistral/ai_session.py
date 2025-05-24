@@ -97,61 +97,96 @@ class AISession:
 
         print(f"Noeuds du batch : {self.pending_nodes}")
 
-        prompts = {}
-        for node in self.pending_nodes:
+        batch = {}
+        for pending_node in self.pending_nodes:
             # On ne prend que les triggers activables maintenant
-            available_triggers = []
+            available_triggers = {}
             for trigger in self.trigger_nodes:
                 if trigger["id"] in self.triggered_nodes:
                     continue
                 if "condition" not in trigger or trigger["condition"] == "first" or trigger["condition"] in self.triggered_nodes:
-                    available_triggers.append(trigger)
+                    available_triggers[trigger["id"]] = trigger["trigger"]
 
-            prompts[node["id"]] = {
-                "title": node["title"],
-                "text": node["text"],
+            batch[pending_node["id"]] = {
+                "title": pending_node["title"],
+                "text": pending_node["text"],
                 "available_triggers": available_triggers
             }
 
-        mistral_prompt = """Tu es une IA qui aide à détecter si certains noeuds textuels déclenchent des noeuds IA narratifs (appelés "trigger_nodes").
+        mistral_prompt = """
+        Tu vas recevoir une liste de nodes sous le format
+        { "node_id": {
+            "title" : "name of node",
+            "text" : "content of node",
+            "available_triggers": {
+                "trigger_id" : "content of trigger_id"
+                }
+            }
+        }
 
-        Pour chaque message (appelé "node"), analyse si son texte contient une intention ou correspond à un des triggers listés pour lui.S'il contient 
-        une référence directe ou indirecte, ou est le synonyme, ou est identique
-        au mot ou à l'idée suivante (fais le même raisonnement en traduisant en chinois ou en anglais et vise versa) dans les available_triggers.
-    
-        Voici le format de réponse que tu dois produire, en JSON uniquement :
-        { "node_id": { "trigger" : "true/false", "justification text" : "ta justification" } }
-    
+        Pour chaque noeud à traiter, détermine si les valeurs de "title" ou "text" contiennent une référence ou un synonyme
+        au contenu de l'un des available_triggers. Il suffit que soit le "title" ou le "text" contienne
+        une référence pour que ce soit considéré comme vrai.
+        Ce raisonnement est applicable dans toutes les langues et notamment le français, l'anglais et le chinois.
+        Par exemple, pour le node fictif
+        {"32432" : {
+            "title" : "Des pâtes"
+            "text" : "Manger des pâtes"
+            "available_triggers": {
+                "2" : "boire de l'eau"
+                }
+            }
+        }
+        'Des pâtes' ne fait pas référence à l'idée de boire de l'eau.
+        'Manger des pâtes' ne fait pas référence à l'idée de boire de l'eau.
+        
+        Dans ta réponse tu dois traiter tous les available_trigger et justifier ta réponse dans chaque cas.
+        Voici le format exact de réponse que tu dois produire pour chaque noeud, en format JSON:
+        { "node_id": 
+            { 
+            "trigger_id" : "id du available_trigger",
+            "trigger" : "True ou False", 
+            "justification" : "ta justification" 
+            },
+            {
+            // d'autres available_triggers s'il y en a
+            }
+        }
+
+        Si on reprend l'exemple d'avant, la réponse serait:
+        { "32432": 
+            { 
+            "trigger_id" : "2",
+            "trigger" : "False", 
+            "justification" : "Ni 'Des pâtes' ni 'Manger des pâtes' ne font référence à l'idée de boire de l'eau." 
+            }
+        }
+
         Voici les noeuds à traiter :
         """
-        mistral_prompt = mistral_prompt + str({json.dumps(prompts, ensure_ascii=False, indent=2)})
-
+        mistral_prompt = mistral_prompt + json.dumps(batch, ensure_ascii=False, indent=4)
         try:
             response = ask_mistral(mistral_prompt)
-            results = json.loads(response)
-            for node in self.pending_nodes:
-                node_id = node["id"]
-                if node_id in results and results[node_id].get("trigger") in [True, 'true', 'True']:
-                    justification = results[node_id].get("justification text", "")
-                    # Trouver le trigger qui correspond, parmi ceux autorisés
-                    matched_trigger = self.find_matching_trigger_in_node(node["text"],prompts[node_id]["available_triggers"])
-                    print(f"node_text : {node["text"]}")
-                    print(f"available_triggers : {prompts[node_id]["available_triggers"]}")
-                    print(f"matched_trigger : {matched_trigger}")
-                    if matched_trigger:
-                        self.trigger_node(node_id, matched_trigger)
+            response_json = json.loads(response)
+            # pour chaque noeud traité du batch
+            for node_id in response_json:
+                # on regarde la réponse pour chaque trigger
+                for trigger in response_json[node_id]:
+                    pending_nodes_id = []
+                    for pending_node in self.pending_nodes:
+                        pending_nodes_id.append(pending_node["id"])
+                    # on regarde si le noeud du batch a déclenché un trigger
+                    if node_id in pending_nodes_id and trigger["trigger"] in [True, 'True', 'true']:
+                        # on retrouve le trigger_node et on appelle la fonction qui l'ajoute à la session
+                        for trigger_node in self.trigger_nodes:
+                            if trigger_node["id"] == trigger["trigger_id"]:
+                                self.trigger_node(node_id, trigger_node)
+                                break
         except Exception as e:
             print(f"❌ Erreur Mistral batch : {e}")
 
+        # on vide le batch
         self.pending_nodes = []
-
-    def find_matching_trigger_in_node(self, text, available_triggers):
-        lower_text = text.lower()
-        for trigger_node in available_triggers:
-            if "trigger" in trigger_node and lower_text in trigger_node["trigger"].lower():
-                return trigger_node
-        return None
-
 
     def check_triggers(self, node_id, title: str, text: str):
         lower_title = title.lower()
