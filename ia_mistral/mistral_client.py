@@ -1,7 +1,9 @@
 import os
-import requests
-from dotenv import load_dotenv
 import time
+
+from dotenv import load_dotenv
+from mistralai import Mistral
+from mistralai.models import UserMessage
 
 load_dotenv()
 
@@ -13,28 +15,28 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-def ask_mistral(prompt: str, history: list = [], model: str = "mistral-tiny") -> str:
+def ask_mistral(prompt: str, history: list = [], model: str = "open-mistral-nemo") -> str:
     """
     Envoie un prompt à l'API Mistral, avec option d'historique (mode chat).
     Renvoie le contenu de la réponse.
     """
-    messages = history + [{"role": "user", "content": prompt}]
-
-    body = {
-        "model": model,
-        "messages": messages,
-        "temperature": 0.7,
-        "top_p": 0.9
-    }
-
+    client = Mistral(api_key=MISTRAL_API_KEY)
     try:
-        res = requests.post(MISTRAL_API_URL, headers=HEADERS, json=body)
-        res.raise_for_status()
-        data = res.json()
-        time.sleep(2)
-        return data["choices"][0]["message"]["content"]
+        print("Envoi du batch au client Mistral...", end=" ")
+        chat_response = client.chat.complete(
+            model=model,
+            response_format={"type": "json_object"},
+            messages=[
+                UserMessage(
+                    content=prompt,
+                )
+            ],
+        )
+        print("OK")
+        # print(chat_response.choices[0].message.content)
+        return chat_response.choices[0].message.content
 
     except Exception as e:
-        print(f"❌ Erreur Mistral : {e}")
+        print(f"❌ Erreur venant du client Mistral : {e}")
         return ""
     
