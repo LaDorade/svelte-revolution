@@ -1,6 +1,7 @@
 import { availableLocales } from '../i18n';
 import { z } from 'zod';
 import { eventSchema } from './event.schema';
+import { triggerSchema } from './trigger.schema';
 
 // TODO: translate error messages
 // test file : tests/units/scenario.test.ts
@@ -54,6 +55,7 @@ export const fullScenarioSchema = z.object({
 	...scenarioSchema.shape,
 	firstNode: nodeSchema,
 	sides: z.array(sideSchema).min(2, { message: 'There must be at least 2 sides in the scenario' }),
-	events: z.array(eventSchema).min(1, { message: 'There must be at least 1 event in the scenario' }),
+	events: z.array(eventSchema).min(1, { message: 'There must be at least 1 event in the scenario' }).optional(),
+	triggers: z.array(triggerSchema).min(1, { message: 'There must be at least 1 trigger in the scenario'}).optional(),
 	ends: z.array(endSchema).min(1, { message: 'There must be at least 1 end in the scenario' })
 });
