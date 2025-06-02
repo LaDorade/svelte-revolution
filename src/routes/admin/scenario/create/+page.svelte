@@ -46,6 +46,15 @@
 				author: ''
 			}
 		],
+		triggers: [
+			{
+				title: '',
+				text: '',
+				author: '',
+				triggerExpressions: [],
+				conditions: []
+			}
+		],
 		ends: [
 			{
 				title: '',
@@ -99,7 +108,7 @@
 				} as PreviewNode;
 				graph?.addNode(node);
 			});
-			formData.events.forEach((event, i) => {
+			formData.events?.forEach((event, i) => {
 				if (!event.title) return;
 				const node = {
 					id: `event-${i}`,
@@ -126,6 +135,7 @@
 			formData.ai = parsed.ai;
 			formData.sides = parsed.sides;
 			formData.events = parsed.events;
+			formData.triggers = parsed.triggers;
 			formData.ends = parsed.ends;
 			if (preview) {
 				generateNodes();
@@ -306,68 +316,156 @@
 			</button>
 		</div>
 
-		<!-- Events -->
-		<h3 class=" text-white text-3xl text-center w-full mt-5">
-			{$t('scenario.event.events')}
-		</h3>
-		<div class="w-full standardLabel flex flex-col items-center gap-4 p-4 justify-center">
-			<div class="flex flex-wrap gap-4 justify-center items-center">
-				{#each formData.events as event, i (event)}
-					<div class="flex flex-col justify-center items-center p-2 border-gray-800 border-l rounded-md">
-						<div class="flex items-center justify-center flex-col gap-2">
-							<h2 class="p-4 text-2xl font-bold">{$t('scenario.event.event')} {i + 1}</h2>
-							<label class="standardLabel">
-								<input
-									class="w-full h-full p-2 rounded bg-black/0"
-									type="text"
-									bind:value={event.title}
-									placeholder={$t('scenario.event.title')}
-									name="eventTitle"
-								/>
-							</label>
-							<label class="standardLabel">
-								<textarea
-									class="appearance-none block w-full h-full p-2 rounded bg-black/0"
-									bind:value={event.text}
-									placeholder={$t('scenario.event.text')}
-									name="eventText"
-								></textarea>
-							</label>
-							<label class="standardLabel">
-								<input
-									class="w-full h-full p-2 rounded bg-black/0"
-									type="text"
-									bind:value={event.author}
-									placeholder={$t('scenario.event.author')}
-									name="eventAuthor"
-								/>
-							</label>
+		{#if !formData.ai}
+			<!-- Events -->
+			<h3 class=" text-white text-3xl text-center w-full mt-5">
+				{$t('scenario.event.events')}
+			</h3>
+			<div class="w-full standardLabel flex flex-col items-center gap-4 p-4 justify-center">
+				<div class="flex flex-wrap gap-4 justify-center items-center">
+					{#each formData.events ?? [] as event, i (event)}
+						<div class="flex flex-col justify-center items-center p-2 border-gray-800 border-l rounded-md">
+							<div class="flex items-center justify-center flex-col gap-2">
+								<h2 class="p-4 text-2xl font-bold">{$t('scenario.event.event')} {i + 1}</h2>
+								<label class="standardLabel">
+									<input
+										class="w-full h-full p-2 rounded bg-black/0"
+										type="text"
+										bind:value={event.title}
+										placeholder={$t('scenario.event.title')}
+										name="eventTitle"
+									/>
+								</label>
+								<label class="standardLabel">
+									<textarea
+										class="appearance-none block w-full h-full p-2 rounded bg-black/0"
+										bind:value={event.text}
+										placeholder={$t('scenario.event.text')}
+										name="eventText"
+									></textarea>
+								</label>
+								<label class="standardLabel">
+									<input
+										class="w-full h-full p-2 rounded bg-black/0"
+										type="text"
+										bind:value={event.author}
+										placeholder={$t('scenario.event.author')}
+										name="eventAuthor"
+									/>
+								</label>
+							</div>
+							<button
+								class="rounded-md border mt-2 px-4 py-2 h-fit {formData.events?.length ?? 0 <= 1
+									? 'cursor-not-allowed text-gray-500 border-gray-500'
+									: 'bg-black text-gray-50  '}"
+								type="button"
+								onclick={() => {
+									formData.events = formData.events?.filter((_, index) => index !== i);
+								}}
+								disabled={(formData.events?.length ?? 0) <= 1}
+							>
+								{$t('misc.delete')}
+							</button>
 						</div>
-						<button
-							class="rounded-md border mt-2 px-4 py-2 h-fit {formData.events.length <= 1
-								? 'cursor-not-allowed text-gray-500 border-gray-500'
-								: 'bg-black text-gray-50  '}"
-							type="button"
-							onclick={() => {
-								formData.events = formData.events.filter((_, index) => index !== i);
-							}}
-							disabled={formData.events.length <= 1}
-						>
-							{$t('misc.delete')}
-						</button>
-					</div>
-				{/each}
+					{/each}
+				</div>
+				<button
+					class="rounded text-black mt-2 mb-1 px-4 w-60 py-2 font-bold bg-white"
+					type="button"
+					onclick={() => {
+						formData.events = [...(formData.events ?? []), { title: '', text: '', author: '' }];
+					}}
+				>
+					{$t('misc.add')}
+				</button>
 			</div>
-			<button
-				class="rounded text-black mt-2 mb-1 px-4 w-60 py-2 font-bold bg-white"
-				type="button"
-				onclick={() => {
-					formData.events = [...formData.events, { title: '', text: '', author: '' }];
-				}}
-			>
-				{$t('misc.add')}
-			</button>
-		</div>
+		{:else}
+			<!-- Triggers -->
+			<h3 class=" text-white text-3xl text-center w-full mt-5">
+				{$t('Triggers pour l\'IA')}
+			</h3>
+			<p class="text-gray-300 text-sm mb-2 max-w-2xl text-center">
+				Chaque noeud trigger doit contenir une ou plusieurs expressions déclencheuses (séparées par des virgules), des conditions éventuelles (séparées par des virgules) qui correspondent au numéro des triggers devant avoir été déclenchés avant pour que celui-ci puisse l'être aussi, et l'auteur du trigger. 
+				Ces triggers serviront à détecter des situations ou mots-clés spécifiques dans le scénario.
+			</p>
+			<div class="w-full standardLabel flex flex-col items-center gap-4 p-4 justify-center">
+				<div class="flex flex-wrap gap-4 justify-center items-center">
+					{#each formData.triggers ?? [] as trigger, i (trigger)}
+						<div class="flex flex-col justify-center items-center p-2 border-gray-800 border-l rounded-md">
+							<div class="flex items-center justify-center flex-col gap-2">
+								<h2 class="p-4 text-2xl font-bold">Trigger {i + 1}</h2>
+								<label class="standardLabel">
+									<input
+										class="w-full h-full p-2 rounded bg-black/0"
+										type="text"
+										bind:value={trigger.title}
+										placeholder="Titre du noeud déclenché"
+										name="triggerTitle"
+									/>
+								</label>
+								<label class="standardLabel">
+									<input
+										class="w-full h-full p-2 rounded bg-black/0"
+										type="text"
+										bind:value={trigger.text}
+										placeholder="Texte du noeud délenché"
+										name="triggerText"
+									/>
+								</label>
+								<label class="standardLabel">
+									<input
+										class="w-full h-full p-2 rounded bg-black/0"
+										type="text"
+										bind:value={trigger.triggerExpressions}
+										placeholder="Triggers (séparés par ,)"
+										name="triggerExpressions"
+									/>
+								</label>
+								<label class="standardLabel">
+									<input
+										class="w-full h-full p-2 rounded bg-black/0"
+										type="text"
+										bind:value={trigger.conditions}
+										placeholder="Conditions (séparées par ,)"
+										name="conditions"
+									/>
+								</label>
+								<label class="standardLabel">
+									<input
+										class="w-full h-full p-2 rounded bg-black/0"
+										type="text"
+										bind:value={trigger.author}
+										placeholder="Auteur"
+										name="triggerAuthor"
+									/>
+								</label>
+							</div>
+							<button
+								class="rounded-md border mt-2 px-4 py-2 h-fit {formData.triggers?.length ?? 0 <= 1
+									? 'cursor-not-allowed text-gray-500 border-gray-500'
+									: 'bg-black text-gray-50  '}"
+								type="button"
+								onclick={() => {
+									formData.triggers = formData.triggers?.filter((_, index) => index !== i);
+								}}
+								disabled={(formData.triggers?.length ?? 0) <= 1}
+							>
+								{$t('misc.delete')}
+							</button>
+						</div>
+					{/each}
+				</div>
+				<button
+					class="rounded text-black mt-2 mb-1 px-4 w-60 py-2 font-bold bg-white"
+					type="button"
+					onclick={() => {
+						formData.triggers = [...(formData.triggers ?? []), { title: '', text: '', author: '', triggerExpressions: [], conditions: [] }];
+					}}
+				>
+					{$t('misc.add')}
+				</button>
+			</div>
+		{/if}
 
 		<!-- Ends -->
 		<h3 class="text-white text-3xl text-center w-full mt-5">
@@ -456,7 +554,6 @@
 			{/if}
 		</div>
 	</form>
-
 	<!-- Session preview -->
 	<h3 class=" text-white text-3xl mt-10 mb-4 text-center w-full">
 		{$t('admin.session.preview')}

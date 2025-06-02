@@ -81,33 +81,55 @@ export const actions = {
 } satisfies Actions;
 
 function parseFormData(data: FormData) {
-	const scenarioData = {
-		title: data.get('title')?.toString(),
-		prologue: data.get('prologue')?.toString(),
-		lang: data.get('lang')?.toString(),
-		ai: Boolean(data.get('useAi'))
-	};
+    const ai = Boolean(data.get('useAi'));
+    const scenarioData = {
+        title: data.get('title')?.toString(),
+        prologue: data.get('prologue')?.toString(),
+        lang: data.get('lang')?.toString(),
+        ai
+    };
+	interface Event {
+		title: string;
+		text: string;
+		author: string;
+	}
 
-	const events = data.getAll('eventTitle').map((title, index) => ({
-		title: title.toString(),
-		text: data.getAll('eventText')[index]?.toString() || '',
-		author: data.getAll('eventAuthor')[index]?.toString() || ''
-	}));
+	interface Trigger {
+		trigger: string;
+		condition: string;
+		author: string;
+	}
 
-	const sides = data.getAll('side').map((side) => ({
-		title: side.toString()
-	}));
+	let events: Event[] = [];
+    let triggers: Trigger[] = [];
+    if (ai) {
+        triggers = data.getAll('trigger').map((trigger, index) => ({
+            trigger: trigger.toString(),
+            condition: data.getAll('triggerConditions')[index]?.toString() || '',
+            author: data.getAll('triggerAuthor')[index]?.toString() || ''
+        }));
+    } else {
+        events = data.getAll('eventTitle').map((title, index) => ({
+            title: title.toString(),
+            text: data.getAll('eventText')[index]?.toString() || '',
+            author: data.getAll('eventAuthor')[index]?.toString() || ''
+        }));
+    }
 
-	const ends = data.getAll('endTitle').map((title, index) => ({
-		title: title.toString(),
-		text: data.getAll('endText')[index]?.toString() || ''
-	}));
+    const sides = data.getAll('side').map((side) => ({
+        title: side.toString()
+    }));
 
-	const firstNode = {
-		title: data.get('firstNodeTitle')?.toString(),
-		text: data.get('firstNodeText')?.toString(),
-		author: data.get('firstNodeAuthor')?.toString()
-	};
+    const ends = data.getAll('endTitle').map((title, index) => ({
+        title: title.toString(),
+        text: data.getAll('endText')[index]?.toString() || ''
+    }));
 
-	return { scenarioData, firstNode, sides, events, ends };
+    const firstNode = {
+        title: data.get('firstNodeTitle')?.toString(),
+        text: data.get('firstNodeText')?.toString(),
+        author: data.get('firstNodeAuthor')?.toString()
+    };
+
+    return { scenarioData, firstNode, sides, events, triggers, ends };
 }
