@@ -57,7 +57,7 @@
 				<li
 					animate:flip={{ duration: 300 }}
 					class="w-full h-full flex relative flex-col items-center rounded-lg {completed
-						? ' bg-gray-600'
+						? ' bg-amber-800'
 						: 'bg-primary-600'}"
 				>
 					<div class=" w-full h-full">
@@ -65,7 +65,7 @@
 							<a
 								tabindex="0"
 								class="grid hover:z-20 w-full h-full grid-cols-[3fr,1fr] p-4 hover:scale-105 transition-all rounded-lg {completed
-									? ' bg-gray-500'
+									? ' bg-amber-700'
 									: 'bg-primary-500'}"
 								href={getSessionUrl(session)}
 							>

@@ -127,7 +127,7 @@
 		{/if}
 		<button
 			type="button"
-			disabled={(!admin && !sideLocked) || (!admin && !pseudoLocked)}
+			disabled={!sessionData.completed && (!admin && (!sideLocked || !pseudoLocked))}
 			onclick={handlePrologueSeen}
 			class="font-bold w-fit self-center border float-end border-gray-200 py-2 px-4 rounded disabled:opacity-50 hover:bg-black hover:border-white"
 		>
