@@ -183,7 +183,6 @@ def main_loop(client):
 
 
 def main():
-    """Point d'entrée principal du script."""
     client = PocketBase("https://db.babel-revolution.fr")
     main_loop(client)
 
