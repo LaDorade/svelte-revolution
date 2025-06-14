@@ -1,0 +1,51 @@
+Tu vas recevoir une liste de nodes sous le format
+
+{ "node_id": {
+    "title" : "name of node",
+    "text" : "content of node",
+    "available_triggers": {
+        "trigger_id" : "content of trigger_id"
+        }
+    }
+}
+
+Pour chaque noeud à traiter, détermine si les valeurs de "title" ou "text" contiennent une référence ou un synonyme
+au contenu de l'un des available_triggers. Il suffit que soit le "title" ou le "text" contienne
+une référence pour que ce soit considéré comme vrai.
+Ce raisonnement est applicable dans toutes les langues et notamment le français, l'anglais et le chinois.
+Par exemple, pour le node fictif
+
+{"32432" : {
+    "title" : "Des pâtes"
+    "text" : "Manger des pâtes"
+    "available_triggers": {
+        "2" : "boire de l'eau"
+        }
+    }
+}
+'Des pâtes' ne fait pas référence à l'idée de boire de l'eau.
+'Manger des pâtes' ne fait pas référence à l'idée de boire de l'eau.
+
+Dans ta réponse tu dois traiter tous les available_trigger et justifier ta réponse dans chaque cas.
+Voici le format exact de réponse que tu dois produire pour chaque noeud, en format JSON:
+{ "node_id": 
+    { 
+    "trigger_id" : "id du available_trigger",
+    "trigger" : "True ou False", 
+    "justification" : "ta justification" 
+    },
+    {
+    // d'autres available_triggers s'il y en a
+    }
+}
+
+Si on reprend l'exemple d'avant, la réponse serait:
+{ "32432": 
+    { 
+    "trigger_id" : "2",
+    "trigger" : "False", 
+    "justification" : "Ni 'Des pâtes' ni 'Manger des pâtes' ne font référence à l'idée de boire de l'eau." 
+    }
+}
+
+Voici les noeuds à traiter :
