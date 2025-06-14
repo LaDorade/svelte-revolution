@@ -21,7 +21,7 @@
 	let graph: PreviewGraph | null = $state.raw(null);
 	let preview = $state(true);
 
-	const formData: z.infer<typeof fullScenarioSchema> = $state({
+	const formData: z.input<typeof fullScenarioSchema> = $state({
 		title: '',
 		prologue: '',
 		lang: 'fr',
@@ -51,8 +51,8 @@
 				title: '',
 				text: '',
 				author: '',
-				triggerExpressions: [],
-				conditions: []
+				triggerExpressions: '',
+				conditions: ''
 			}
 		],
 		ends: [
@@ -78,6 +78,11 @@
 			toast.error(form.error, { duration: 5000, position: 'bottom-center' });
 		} else if (form?.success) {
 			toast.success($t('misc.success'), { duration: 3000, position: 'bottom-center' });
+		}
+		if (formData.ai) {
+        	formData.events = [];
+		} else {
+			formData.triggers = [];
 		}
 	});
 
@@ -459,7 +464,7 @@
 					class="rounded text-black mt-2 mb-1 px-4 w-60 py-2 font-bold bg-white"
 					type="button"
 					onclick={() => {
-						formData.triggers = [...(formData.triggers ?? []), { title: '', text: '', author: '', triggerExpressions: [], conditions: [] }];
+						formData.triggers = [...(formData.triggers ?? []), { title: '', text: '', author: '', triggerExpressions: '', conditions: '' }];
 					}}
 				>
 					{$t('misc.add')}

@@ -52,10 +52,29 @@ export const scenarioSchema = z.object({
 });
 
 export const fullScenarioSchema = z.object({
-	...scenarioSchema.shape,
-	firstNode: nodeSchema,
-	sides: z.array(sideSchema).min(2, { message: 'There must be at least 2 sides in the scenario' }),
-	events: z.array(eventSchema).min(1, { message: 'There must be at least 1 event in the scenario' }).optional(),
-	triggers: z.array(triggerSchema).min(1, { message: 'There must be at least 1 trigger in the scenario'}).optional(),
-	ends: z.array(endSchema).min(1, { message: 'There must be at least 1 end in the scenario' })
+    ...scenarioSchema.shape,
+    firstNode: nodeSchema,
+    sides: z.array(sideSchema).min(2, { message: 'There must be at least 2 sides in the scenario' }),
+    events: z.array(eventSchema).optional(),
+    triggers: z.array(triggerSchema).optional(),
+    ends: z.array(endSchema).min(1, { message: 'There must be at least 1 end in the scenario' })
+}).superRefine((data, ctx) => {
+    const ai = !!data.ai;
+    if (ai) {
+        if (!data.triggers || data.triggers.length < 1) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'There must be at least 1 trigger expression in the scenario',
+                path: ['triggers']
+            });
+        }
+    } else {
+        if (!data.events || data.events.length < 1) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'There must be at least 1 event in the scenario',
+                path: ['events']
+            });
+        }
+    }
 });
