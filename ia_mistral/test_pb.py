@@ -29,11 +29,7 @@ if __name__ == "__main__":
 
     try:
         client = PocketBase("https://db.babel-revolution.fr")
-        admin_data = client.admins.auth_with_password(str(PB_LOGIN), str(PB_PASSWORD))
-        table = client.collection("TriggerNodes").get_list().items
-        for ligne in table:
-            for trigger_node in ligne.nodes:
-                if "conditions" in trigger_node:
-                    print(len(trigger_node["conditions"]))
+        client.admins.auth_with_password(str(PB_LOGIN), str(PB_PASSWORD))
+        table = client.collection("Session").update("h95i580pr0eeowi", { "completed": False, })
     except Exception as e:
         print("❌ Erreur Pocketbase:", e)
