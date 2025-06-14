@@ -9,7 +9,7 @@ scenario: int
 infos: json
 {
   "id":
-  "conditions":
+  "conditions": [],
   "triggers": [],
   "title":
   "text":
