@@ -1,7 +1,4 @@
-import time
-import json
-import os
-
+import time, json, os
 from mistral_client import ask_mistral
 
 DATA_FOLDER = "session_data"
@@ -21,12 +18,14 @@ class AISession:
 
         self.load_state()
 
-    def load_trigger_nodes(self):
+    def load_trigger_nodes(self) -> list:
         try:
-            with open("trigger_nodes.json", "r", encoding="utf-8") as f:
-                data = json.load(f)
-                print(f"✅ {len(data)} triggers nodes chargés depuis trigger_nodes.json")
-                return data
+            table = self.pb.collection("TriggerNodes").get_list().items
+            for ligne in table:
+                if ligne.scenario == self.scenario_id:
+                    print(f"✅ {len(ligne.nodes)} trigger nodes chargés depuis la BDD")
+                    return ligne.nodes
+            return []
         except Exception as e:
             print(f"⚠️ Erreur chargement des trigger nodes : {e}")
             return []
@@ -102,11 +101,16 @@ class AISession:
             # On ne prend que les triggers activables maintenant
             available_triggers = {}
             # format {"trigger_id" : "trigger"}
-            for trigger in self.trigger_nodes:
-                if trigger["id"] in self.triggered_nodes:
+            for trigger_node in self.trigger_nodes:
+                if trigger_node["id"] in self.triggered_nodes:
                     continue
-                if "condition" not in trigger or trigger["condition"] == "first" or trigger["condition"] in self.triggered_nodes:
-                    available_triggers[trigger["id"]] = trigger["trigger"]
+                if "conditions" not in trigger_node or "first" in trigger_node["conditions"]:
+                    available_triggers[trigger_node["id"]] = trigger_node["triggers"]
+
+                if "conditions" in trigger_node:
+                    for condition in trigger_node["conditions"]:
+                        if condition in self.triggered_nodes:
+                            available_triggers[trigger_node["id"]] = trigger_node["triggers"]
 
             batch[pending_node["id"]] = {
                 "title": pending_node["title"],
@@ -114,57 +118,9 @@ class AISession:
                 "available_triggers": available_triggers
             }
 
-        mistral_prompt = """
-        Tu vas recevoir une liste de nodes sous le format
-        { "node_id": {
-            "title" : "name of node",
-            "text" : "content of node",
-            "available_triggers": {
-                "trigger_id" : "content of trigger_id"
-                }
-            }
-        }
+        with open("mistral_batch_prompt.txt", "r", encoding="utf-8") as f:
+            mistral_prompt = f.read()
 
-        Pour chaque noeud à traiter, détermine si les valeurs de "title" ou "text" contiennent une référence ou un synonyme
-        au contenu de l'un des available_triggers. Il suffit que soit le "title" ou le "text" contienne
-        une référence pour que ce soit considéré comme vrai.
-        Ce raisonnement est applicable dans toutes les langues et notamment le français, l'anglais et le chinois.
-        Par exemple, pour le node fictif
-        {"32432" : {
-            "title" : "Des pâtes"
-            "text" : "Manger des pâtes"
-            "available_triggers": {
-                "2" : "boire de l'eau"
-                }
-            }
-        }
-        'Des pâtes' ne fait pas référence à l'idée de boire de l'eau.
-        'Manger des pâtes' ne fait pas référence à l'idée de boire de l'eau.
-        
-        Dans ta réponse tu dois traiter tous les available_trigger et justifier ta réponse dans chaque cas.
-        Voici le format exact de réponse que tu dois produire pour chaque noeud, en format JSON:
-        { "node_id": 
-            { 
-            "trigger_id" : "id du available_trigger",
-            "trigger" : "True ou False", 
-            "justification" : "ta justification" 
-            },
-            {
-            // d'autres available_triggers s'il y en a
-            }
-        }
-
-        Si on reprend l'exemple d'avant, la réponse serait:
-        { "32432": 
-            { 
-            "trigger_id" : "2",
-            "trigger" : "False", 
-            "justification" : "Ni 'Des pâtes' ni 'Manger des pâtes' ne font référence à l'idée de boire de l'eau." 
-            }
-        }
-
-        Voici les noeuds à traiter :
-        """
         mistral_prompt = mistral_prompt + json.dumps(batch, ensure_ascii=False, indent=4)
         try:
             response = ask_mistral(mistral_prompt)
@@ -177,10 +133,10 @@ class AISession:
                     for pending_node in self.pending_nodes:
                         pending_nodes_id.append(pending_node["id"])
                     # on regarde si le noeud du batch a déclenché un trigger
-                    if node_id in pending_nodes_id and trigger["trigger"] in [True, 'True', 'true']:
+                    if node_id in pending_nodes_id and "trigger" in trigger and trigger["trigger"] in [True, 'True', 'true']:
                         # on retrouve le trigger_node et on appelle la fonction qui l'ajoute à la session
                         for trigger_node in self.trigger_nodes:
-                            if trigger_node["id"] == trigger["trigger_id"]:
+                            if "trigger_id" in trigger and trigger_node["id"] == trigger["trigger_id"]:
                                 self.trigger_node(node_id, trigger_node)
                                 break
         except Exception as e:
@@ -190,63 +146,20 @@ class AISession:
         self.pending_nodes = []
         print(f"🧾 Le batch a été traité. En attente de nouveaux nodes...")
 
-    def check_triggers(self, node_id, title: str, text: str):
-        lower_title = title.lower()
-        lower_text = text.lower()
-
-        for trigger_node in self.trigger_nodes:
-            # Vérifie si le noeud a déjà été déclenché
-            if trigger_node["id"] in self.triggered_nodes:
-                continue
-
-            if "condition" not in trigger_node:
-                if "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
-                    self.trigger_node(node_id, trigger_node)
-                    break
-
-            else:
-                # Si c'est le tout premier trigger, il n'a pas de condition
-                if trigger_node["condition"] == "first":
-                    if "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
-                        self.trigger_node(node_id, trigger_node)
-                        break
-                # Vérifie si le noeud a une condition (ex: il faut qu'un autre noeud soit déclenché avant)
-                elif trigger_node["condition"] in self.triggered_nodes:
-                    # Vérifie si le trigger est présent dans le contenu du noeud
-                    if "trigger" in trigger_node and self.text_matches_trigger(trigger_node["trigger"], lower_text):
-                        self.trigger_node(node_id, trigger_node)
-                        break
-
-            #Laisse à mistral le temps de soufler
-            time.sleep(1)
-
-    def text_matches_trigger(self, trigger, text):
-        print("Trigger actuel:", trigger)
-        print("Contenu du noeud traité:", text)
-        prompt = f"""Le message suivant contient-il une référence directe ou indirecte, ou est le synonyme, ou est identique
-        au mot ou à l'idée suivante (fais le même raisonnement en traduisant en chinois ou en anglais et vise versa): "{trigger}" ?
-        Message : "{text}"
-
-        Réponds simplement par : oui ou non."""
-        try:
-            response = ask_mistral(prompt).strip().lower()
-            print("Réponse de Mistral:", response)
-            return "oui" in response
-        except Exception as e:
-            print(f"⚠️ Erreur Mistral lors du matching de trigger : {e}")
-            return False
-
     def trigger_node(self, node_id, trigger_node):
-        print(f"⚡ Trigger détecté: {trigger_node["trigger"]}. Création du noeud...")
-        title = trigger_node["title"]
-        text = trigger_node["text"]
-        author = trigger_node["author"]
-        self.add_node(node_id, title, text, author)
-        self.triggered_nodes.append(trigger_node["id"])
-        self.save_state()
+        try:
+            print(f"⚡ Trigger détecté: {trigger_node["triggers"]}. Création du noeud...")
+            title = trigger_node["title"]
+            text = trigger_node["text"]
+            author = trigger_node["author"]
+            self.add_node(node_id, title, text, author)
+            self.triggered_nodes.append(trigger_node["id"])
+            self.save_state()
 
-        if trigger_node.get("is_final"):
-            self.handle_final_node()
+            if "is_final" in trigger_node and trigger_node["is_final"] in [True, "true", "True"]:
+                self.handle_final_node()
+        except Exception as e:
+            print("❌ Erreur fonction trigger_node:", e)
 
     def add_node(self, node_id, title, text, author):
         node_type = "contribution" if author != "Narrator" else "event"
