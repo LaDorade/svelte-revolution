@@ -194,6 +194,7 @@ class AISession:
         print(f"🔚 Dernier trigger node enclenché. Attente des réponses joueurs... ({timeout} sec)")
 
         # Récupère les nouveaux noeuds jusqu'à ce que le temps soit écoulé
+        new_nodes = []
         while waited < timeout:
             nodes = self.pb.collection("node").get_full_list(query_params={
                 "filter": f"session = '{self.session_id}'"
@@ -204,7 +205,6 @@ class AISession:
             waited += 10
             print(f"⏳ Attente... {waited}/{timeout} sec")
 
-        new_nodes = [n for n in nodes if n.id not in self.known_node_ids]
         user_responses = [(n.title, n.text, n.author) for n in new_nodes if n.side != ""]
         one_node_id = new_nodes[0].id if new_nodes else None
 
@@ -215,6 +215,12 @@ class AISession:
         prompt = self.build_final_prompt(user_responses)
         final_story = ask_mistral(prompt)
         self.add_node(one_node_id, "THE END", final_story, "Narrator")
+
+        try:
+            self.pb.collection("Session").update(self.session_id, { "completed": True, })
+            print(f"✅ La session {self.session_id} a été mise à jour dans la BDD et est désormais complétée.")
+        except Exception as e:
+            print(f"❌ Erreur lors de la mise à jour de la session {self.session_id} dans la BDD:", e)
 
         self.stop()
 

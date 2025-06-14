@@ -115,7 +115,7 @@ def update_active_ai_sessions(client):
 
     # ajoute les nouvelles sessions IA actives
     for session in sessions_ia:
-        if session.id in sessions_actives_id and session.id not in current_active_ids:
+        if session.id in sessions_actives_id and session.id not in current_active_ids and session.completed in [False, "False", "false"]:
             sessions_ia_actives.append(session)
             log_activity(f"Ajout session IA active {session.id} (scénario {session.scenario})", log_dir, log_file)
 
@@ -144,7 +144,7 @@ def update_instances_AISession(pb_client: PocketBase):
 
     # ajoute les nouvelles instances
     for session in sessions_ia_actives:
-        if session.id not in existing_session_ids:
+        if session.id not in existing_session_ids and session.completed in [False, "false", "False"]:
             ai_instance = AISession(session.id, session.scenario, pb_client)
             instances_AISession.append(ai_instance)
             threading.Thread(target=ai_instance.start).start()
@@ -185,7 +185,7 @@ def main_loop(client):
         try:
             if compteur  == 0 or compteur == sleep_time * 10:
                 print(f"🧾 Rappel: les sessions et instances IA sont analysées toutes les {sleep_time} secondes.")
-                
+
             update_active_ai_sessions(client)
             update_instances_AISession(client)
 
@@ -206,6 +206,7 @@ def main():
     
     try:
         client = PocketBase("https://db.babel-revolution.fr")
+        # important pour pouvoir faire des delete ou update...
         client.admins.auth_with_password(str(PB_LOGIN), str(PB_PASSWORD))
         main_loop(client)
     except Exception as e:
