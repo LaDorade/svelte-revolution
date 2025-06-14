@@ -90,17 +90,17 @@ class AISession:
 
         return
 
-    def process_pending_nodes_batch(self):
-        if not self.pending_nodes:
-            return
-
-        print(f"🧾 Traitement du batch en cours... (n={len(self.pending_nodes)})")
-
+    def build_batch(self):
+        """
+        Construit le batch à envoyer à Mistral à partir des pending_nodes et des triggers disponibles.
+        Retourne un dictionnaire prêt à être sérialisé en JSON.
+        Affiche les available_triggers à la fin.
+        """
         batch = {}
+        all_available_triggers = []
         for pending_node in self.pending_nodes:
             # On ne prend que les triggers activables maintenant
             available_triggers = {}
-            # format {"trigger_id" : "trigger"}
             for trigger_node in self.trigger_nodes:
                 if trigger_node["id"] in self.triggered_nodes:
                     continue
@@ -117,6 +117,20 @@ class AISession:
                 "text": pending_node["text"],
                 "available_triggers": available_triggers
             }
+            if available_triggers:
+                all_available_triggers.extend(list(available_triggers.values()))
+
+        if all_available_triggers:
+            print("Triggers possibles:", all_available_triggers)
+        return batch
+
+    def process_pending_nodes_batch(self):
+        if not self.pending_nodes:
+            return
+
+        print(f"🧾 Traitement du batch en cours... (n={len(self.pending_nodes)})")
+
+        batch = self.build_batch()
 
         with open("mistral_batch_prompt.txt", "r", encoding="utf-8") as f:
             mistral_prompt = f.read()
@@ -137,8 +151,9 @@ class AISession:
                         # on retrouve le trigger_node et on appelle la fonction qui l'ajoute à la session
                         for trigger_node in self.trigger_nodes:
                             if "trigger_id" in trigger and trigger_node["id"] == trigger["trigger_id"]:
-                                self.trigger_node(node_id, trigger_node)
-                                break
+                                if trigger_node["id"] not in self.triggered_nodes:
+                                    self.trigger_node(node_id, trigger_node)
+                                    break
         except Exception as e:
             print(f"❌ Erreur Mistral batch : {e}")
 
@@ -148,7 +163,7 @@ class AISession:
 
     def trigger_node(self, node_id, trigger_node):
         try:
-            print(f"⚡ Trigger détecté: {trigger_node["triggers"]}. Création du noeud...")
+            print(f"⚡ Trigger détecté parmis: {trigger_node["triggers"]}. Création du noeud...")
             title = trigger_node["title"]
             text = trigger_node["text"]
             author = trigger_node["author"]
@@ -200,40 +215,6 @@ class AISession:
         prompt = self.build_final_prompt(user_responses)
         final_story = ask_mistral(prompt)
         self.add_node(one_node_id, "THE END", final_story, "Narrator")
-
-        ## LOGIQUE POUR FICHIER SESSION
-        # ✅ Ajout : mise à jour du fichier JSON unique pour toutes les sessions
-        status_file = "sessions_status.json"
-        session_status = {
-            "session_id": self.session_id,
-            "etat": "terminée"
-        }
-
-        # Charger les données existantes ou créer une nouvelle liste
-        if os.path.exists(status_file):
-            with open(status_file, "r", encoding="utf-8") as f:
-                try:
-                    all_statuses = json.load(f)
-                except json.JSONDecodeError:
-                    all_statuses = []
-        else:
-            all_statuses = []
-
-        # Met à jour ou ajoute l'entrée de la session actuelle
-        updated = False
-        for entry in all_statuses:
-            if entry["session_id"] == self.session_id:
-                entry["etat"] = "terminée"
-                updated = True
-                break
-
-        if not updated:
-            all_statuses.append(session_status)
-
-        # Sauvegarder
-        with open(status_file, "w", encoding="utf-8") as f:
-            json.dump(all_statuses, f, ensure_ascii=False, indent=4)
-
 
         self.stop()
 
