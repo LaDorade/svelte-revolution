@@ -1,10 +1,8 @@
 from ai_session import AISession
-import time
 from pocketbase import PocketBase
 from datetime import datetime, timedelta, timezone
-import threading
-import os
-import json
+from dotenv import load_dotenv
+import os, json, threading, time
 
 """
 Ce script permet de maintenir la liste des sessions IA actives.
@@ -183,8 +181,19 @@ def main_loop(client):
 
 
 def main():
-    client = PocketBase("https://db.babel-revolution.fr")
-    main_loop(client)
+    try:
+        load_dotenv()
+        PB_LOGIN = os.getenv("PB_LOGIN")
+        PB_PASSWORD = os.getenv("PB_PASSWORD")
+    except Exception as e:
+        print("❌ Erreur chargement .env:", e)
+    
+    try:
+        client = PocketBase("https://db.babel-revolution.fr")
+        client.admins.auth_with_password(str(PB_LOGIN), str(PB_PASSWORD))
+        main_loop(client)
+    except Exception as e:
+        print("❌ Erreur Pocketbase:", e)
 
 
 if __name__ == "__main__":
