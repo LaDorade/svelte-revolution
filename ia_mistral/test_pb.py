@@ -30,6 +30,20 @@ if __name__ == "__main__":
     try:
         client = PocketBase("https://db.babel-revolution.fr")
         client.admins.auth_with_password(str(PB_LOGIN), str(PB_PASSWORD))
-        table = client.collection("Session").update("h95i580pr0eeowi", { "completed": False, })
+        # table = client.collection("Session").update("h95i580pr0eeowi", { "completed": False, })
+        for i in range(10):
+            titre = i
+            message = f"ceci est le noeud numero {i}"
+            client.collection("Node").create(
+                {
+                    "title": titre,
+                    "text": message,
+                    "author": "Bot",
+                    "type": "contribution",
+                    "session": "h95i580pr0eeowi",
+                    "parent": "8k8m58066q4h6ek",
+                    "side": "k307wt00z8j5onj",
+                }
+            )
     except Exception as e:
         print("❌ Erreur Pocketbase:", e)
