@@ -1,4 +1,5 @@
 from ai_session import AISession
+from ai_session_2 import AISession2
 from pocketbase import PocketBase
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
@@ -20,6 +21,7 @@ sessions_ia_actives = []
 # Liste des instances de 'AISession' créées pour chaque session active
 instances_AISession = []
 
+SCENARIO_ID_SPECIAL = "kh8661rifw077i8"
 
 def log_activity(message, log_dir="logs", log_file="default_log.txt"):
     """Log une activité dans le fichier spécifié. Archive si >1000 lignes."""
@@ -145,10 +147,17 @@ def update_instances_AISession(pb_client: PocketBase):
     # ajoute les nouvelles instances
     for session in sessions_ia_actives:
         if session.id not in existing_session_ids and session.completed in [False, "false", "False"]:
-            ai_instance = AISession(session.id, session.scenario, pb_client)
+
+            # Si le scénario correspond au scénario 2 avec Time
+            if session.scenario == SCENARIO_ID_SPECIAL:
+                ai_instance = AISession2(session.id, session.scenario, pb_client)
+                log_activity(f"Ajout instance AISession2 pour session {session.id} (scénario {session.scenario})", log_dir, log_file)
+            else:
+                ai_instance = AISession(session.id, session.scenario, pb_client)
+                log_activity(f"Ajout instance AISession pour session {session.id} (scénario {session.scenario})", log_dir, log_file)
+
             instances_AISession.append(ai_instance)
             threading.Thread(target=ai_instance.start).start()
-            log_activity(f"Ajout instance AISession pour session {session.id} (scénario {session.scenario})", log_dir, log_file)
 
     # supprime les instances pour les sessions qui ne sont plus actives
     for instance in instances_AISession[:]:
