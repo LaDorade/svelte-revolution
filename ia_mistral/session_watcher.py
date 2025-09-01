@@ -15,30 +15,33 @@ Il est exécuté en continu et met à jour la liste 'sesssions_ia_actives'.
 Cette liste sert ensuite à instancier une 'AISession' pour chaque session active.
 """
 
-# Liste des sessions IA actives qui est mise à jour par le script
-sessions_ia_actives = []
+# Configuration
+SCENARIO_ID_SPECIAL = "kh8661rifw077i8"
+SLEEP_TIME = 5
+RECENT_MINUTES = 10
+MAX_LOG_LINES = 1000
 
-# Liste des instances de 'AISession' créées pour chaque session active
+# Variables globales
+sessions_ia_actives = []
 instances_AISession = []
 
-SCENARIO_ID_SPECIAL = "kh8661rifw077i8"
-
 def log_activity(message, log_dir="logs", log_file="default_log.txt"):
-    """Log une activité dans le fichier spécifié. Archive si >1000 lignes."""
+    """Log une activité avec archivage automatique si >MAX_LOG_LINES lignes."""
     os.makedirs(log_dir, exist_ok=True)
     full_path = os.path.join(log_dir, log_file)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # vérifie si le fichier existe et dépasse 1000 lignes
+    # vérifie si le fichier existe et dépasse MAX_LOG_LINES lignes
     if os.path.exists(full_path):
         with open(full_path, "r", encoding="utf-8") as f:
             lines = sum(1 for _ in f)
-        if lines >= 1000:
+        if lines >= MAX_LOG_LINES:
             # archive le fichier
             archive_name = f"{full_path}.{datetime.now().strftime('%Y%m%d_%H%M%S')}.gz"
             with open(full_path, "rb") as f_in, gzip.open(archive_name, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
             os.remove(full_path)
+            print(f"📦 Log archivé: {archive_name}")
 
     # ajoute le log dans le fichier (nouveau ou existant)
     with open(full_path, "a", encoding="utf-8") as f:
@@ -62,40 +65,50 @@ def fetch_ai_sessions(pb_client: PocketBase) -> list:
     for session in sessions:
         try:
             scenario = pb_client.collection("scenario").get_one(session.scenario)
+            # Accès sécurisé à l'attribut ai avec getattr
+            has_ai = getattr(scenario, 'ai', False)
+            if scenario and has_ai:
+                sessions_avec_ia.append(session)
         except Exception as e:
-            print(f"❌ Erreur PocketBase en récupérant les informations du scénario {session.scenario}:", e)
-        if scenario and scenario.ai:
-            sessions_avec_ia.append(session)
+            print(f"❌ Erreur récupération scénario {session.scenario}: {e}")
 
     return sessions_avec_ia
 
 
 def fetch_recent_nodes(client) -> list:
-    """Récupère les 10 derniers noeuds mis à jour."""
+    """Récupère les 10 derniers nœuds mis à jour."""
     try:
-        return client.collection("Node").get_list(
+        result = client.collection("Node").get_list(
             page=1,
             per_page=10,
             query_params={'sort': '-updated'}
-        ).items
+        )
+        return result.items if hasattr(result, 'items') else []
     except Exception as e:
-        print(f"❌ Erreur lors de la récupération des noeuds récents : {e}")
+        print(f"❌ Erreur récupération nœuds récents: {e}")
         return []
 
 
 def is_recently_updated(node) -> bool:
-    """Vérifie si un noeud a été mis à jour dans les 10 dernières minutes."""
+    """Vérifie si un nœud a été mis à jour dans les RECENT_MINUTES dernières minutes."""
     try:
+        if not hasattr(node, 'updated') or not node.updated:
+            return False
+            
         updated_time = datetime.strptime(str(node.updated), "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
-        return updated_time >= datetime.now(timezone.utc) - timedelta(minutes=10)
-    except Exception as e:
-        print(f"❌ Erreur lors de la vérification de la mise à jour du noeud : {e}")
+        return updated_time >= datetime.now(timezone.utc) - timedelta(minutes=RECENT_MINUTES)
+    except (ValueError, AttributeError) as e:
+        print(f"❌ Erreur vérification mise à jour nœud {getattr(node, 'id', 'unknown')}: {e}")
         return False
 
 
 def get_active_session_ids(noeuds_recents: list) -> list:
-    """Identifie les IDs des sessions actives basées sur les noeuds récents."""
-    return [noeud.session for noeud in noeuds_recents if is_recently_updated(noeud)]
+    """Identifie les IDs des sessions actives basées sur les nœuds récents."""
+    active_ids = []
+    for noeud in noeuds_recents:
+        if is_recently_updated(noeud) and hasattr(noeud, 'session') and noeud.session:
+            active_ids.append(noeud.session)
+    return list(set(active_ids))  # Supprime les doublons
 
 
 def update_active_ai_sessions(client):
@@ -117,7 +130,11 @@ def update_active_ai_sessions(client):
 
     # ajoute les nouvelles sessions IA actives
     for session in sessions_ia:
-        if session.id in sessions_actives_id and session.id not in current_active_ids and session.completed in [False, "False", "false"]:
+        # Vérification sécurisée de l'état de completion
+        is_completed = getattr(session, 'completed', False)
+        if (session.id in sessions_actives_id and 
+            session.id not in current_active_ids and 
+            not is_completed):
             sessions_ia_actives.append(session)
             log_activity(f"Ajout session IA active {session.id} (scénario {session.scenario})", log_dir, log_file)
 
@@ -146,7 +163,8 @@ def update_instances_AISession(pb_client: PocketBase):
 
     # ajoute les nouvelles instances
     for session in sessions_ia_actives:
-        if session.id not in existing_session_ids and session.completed in [False, "false", "False"]:
+        is_completed = getattr(session, 'completed', False)
+        if session.id not in existing_session_ids and not is_completed:
 
             # Si le scénario correspond au scénario 2 avec Time
             if session.scenario == SCENARIO_ID_SPECIAL:
@@ -157,16 +175,19 @@ def update_instances_AISession(pb_client: PocketBase):
                 log_activity(f"Ajout instance AISession pour session {session.id} (scénario {session.scenario})", log_dir, log_file)
 
             instances_AISession.append(ai_instance)
-            threading.Thread(target=ai_instance.start).start()
+            threading.Thread(target=ai_instance.start, daemon=True).start()
 
     # supprime les instances pour les sessions qui ne sont plus actives
     for instance in instances_AISession[:]:
         if instance.session_id not in active_session_ids:
-            instance.stop()
+            try:
+                instance.stop()
+            except Exception as e:
+                print(f"❌ Erreur arrêt instance {instance.session_id}: {e}")
             instances_AISession.remove(instance)
             log_activity(f"Suppression instance AISession pour session {instance.session_id} (inactive)", log_dir, log_file)
             continue
-        if instance.active == False:
+        if not getattr(instance, 'active', True):
             instances_AISession.remove(instance)
             log_activity(f"Suppression instance AISession pour session {instance.session_id} (inactive/stop)", log_dir, log_file)
             continue
@@ -188,21 +209,22 @@ def display_instances_AISession():
 
 def main_loop(client):
     """Boucle principale pour surveiller les sessions et instances IA actives."""
-    sleep_time: int = 5
     compteur: int = 0
+    print(f"🚀 Démarrage surveillance IA - intervalle: {SLEEP_TIME}s")
+    
     while True:
         try:
-            if compteur  == 0 or compteur == sleep_time * 10:
-                print(f"🧾 Rappel: les sessions et instances IA sont analysées toutes les {sleep_time} secondes.")
+            if compteur == 0 or compteur % (SLEEP_TIME * 10) == 0:
+                print(f"🧾 Status: {len(sessions_ia_actives)} sessions actives, {len(instances_AISession)} instances")
 
             update_active_ai_sessions(client)
             update_instances_AISession(client)
 
         except Exception as e:
-            print(f"❌ Erreur dans le script : {e}")
+            print(f"❌ Erreur boucle principale: {e}")
 
-        time.sleep(sleep_time)
-        compteur += sleep_time
+        time.sleep(SLEEP_TIME)
+        compteur += SLEEP_TIME
 
 
 def main():
@@ -210,16 +232,23 @@ def main():
         load_dotenv()
         PB_LOGIN = os.getenv("PB_LOGIN")
         PB_PASSWORD = os.getenv("PB_PASSWORD")
+        
+        if not PB_LOGIN or not PB_PASSWORD:
+            print("❌ Variables d'environnement PB_LOGIN ou PB_PASSWORD manquantes")
+            return
+            
     except Exception as e:
-        print("❌ Erreur chargement .env:", e)
+        print(f"❌ Erreur chargement .env: {e}")
+        return
     
     try:
         client = PocketBase("https://db.babel-revolution.fr")
         # important pour pouvoir faire des delete ou update...
-        client.admins.auth_with_password(str(PB_LOGIN), str(PB_PASSWORD))
+        client.admins.auth_with_password(PB_LOGIN, PB_PASSWORD)
+        print("✅ Connexion PocketBase réussie")
         main_loop(client)
     except Exception as e:
-        print("❌ Erreur Pocketbase:", e)
+        print(f"❌ Erreur Pocketbase: {e}")
 
 
 if __name__ == "__main__":
