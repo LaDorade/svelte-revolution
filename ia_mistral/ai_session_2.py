@@ -90,14 +90,16 @@ class AISession2:
         prompt = f"""Tu es une IA de narration immersive.
 À partir des idées suivantes des joueurs, crée :
 1. Un contexte historique fictif immersif dans l’Histoire du monde (avec lieux, époque, ambiance).
-2. Une phrase codée en lien avec ce contexte (cryptée, mystérieuse).
-3. Une version de cette phrase déclinée en {self.hints_number} indices de plus en plus clairs.
-4. Tu dois censurer dans les premiers niveaux les mots clés (par des ***).
+2. Une phrase/mot codée en lien avec ce contexte (cryptée, mystérieuse) que les joueurs doivent deviner. 
+   Une sorte d'énigme la réponse peut etre une phrase ou un mot de toute manière la résolution sera 
+   l'équipe qui sera le plus proche du mot/phrase que tu auras inventé...
+3. Des incides aux nombres de {self.hints_number} indices de plus en plus clairs. Ils doivent aider les joueurs sans leur donner des réponses. 
+La tout doit être réalisé en français.
 
 Idées des joueurs:
 {entries}
 
-Réponds en JSON avec les clés : context, coded_sentence, hints (liste de 10 éléments)."""
+Réponds en JSON avec les clés : context, coded_sentence, hints (liste de {self.hints_number} éléments)."""
 
         response = ask_mistral(prompt)
         try:
@@ -105,6 +107,8 @@ Réponds en JSON avec les clés : context, coded_sentence, hints (liste de 10 é
             self.context = data["context"]
             self.coded_sentence = data["coded_sentence"]
             self.hints = data["hints"]
+            print(f"coded_sentence : {self.coded_sentence}")
+            print(f"hints : {self.hints}")
             print("📜 Contexte historique généré avec succès !")
             self.post_context_and_code()
         except Exception as e:
@@ -116,7 +120,10 @@ Réponds en JSON avec les clés : context, coded_sentence, hints (liste de 10 é
         context_node_id = self.add_node(parent_id, "Situation Historique", self.context, "L'IA")
 
         # La phrase mystérieuse est enfant du contexte historique
-        phrase_node_id = self.add_node(context_node_id, "La Phrase mystérieuse", self.coded_sentence, "L'IA")
+        phrase_node_id = self.add_node(context_node_id, "La Phrase mystérieuse", "*$I_Z*é Vous devez vous rapprocher de la phrase de l'IA en vous basant sur le contexte (ça peut être n'importe quoi, cherchez bien) *$I_Z*é", "L'IA")
+
+        #On attend le temps d'un indice avant de lancer le premier
+        time.sleep(self.hint_interval)
 
         self.start_hint_loop(phrase_node_id)
 
@@ -163,14 +170,14 @@ Réponds en JSON avec les clés : context, coded_sentence, hints (liste de 10 é
             self.evaluate_final_answers(final_answers)
 
     def evaluate_final_answers(self, answers):
-        answer_texts = "\n".join(f"- {n.author}: {n.text}" for n in answers)
+        answer_texts = "\n".join(f"- {n.author}, {n.side}: {n.text}" for n in answers)
 
         prompt = f"""Voici la phrase codée : {self.coded_sentence}
 Voici les indices donnés : {self.hints}
 Voici les tentatives de décryptage :
 {answer_texts}
 
-Quelle équipe a le mieux décrypté le message ? Donne une courte conclusion.
+Quelle équipe a le mieux décrypté le message, les activites ou les rocops ? Donne une courte conclusion.
 Réponds en français, sans dépasser 4 phrases."""
 
         conclusion = ask_mistral(prompt)
