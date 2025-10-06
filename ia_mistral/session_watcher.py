@@ -1,13 +1,15 @@
-from ai_session import AISession
-from ai_session_2 import AISession2
-from pocketbase import PocketBase
-from datetime import datetime, timedelta, timezone
-from dotenv import load_dotenv
-import os, threading, time
 import os
-from datetime import datetime
+import threading
+import time
 import gzip
 import shutil
+
+from datetime import datetime, timedelta, timezone
+from dotenv import load_dotenv
+
+from pocketbase import PocketBase
+from ai_session import AISession
+from ai_session_2 import AISession2
 
 """
 Ce script permet de maintenir la liste des sessions IA actives.

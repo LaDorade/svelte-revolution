@@ -1,4 +1,7 @@
-import time, json, os
+import os
+import time
+import json
+
 from mistral_client import ask_mistral
 
 DATA_FOLDER = "session_data"

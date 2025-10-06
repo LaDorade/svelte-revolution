@@ -1,9 +1,10 @@
-from pocketbase import PocketBase
 import os
 import time
 import threading
+
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dotenv import load_dotenv
+from pocketbase import PocketBase
 
 """
 Script de test de résilience pour PocketBase.
@@ -27,8 +28,8 @@ updated: date
 
 def create_single_node(client, session_id, parent_id, side_id, node_index):
     """Crée un seul nœud avec gestion d'erreurs."""
+    start_time = time.time()
     try:
-        start_time = time.time()
         
         client.collection("Node").create({
             "title": f"Test Node #{node_index}",

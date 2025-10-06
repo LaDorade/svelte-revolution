@@ -1,8 +1,6 @@
-import os
-import asyncio
-from typing import List, Optional
 from dotenv import load_dotenv
 from pocketbase import PocketBase
+import os
 
 load_dotenv()
 
