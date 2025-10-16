@@ -1,10 +1,13 @@
 import os
 import time
 import json
+import utils
 
-from mistral_client import ask_mistral
+from ia_mistral.mistral_client_2 import ask_mistral
 
 DATA_FOLDER = "session_data"
+HISTORICAL_CONTEXT_PROMPT_FILE = "mistral_historical_context_prompt.txt"
+EVALUATE_ANSWERS_PROMPT_FILE = "mistral_evaluate_answers_prompt.txt"
 
 
 class AISession2:
@@ -14,6 +17,7 @@ class AISession2:
         self.pb = pb_client
         self.active = True
         self.session_file = os.path.join(DATA_FOLDER, f"{session_id}.json")
+        self.log_file_name = utils.get_log_file_name(prefix="ai_session_2")
 
         # Mémorisation des nœuds déjà connus
         self.known_node_ids = set()
@@ -46,10 +50,10 @@ class AISession2:
 
     def stop(self):
         self.active = False
-        print(f"🛑 Instance AISession {self.session_id} arrêtée.")
+        utils.log_message(f"[AISession2 '{self.session_id}'] Instance arrêtée", self.log_file_name)
 
     def start(self):
-        print(f"🤖 AISession démarrée pour la session {self.session_id} — scénario 'Project : T1M3'")
+        utils.log_message(f"[AISession2 '{self.session_id}'] Démarrage pour le scénario 'Project : T1M3'", self.log_file_name)
 
         # Récupération du noeud prologue 'Le voyage'
         context_nodes = self.pb.collection("node").get_full_list(query_params={
@@ -57,15 +61,15 @@ class AISession2:
         })
         if context_nodes:
             self.initial_context_node_id = context_nodes[0].id
-            print(f"📌 Nœud contexte initial trouvé : {self.initial_context_node_id}")
+            utils.log_message(f"[AISession2 '{self.session_id}'] Nœud contexte initial trouvé : {self.initial_context_node_id}", self.log_file_name)
         else:
             self.initial_context_node_id = None
-            print("⚠️ Aucun nœud contexte initial trouvé.")
+            utils.log_message(f"[AISession2 '{self.session_id}'] Aucun nœud contexte initial trouvé", self.log_file_name)
 
 
         # Attente 2 minutes pour que les joueurs se présentent
         wait_time = 120
-        print(f"⏳ Attente de {wait_time} sec pour collecte des présentations joueurs...")
+        utils.log_message(f"[AISession2 '{self.session_id}'] Attente de {wait_time}s pour collecte des présentations joueurs", self.log_file_name)
         time.sleep(wait_time)
 
         self.collect_player_presentations()
@@ -80,42 +84,42 @@ class AISession2:
         ]
 
         if not player_nodes:
-            print("⚠️ Aucun joueur n'a envoyé de présentation.")
+            utils.log_message(f"[AISession2 '{self.session_id}'] Aucun joueur n'a envoyé de présentation", self.log_file_name)
             self.stop()
             return
 
-        print(f"📥 {len(player_nodes)} présentations trouvées.")
+        utils.log_message(f"[AISession2 '{self.session_id}'] {len(player_nodes)} présentations trouvées", self.log_file_name)
         self.generate_historical_context(player_nodes)
 
     def generate_historical_context(self, player_inputs):
         entries = "\n".join(f"- {n.author}: {n.text}" for n in player_inputs)
 
-        prompt = f"""Tu es une IA de narration immersive.
-À partir des idées suivantes des joueurs, crée :
-1. Un contexte historique fictif immersif dans l’Histoire du monde (avec lieux, époque, ambiance).
-2. Une phrase/mot codée en lien avec ce contexte (cryptée, mystérieuse) que les joueurs doivent deviner. 
-   Une sorte d'énigme la réponse peut etre une phrase ou un mot de toute manière la résolution sera 
-   l'équipe qui sera le plus proche du mot/phrase que tu auras inventé...
-3. Des incides aux nombres de {self.hints_number} indices de plus en plus clairs. Ils doivent aider les joueurs sans leur donner des réponses. 
-La tout doit être réalisé en français.
+        prompt = f"""Nombre d'indices requis : {self.hints_number}
 
 Idées des joueurs:
-{entries}
+{entries}"""
 
-Réponds en JSON avec les clés : context, coded_sentence, hints (liste de {self.hints_number} éléments)."""
-
-        response = ask_mistral(prompt)
+        response = ask_mistral(prompt, context_file=HISTORICAL_CONTEXT_PROMPT_FILE)
+        if not response:
+            utils.log_message(f"[AISession2 '{self.session_id}'] Réponse vide de Mistral", self.log_file_name)
+            return
+            
         try:
             data = json.loads(response)
-            self.context = data["context"]
-            self.coded_sentence = data["coded_sentence"]
-            self.hints = data["hints"]
-            print(f"coded_sentence : {self.coded_sentence}")
-            print(f"hints : {self.hints}")
-            print("📜 Contexte historique généré avec succès !")
+            self.context = data.get("context", "")
+            self.coded_sentence = data.get("coded_sentence", "")
+            self.hints = data.get("hints", [])
+            
+            if not self.context or not self.coded_sentence or not self.hints:
+                utils.log_message(f"[AISession2 '{self.session_id}'] Données manquantes dans la réponse JSON", self.log_file_name)
+                return
+                
+            utils.log_message(f"[AISession2 '{self.session_id}'] Phrase codée : {self.coded_sentence}", self.log_file_name)
+            utils.log_message(f"[AISession2 '{self.session_id}'] Indices : {self.hints}", self.log_file_name)
+            utils.log_message(f"[AISession2 '{self.session_id}'] Contexte historique généré avec succès", self.log_file_name)
             self.post_context_and_code()
         except Exception as e:
-            print("❌ Erreur parsing JSON IA:", e)
+            utils.log_message(f"[AISession2 '{self.session_id}'] Erreur parsing JSON IA: {e}", self.log_file_name)
 
     def post_context_and_code(self):
         # Le contexte historique est enfant du contexte initial (si trouvé)
@@ -146,7 +150,7 @@ Réponds en JSON avec les clés : context, coded_sentence, hints (liste de {self
 ## AJOUTER LE FAIT DE CENSURER DES MOTS, DEMANDER A MISTRAL DES MOTS CENSURABLES.
 
     def handle_end_of_game(self):
-        print("🔚 Tous les indices ont été envoyés. Attente des réponses...")
+        utils.log_message(f"[AISession2 '{self.session_id}'] Tous les indices ont été envoyés. Attente des réponses", self.log_file_name)
 
         timeout = 90
         waited = 0
@@ -175,17 +179,21 @@ Réponds en JSON avec les clés : context, coded_sentence, hints (liste de {self
     def evaluate_final_answers(self, answers):
         answer_texts = "\n".join(f"- {n.author}, {n.side}: {n.text}" for n in answers)
 
-        prompt = f"""Voici la phrase codée : {self.coded_sentence}
-Voici les indices donnés : {self.hints}
-Voici les tentatives de décryptage :
-{answer_texts}
+        prompt = f"""Phrase codée : {self.coded_sentence}
 
-Quelle équipe a le mieux décrypté le message, les activites ou les rocops ? Donne une courte conclusion.
-Réponds en français, sans dépasser 4 phrases."""
+Indices donnés : {self.hints}
 
-        conclusion = ask_mistral(prompt)
-        self.add_node(answers[0].id, "LA FIN", f"La phrase était : {self.coded_sentence}" + conclusion, "L'IA")
+Tentatives de décryptage :
+{answer_texts}"""
+
+        conclusion = ask_mistral(prompt, context_file=EVALUATE_ANSWERS_PROMPT_FILE)
+        if not conclusion:
+            conclusion = "Les équipes ont fait de leur mieux pour résoudre l'énigme."
+            
+        final_text = f"La phrase était : {self.coded_sentence}\n\n{conclusion}"
+        self.add_node(answers[0].id, "LA FIN", final_text, "L'IA")
         self.pb.collection("Session").update(self.session_id, {"completed": True})
+        utils.log_message(f"[AISession2 '{self.session_id}'] Session marquée comme complétée", self.log_file_name)
         self.stop()
 
     def add_node(self, parent_id, title, text, author):
@@ -198,5 +206,5 @@ Réponds en français, sans dépasser 4 phrases."""
             "session": self.session_id,
             "parent": parent_id
         })
-        print(f"🤖 Nœud IA posté : {title} avec auteur '{author}' (parent={parent_id})")
+        utils.log_message(f"[AISession2 '{self.session_id}'] Nœud IA posté : {title} avec auteur '{author}' (parent={parent_id})", self.log_file_name)
         return node.id  # ✅ On retourne l'ID pour chaîner les enfants
