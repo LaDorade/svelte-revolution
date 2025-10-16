@@ -1,280 +1,349 @@
-import os
-import time
+import utils
 import json
+import time
+import os
 
-from mistral_client import ask_mistral
+from pocketbase.models.record import Record
+from pocketbase import PocketBase
 
-DATA_FOLDER = "session_data"
+from ia_mistral.mistral_client import ask_mistral, TriggerEvaluationBatch, FINAL_PROMPT_CONTEXT_FILE
+
+SESSION_DATA_FOLDER = "sessions_data"
 
 class AISession:
-    def __init__(self, session_id, scenario_id, pb_client):
-        self.session_id = session_id
-        self.scenario_id = scenario_id
-        self.pb = pb_client
-        self.active = True
-        self.session_file = os.path.join(DATA_FOLDER, f"{session_id}.json")
+    def __init__(self, session: Record, pb_client: PocketBase):
+        self.session = session
+        self.pb_client = pb_client
 
-        self.known_node_ids = set()
-        self.triggered_nodes = []  # Identifiants des noeuds IA déjà envoyés
-        self.trigger_nodes = self.load_trigger_nodes()
-        self.pending_nodes = []
+        self.session_id = session.id
+        self.session_name = getattr(session, 'name', None)
+        self.scenario_id = getattr(session, 'scenario', None)
 
-        self.load_state()
+        self.log_file_name = utils.get_log_file_name(prefix="ai_session2")
+        self.session_file = os.path.join(SESSION_DATA_FOLDER, f"session_{session.id}.json")
+        self.triggered_nodes_file = os.path.join(SESSION_DATA_FOLDER, f"triggered_nodes_{session.id}.json")
 
-    def load_trigger_nodes(self) -> list:
-        try:
-            table = self.pb.collection("TriggerNodes").get_list().items
-            for ligne in table:
-                if ligne.scenario == self.scenario_id:
-                    print(f"✅ {len(ligne.nodes)} trigger nodes chargés depuis la BDD")
-                    return ligne.nodes
-            return []
-        except Exception as e:
-            print(f"⚠️ Erreur chargement des trigger nodes : {e}")
-            return []
+        self.trigger_nodes: list[dict] = []  # liste des trigger nodes du scénario
+        self.triggered_nodes: list[str] = []  # trigger nodes de la session déjà déclenchés [id1, id2, ...]
+        self.available_trigger_nodes: list[tuple[str, list[str]]] = []  # (trigger_id, [triggers])
+        self.processed_nodes: dict[str, dict] = {}  # nodes de la session déjà traités
+        self.pending_batch: list[dict] = []  # nodes en attente d'évaluation par l'IA
 
-    def load_state(self):
-        if not os.path.exists(DATA_FOLDER):
-            os.makedirs(DATA_FOLDER)
-        if os.path.exists(self.session_file):
-            with open(self.session_file, 'r') as f:
-                data = json.load(f)
-                self.known_node_ids = set(data.get("known_node_ids", []))
-                self.triggered_nodes = data.get("triggered_nodes", [])
-
-    def save_state(self):
-        with open(self.session_file, 'w') as f:
-            json.dump({
-                "known_node_ids": list(self.known_node_ids),
-                "triggered_nodes": self.triggered_nodes
-            }, f)
-
-    def stop(self):
         self.active = False
-        print(f"🛑 Instance AISession {self.session_id} arrêtée.")
+
+        utils.log_message(f"[AISession '{self.session_name}'] Initialisation terminée", self.log_file_name)
 
     def start(self):
-        print(f"🤖 Instance AISession lancée pour la session {self.session_id} — Scénario: {self.scenario_id}")
+        if not self.session_id or not self.session_name or not self.scenario_id:
+            utils.log_message(f"Session {self.session.id} invalide, impossible de démarrer AISession.", self.log_file_name)
+            return
+        self.trigger_nodes = self.get_trigger_nodes()
+        self.triggered_nodes = self.get_already_triggered_nodes()
+        self.available_trigger_nodes = self.get_available_trigger_nodes()
+        self.processed_nodes = self.get_already_processed_nodes()
+        self.active = True
+        utils.log_message(f"[AISession '{self.session_name}'] Démarrage réussi", self.log_file_name)
+        self.start_processing_loop()
+
+    def stop(self):
+        self.save_processed_nodes()
+        self.active = False
+        utils.log_message(f"[AISession '{self.session_name}'] Arrêt de l'instance IA", self.log_file_name)
+
+    def get_trigger_nodes(self) -> list[dict]:
+        try:
+            # Filtre directement par scenario
+            trigger_nodes_records = self.pb_client.collection("TriggerNodes").get_list(
+                query_params={'filter': f'scenario="{self.scenario_id}"', 'perPage': 1}
+            )
+            
+            if not trigger_nodes_records.items:
+                utils.log_message(f"Aucun TriggerNodes trouvé pour le scénario {self.scenario_id}.", self.log_file_name)
+                return []
+            
+            # Prend le premier Record trouvé
+            trigger_nodes_record = trigger_nodes_records.items[0]
+            trigger_nodes = getattr(trigger_nodes_record, 'nodes', None)
+            
+            if not isinstance(trigger_nodes, list):
+                utils.log_message(f"Le champ 'nodes' dans TriggerNodes pour le scénario {self.scenario_id} n'est pas une liste.", self.log_file_name)
+                return []
+
+            utils.log_message(f"[AISession '{self.session_name}'] {len(trigger_nodes)} trigger nodes chargés", self.log_file_name)
+            return trigger_nodes
+            
+        except Exception as e:
+            utils.log_message(f"Erreur lors de la récupération des TriggerNodes pour le scénario {self.scenario_id}: {e}", self.log_file_name)
+            return []
+        
+    def get_already_triggered_nodes(self) -> list[str]:
+        if not os.path.exists(SESSION_DATA_FOLDER):
+            os.makedirs(SESSION_DATA_FOLDER)
+        if not os.path.exists(self.triggered_nodes_file):
+            with open(self.triggered_nodes_file, "w") as f:
+                f.write("[]")
+            return []
+        with open(self.triggered_nodes_file, "r") as f:
+            content = f.readline()
+            return content.strip("[]").replace('"', '').split(",") if content.strip("[]") else []
+        
+    def get_available_trigger_nodes(self) -> list[tuple[str, list[str]]]:
+        available_triggers = []
+        for trigger_node in self.trigger_nodes:
+            trigger_id = trigger_node.get("id")
+            # Vérifie si le trigger_id est valide et non déjà déclenché
+            if not trigger_id or trigger_id in self.triggered_nodes:
+                continue
+            triggers = trigger_node.get("triggers", [])
+            conditions = trigger_node.get("conditions", [])
+            # Si pas de conditions ou "first" dans conditions
+            if not conditions or "first" in conditions:
+                available_triggers.append((trigger_id, triggers))
+                continue
+            # Si toutes les conditions sont respectées
+            for condition in conditions:
+                if condition not in self.triggered_nodes:
+                    break
+            else:
+                available_triggers.append((trigger_id, triggers))
+        return available_triggers
+    
+    def update_available_trigger_nodes(self) -> None:
+        self.available_trigger_nodes = self.get_available_trigger_nodes()
+        utils.log_message(f"[AISession '{self.session_name}'] Triggers disponibles mis à jour: {list(self.available_trigger_nodes)}", self.log_file_name)
+        
+    def get_already_processed_nodes(self) -> dict[str, dict]:
+        # Crée le dossier s'il n'existe pas
+        if not os.path.exists(SESSION_DATA_FOLDER):
+            os.makedirs(SESSION_DATA_FOLDER)
+        # Crée le fichier s'il n'existe pas
+        if not os.path.exists(self.session_file):
+            with open(self.session_file, "w", encoding="utf-8") as f:
+                json.dump({}, f)
+            return {}
+        # Lit le fichier JSON
+        try:
+            with open(self.session_file, "r", encoding="utf-8") as f:
+                processed_nodes = json.load(f)
+            utils.log_message(f"[AISession '{self.session_name}'] {len(processed_nodes)} nodes déjà traités chargés depuis {self.session_file}", self.log_file_name)
+            return processed_nodes
+        except json.JSONDecodeError as e:
+            utils.log_message(f"[AISession '{self.session_name}'] Erreur lors de la lecture du fichier JSON: {e}", self.log_file_name)
+            return {}
+    
+    def save_processed_nodes(self) -> None:
+        with open(self.session_file, "w", encoding="utf-8") as f:
+            json.dump(self.processed_nodes, f, ensure_ascii=False, indent=2)
+        utils.log_message(f"[AISession '{self.session_name}'] État sauvegardé dans {self.session_file}", self.log_file_name)
+
+    def start_processing_loop(self):
+        utils.log_message(f"[AISession '{self.session_name}'] Lancement de la boucle de traitement", self.log_file_name)
         while self.active:
             try:
-                self.check_new_nodes()
-                self.process_pending_nodes_batch()
-                time.sleep(20)
+                new_nodes: list[dict] = self.fetch_new_nodes()
+                if new_nodes:
+                    utils.log_message(f"[AISession '{self.session_name}'] {len(new_nodes)} nouveaux nodes détectés", self.log_file_name)
+                    self.pending_batch.extend(new_nodes)
+                
+                if self.pending_batch:
+                    utils.log_message(f"[AISession '{self.session_name}'] Traitement d'un batch de {len(self.pending_batch)} nodes", self.log_file_name)
+                    self.process_pending_batch()
+                
+                time.sleep(5)  # Pause avant la prochaine itération
             except Exception as e:
-                print(f"❌ Erreur AISession {self.session_id} : {e}")
-                time.sleep(5)
+                utils.log_message(f"[AISession '{self.session_name}'] Erreur dans la boucle de traitement: {e}", self.log_file_name)
+                time.sleep(10)  # Pause plus longue en cas d'erreur
+        utils.log_message(f"[AISession '{self.session_name}'] Boucle de traitement arrêtée", self.log_file_name)
 
-    def check_new_nodes(self):
-        nodes = self.pb.collection("node").get_full_list(query_params={
-            "filter": f"session = '{self.session_id}'"
-        })
-
-        for node in nodes:
-            if node.id in self.known_node_ids:
-                continue
-            
-            # Ignore les noeuds du narrateur
-            if node.author == "Narrator":
-                self.known_node_ids.add(node.id)
-                continue
-
-            self.known_node_ids.add(node.id)
-            self.pending_nodes.append({
-                "id" : node.id,
-                "title" : node.title,
-                "text" : node.text,
-            })
-
-            self.save_state()
-
-            print(f"🧾 Nouveau nœud détecté et ajouté au batch : {node.title} (ID: {node.id})")
-
-            #self.check_triggers(node.id, node.title, node.text)
-
-        return
-
-    def build_batch(self):
-        """
-        Construit le batch à envoyer à Mistral à partir des pending_nodes et des triggers disponibles.
-        Retourne un dictionnaire prêt à être sérialisé en JSON.
-        Affiche les available_triggers à la fin.
-        """
-        batch = {}
-        all_available_triggers = []
-        for pending_node in self.pending_nodes:
-            # On ne prend que les triggers activables maintenant
+    def fetch_new_nodes(self) -> list[dict]:
+        try:
+            nodes_records = self.pb_client.collection("Node").get_list(
+                query_params={'filter': f'session="{self.session_id}"', 'perPage': 50}
+            )
+            new_nodes = []
+            for record in nodes_records.items:
+                node_id = getattr(record, 'id', None)
+                if node_id and node_id not in self.processed_nodes:
+                    if getattr(record, 'type') == "contribution" and getattr(record, 'author') != "Narrator":
+                        node_data = {
+                            "id": node_id,
+                            "title": getattr(record, 'title', ''),
+                            "text": getattr(record, 'text', ''),
+                            "author": getattr(record, 'author', ''),
+                            "parent": getattr(record, 'parent', ''),
+                            "side": getattr(record, 'side', ''),
+                        }
+                        new_nodes.append(node_data)
+            return new_nodes
+        except Exception as e:
+            utils.log_message(f"[AISession '{self.session_name}'] Erreur lors de la récupération des nouveaux nodes: {e}", self.log_file_name)
+            return []
+        
+    def process_pending_batch(self):
+        if not self.pending_batch:
+            return
+        # Prépare le prompt pour Mistral au format JSON attendu
+        nodes_dict = {}
+        for node in self.pending_batch:
+            node_id = node["id"]
+            title = node.get("title", "")
+            text = node.get("text", "")
+            # Récupère les triggers disponibles pour ce node
             available_triggers = {}
-            for trigger_node in self.trigger_nodes:
-                if trigger_node["id"] in self.triggered_nodes:
-                    continue
-                if "conditions" not in trigger_node or "first" in trigger_node["conditions"]:
-                    available_triggers[trigger_node["id"]] = trigger_node["triggers"]
-
-                if "conditions" in trigger_node:
-                    for condition in trigger_node["conditions"]:
-                        if condition in self.triggered_nodes:
-                            available_triggers[trigger_node["id"]] = trigger_node["triggers"]
-
-            batch[pending_node["id"]] = {
-                "title": pending_node["title"],
-                "text": pending_node["text"],
+            for trigger_id, trigger_contents in self.available_trigger_nodes:
+                available_triggers[trigger_id] = trigger_contents
+            nodes_dict[node_id] = {
+                "title": title,
+                "text": text,
                 "available_triggers": available_triggers
             }
-            if available_triggers:
-                all_available_triggers.extend(list(available_triggers.values()))
-
-        if all_available_triggers:
-            print("Triggers possibles:", all_available_triggers)
-        return batch
-
-    def process_pending_nodes_batch(self):
-        if not self.pending_nodes:
+        utils.log_message(f"[AISession '{self.session_name}'] Triggers disponibles pour le batch: {list(self.available_trigger_nodes)}", self.log_file_name)
+        prompt = json.dumps(nodes_dict, ensure_ascii=False, indent=2)
+        result = ask_mistral(prompt)
+        if result is None:
+            utils.log_message(f"[AISession '{self.session_name}'] Échec de l'appel à Mistral, le batch sera réessayé plus tard", self.log_file_name)
+            return  # Ne vide pas le batch, réessaiera plus tard
+        elif not isinstance(result, TriggerEvaluationBatch):
+            utils.log_message(f"[AISession '{self.session_name}'] Échec de l'appel à Mistral, mauvais format de réponse reçu", self.log_file_name)
             return
+        
+        # Ajoute les nodes du batch à processed_nodes avant de traiter les evaluations
+        for node in self.pending_batch:
+            node_id = node["id"]
+            if node_id not in self.processed_nodes:
+                self.processed_nodes[node_id] = node
+        
+        # Traite la réponse
+        for node_id, triggers in result.root.items():
+            for trigger_id, evaluation in triggers.items():
+                if evaluation.should_get_triggered and trigger_id not in self.triggered_nodes:
+                    utils.log_message(f"[AISession '{self.session_name}'] Déclenchement du trigger {trigger_id} par le node {node_id}. "
+                                      f"Justification: {evaluation.justification}", self.log_file_name)
+                    self.trigger_node(trigger_id, node_id)
+                    self.triggered_nodes.append(trigger_id)
+                    self.save_triggered_nodes()
 
-        print(f"🧾 Traitement du batch en cours... (n={len(self.pending_nodes)})")
+        # Met à jour les triggers disponibles après traitement du batch
+        self.update_available_trigger_nodes()
+        
+        # Sauvegarde l'état de la session
+        self.save_processed_nodes()
+        
+        # Vide le batch
+        self.pending_batch = []
+        utils.log_message(f"[AISession '{self.session_name}'] Batch traité et sauvegardé", self.log_file_name)
 
-        batch = self.build_batch()
-
-        with open("mistral_batch_prompt.txt", "r", encoding="utf-8") as f:
-            mistral_prompt = f.read()
-
-        mistral_prompt = mistral_prompt + json.dumps(batch, ensure_ascii=False, indent=4)
+    def trigger_node(self, trigger_id: str, parent_node_id: str) -> None:
+        trigger_node = next((node for node in self.trigger_nodes if node.get("id") == trigger_id), None)
+        if not trigger_node:
+            utils.log_message(f"[AISession '{self.session_name}'] Trigger node {trigger_id} non trouvé, probablement une erreur dans la réponse de Mistral", self.log_file_name)
+            return
         try:
-            response = ask_mistral(mistral_prompt)
-            response_json = json.loads(response)
-            
-            # Créer un mapping des IDs des pending nodes pour validation
-            pending_nodes_map = {node["id"]: node for node in self.pending_nodes}
-            
-            # Pour chaque noeud traité du batch
-            for node_id in response_json:
-                if node_id not in pending_nodes_map:
-                    print(f"⚠️ Node ID {node_id} non trouvé dans pending_nodes")
-                    continue
-                    
-                # On regarde la réponse pour chaque trigger
-                for trigger in response_json[node_id]:
-                    # On regarde si le noeud du batch a déclenché un trigger
-                    if "trigger" in trigger and trigger["trigger"] in [True, 'True', 'true']:
-                        # On retrouve le trigger_node et on appelle la fonction qui l'ajoute à la session
-                        for trigger_node in self.trigger_nodes:
-                            if "trigger_id" in trigger and trigger_node["id"] == trigger["trigger_id"]:
-                                if trigger_node["id"] not in self.triggered_nodes:
-                                    # Utilise le node_id comme parent (le nœud qui a déclenché le trigger)
-                                    self.trigger_node(node_id, trigger_node)
-                                    break
-        except Exception as e:
-            print(f"❌ Erreur Mistral batch : {e}")
-
-        # on vide le batch
-        self.pending_nodes = []
-        print(f"🧾 Le batch a été traité. En attente de nouveaux nodes...")
-
-    def trigger_node(self, triggering_node_id, trigger_node):
-        """Déclenche un trigger et crée le nœud IA correspondant."""
-        try:
-            print(f"⚡ Trigger détecté parmi: {trigger_node['triggers']}. Création du nœud...")
-            title = trigger_node["title"]
-            text = trigger_node["text"]
-            author = trigger_node["author"]
-            
-            # Le parent est le nœud qui a déclenché le trigger
-            created_node_id = self.add_node(triggering_node_id, title, text, author)
-            self.triggered_nodes.append(trigger_node["id"])
-            self.save_state()
-
-            if "is_final" in trigger_node and trigger_node["is_final"] in [True, "true", "True"]:
+            new_node_data = {
+                "title": trigger_node.get("title", ""),
+                "text": trigger_node.get("text", ""),
+                "author": trigger_node.get("author", ""),
+                "session": self.session_id,
+                "parent": parent_node_id,
+                "type": "event"
+            }
+            new_record = self.pb_client.collection("Node").create(new_node_data)
+            utils.log_message(f"[AISession '{self.session_name}'] Trigger node {trigger_id} inséré avec succès (ID: {new_record.id})", self.log_file_name)
+            if trigger_node.get("is_final", False):
                 self.handle_final_node()
-                
         except Exception as e:
-            print(f"❌ Erreur fonction trigger_node: {e}")
+            utils.log_message(f"[AISession '{self.session_name}'] Erreur lors du déclenchement du trigger node {trigger_id}: {e}", self.log_file_name)
 
-    def add_node(self, parent_node_id, title, text, author):
-        """Crée un nouveau nœud avec validation du parent."""
-        # Validation du parent
-        if parent_node_id:
-            try:
-                # Vérifie que le parent existe et appartient à cette session
-                parent_node = self.pb.collection("node").get_one(parent_node_id)
-                if parent_node.session != self.session_id:
-                    print(f"⚠️ Parent {parent_node_id} n'appartient pas à la session {self.session_id}")
-                    parent_node_id = None
-            except Exception as e:
-                print(f"⚠️ Parent {parent_node_id} introuvable, création sans parent : {e}")
-                parent_node_id = None
+    def save_triggered_nodes(self) -> None:
+        triggered_nodes_str = json.dumps(self.triggered_nodes, ensure_ascii=False)
+        with open(self.triggered_nodes_file, "w", encoding="utf-8") as f:
+            f.write(triggered_nodes_str)
+        utils.log_message(f"[AISession '{self.session_name}'] Triggered nodes sauvegardés dans {self.triggered_nodes_file}", self.log_file_name)
+
+    def handle_final_node(self) -> None:
+        # Collecte les nouveaux nodes pendant wait_time secondes
+        new_nodes: list[dict] = []
+        k = 30
+        wait_time = 2 * k
+        iterations = 0
+        max_iterations = wait_time // k
+
+        utils.log_message(f"[AISession '{self.session_name}'] Déclenchement du node final, collecte des derniers messages pendant {wait_time} secondes...", self.log_file_name)
         
-        node_type = "contribution" if author != "Narrator" else "event"
-        created_node = self.pb.collection("node").create({
-            "title": title,
-            "text": text,
-            "author": author,
-            "type": node_type,
-            "session": self.session_id,
-            "parent": parent_node_id
-        })
-        print(f"🤖 Nœud IA créé (ID: {created_node.id}, parent: {parent_node_id}) : {title}")
-        return created_node.id
+        while iterations < max_iterations:
+            time.sleep(k)
+            fetched = self.fetch_new_nodes()
+            if fetched:
+                new_nodes.extend(fetched)
+                utils.log_message(f"[AISession '{self.session_name}'] {len(fetched)} nouveaux messages collectés (total: {len(new_nodes)})", self.log_file_name)
+            iterations += 1
 
-    def handle_final_node(self):
-        timeout = 120 # faire un timeout plus long
-        waited = 0
-        print(f"🔚 Dernier trigger node enclenché. Attente des réponses joueurs... ({timeout} sec)")
+        # Ajoute les nouveaux nœuds à processed_nodes
+        for node in new_nodes:
+            self.processed_nodes[node["id"]] = node
+        self.save_processed_nodes()
 
-        # Récupère les nouveaux noeuds jusqu'à ce que le temps soit écoulé
-        new_nodes = []
-        while waited < timeout:
-            nodes = self.pb.collection("node").get_full_list(query_params={
-                "filter": f"session = '{self.session_id}'"
-            })
-            new_nodes = [n for n in nodes if n.id not in self.known_node_ids]
+        # Gère le cas où aucun nouveau nœud n'a été collecté
+        if not new_nodes:
+            utils.log_message(f"[AISession '{self.session_name}'] Aucun nouveau message collecté pour la conclusion", self.log_file_name)
+            final_node_message = "The adventure comes to an end. The disciples have completed their quest."
+        else:
+            # Construit le prompt au format JSON pour plus de clarté
+            nodes_for_prompt = []
+            for node in new_nodes:
+                nodes_for_prompt.append({
+                    "author": node.get("author", "Unknown"),
+                    "title": node.get("title", ""),
+                    "text": node.get("text", ""),
+                    "side": node.get("side", "")
+                })
+            
+            prompt = json.dumps(nodes_for_prompt, ensure_ascii=False, indent=2)
+            utils.log_message(f"[AISession '{self.session_name}'] Envoi de {len(new_nodes)} messages à Mistral pour génération de la conclusion", self.log_file_name)
+            
+            final_node_message = ask_mistral(prompt, context_file=FINAL_PROMPT_CONTEXT_FILE)
 
-            time.sleep(10)
-            waited += 10
-            print(f"⏳ Attente... {waited}/{timeout} sec")
-
-        user_responses = [(n.title, n.text, n.author) for n in new_nodes if hasattr(n, 'side') and n.side != ""]
+            if not isinstance(final_node_message, str) or not final_node_message.strip():
+                utils.log_message(f"[AISession '{self.session_name}'] Erreur: réponse invalide de Mistral, utilisation d'une conclusion par défaut", self.log_file_name)
+                final_node_message = "The disciples complete their journey, each carrying the lessons learned along the way."
         
-        # Choix intelligent du parent : prendre le nœud le plus récent des joueurs
-        parent_node_id = None
+        # Détermine le parent du node final
+        # Utilise le dernier node collecté, ou sinon cherche le dernier node event créé
+        parent_id = ""
         if new_nodes:
-            # Trie par date de création et prend le plus récent
-            sorted_nodes = sorted(new_nodes, key=lambda x: x.created if hasattr(x, 'created') else '', reverse=True)
-            parent_node_id = sorted_nodes[0].id
-            print(f"📌 Parent choisi pour THE END: {parent_node_id}")
-
-        if not user_responses:
-            print("⚠️ Aucune réponse reçue après le nœud final.")
-            return
-
-        prompt = self.build_final_prompt(user_responses)
-        final_story = ask_mistral(prompt)
-        self.add_node(parent_node_id, "THE END", final_story, "Narrator")
+            parent_id = new_nodes[-1].get("id", "")
+        else:
+            # Cherche le dernier node event créé (probablement le trigger final)
+            try:
+                last_events = self.pb_client.collection("Node").get_list(
+                    query_params={
+                        'filter': f'session="{self.session_id}" && type="event"',
+                        'sort': '-created',
+                        'perPage': 1
+                    }
+                )
+                if last_events.items:
+                    parent_id = last_events.items[0].id
+            except Exception as e:
+                utils.log_message(f"[AISession '{self.session_name}'] Erreur lors de la recherche du parent: {e}", self.log_file_name)
+        
+        # Crée le nœud final
+        final_node_data = {
+            "title": "The End",
+            "text": final_node_message,
+            "author": "Narrator",
+            "session": self.session_id,
+            "parent": parent_id,
+            "type": "event"
+        }
 
         try:
-            self.pb.collection("Session").update(self.session_id, { "completed": True, })
-            print(f"✅ La session {self.session_id} a été mise à jour dans la BDD et est désormais complétée.")
+            created_node = self.pb_client.collection("Node").create(final_node_data)
+            utils.log_message(f"[AISession '{self.session_name}'] Node final créé avec succès (ID: {created_node.id})", self.log_file_name)
+            self.pb_client.collection("Session").update(self.session_id, { "completed": True, })
+            utils.log_message(f"[AISession '{self.session_name}'] Session marquée comme complétée", self.log_file_name)
         except Exception as e:
-            print(f"❌ Erreur lors de la mise à jour de la session {self.session_id} dans la BDD:", e)
+            utils.log_message(f"[AISession '{self.session_name}'] Erreur lors de la création du node final ou de la mise à jour du statut de la session: {e}", self.log_file_name)
 
+        utils.log_message(f"[AISession '{self.session_name}'] Session terminée", self.log_file_name)
         self.stop()
-
-    def build_final_prompt(self, responses):
-        reponses_joueurs = "\n".join(f"- Titre du message: {title} / Nom du disciple: {author} / Contenu (action/intention/choix): {text}" for title, text, author in responses)
-
-        print(reponses_joueurs)
-
-        return f"""Tu es une IA narratrice qui clôture une session de récit interactif dans l'univers mythologique de Sun Wukong.
-        Le scénario raconte comment Wukong et ses disciples (les joueurs) ont traversé plusieurs épreuves pour récupérer
-        le Rúyì Jīngū Bàng, le bâton magique, auprès du Roi Dragon dans l'océan de la Mer de l'Est.
-
-        Voici les dernières actions et intentions exprimées par les disciples :
-        {reponses_joueurs}
-
-        Ta mission est de rédiger un court paragraphe immersif concluant cette session. Cette conclusion :
-            -doit être cohérente avec les choix et intentions des disciples,
-            -doit servir de dernier nœud dans la session, et donc apporter une sensation de fermeture au récit.
-            -peut avoir une tournure humoristique ou absurde selon les choix des disciples.
-
-        Ne formule pas de questions ouvertes ni d'invitations à poursuivre : cette conclusion marque la fin de l'aventure.
-        La réponse doit être en anglais.
-        La réponse doit être concise, entre 3 et 5 phrases maximum."""

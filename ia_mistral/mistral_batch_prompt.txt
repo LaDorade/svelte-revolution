@@ -1,51 +1,90 @@
-Tu vas recevoir une liste de nodes sous le format
-
-{ "node_id": {
-    "title" : "name of node",
-    "text" : "content of node",
+Tu vas recevoir une liste de nœuds au format suivant :
+{
+  "node_id": {
+    "title": "nom du nœud",
+    "text": "contenu du nœud",
     "available_triggers": {
-        "trigger_id" : "content of trigger_id"
-        }
+      "trigger_id": ["contenu du trigger1", "contenu du trigger2", etc..]
     }
+  }
 }
+Pour chaque nœud à traiter, analyse si le "title" ou le "text" contient une référence ou un synonyme au contenu d’un des "available_triggers".
+Si c’est le cas pour au moins un champ, considère le trigger comme vrai.
 
-Pour chaque noeud à traiter, détermine si les valeurs de "title" ou "text" contiennent une référence ou un synonyme
-au contenu de l'un des available_triggers. Il suffit que soit le "title" ou le "text" contienne
-une référence pour que ce soit considéré comme vrai.
-Ce raisonnement est applicable dans toutes les langues et notamment le français, l'anglais et le chinois.
-Par exemple, pour le node fictif
-
-{"32432" : {
-    "title" : "Des pâtes"
-    "text" : "Manger des pâtes"
-    "available_triggers": {
-        "2" : "boire de l'eau"
+Par exemple pour
+sample_nodes = {
+    "node_1": {
+        "title": "Comment démarrer le moteur",
+        "text": "Pour démarrer, appuyez sur le bouton de démarrage.",
+        "available_triggers": {
+            "trigger_1": ["démarrer le moteur"]
+            "trigger_2": ["faire le petit train", "tgv"]
         }
-    }
-}
-'Des pâtes' ne fait pas référence à l'idée de boire de l'eau.
-'Manger des pâtes' ne fait pas référence à l'idée de boire de l'eau.
-
-Dans ta réponse tu dois traiter tous les available_trigger et justifier ta réponse dans chaque cas.
-Voici le format exact de réponse que tu dois produire pour chaque noeud, en format JSON:
-{ "node_id": 
-    { 
-    "trigger_id" : "id du available_trigger",
-    "trigger" : "True ou False", 
-    "justification" : "ta justification" 
     },
-    {
-    // d'autres available_triggers s'il y en a
+    "node_2": {
+        "title": "Un bon repas",
+        "text": "Manger un repas de homard.. Miam",
+        "available_triggers": {
+            "trigger_3": ["cross the ocean"],
+            "trigger_4": ["eat a lobster"]
+        }
     }
 }
 
-Si on reprend l'exemple d'avant, la réponse serait:
-{ "32432": 
-    { 
-    "trigger_id" : "2",
-    "trigger" : "False", 
-    "justification" : "Ni 'Des pâtes' ni 'Manger des pâtes' ne font référence à l'idée de boire de l'eau." 
+Tu devrais renvoyer quelque chose comme:
+{
+  "node_1": {
+    "trigger_1": {
+      "trigger_node_id": "trigger_1",
+      "should_get_triggered": true,
+      "justification": "Le texte du nœud indique comment démarrer un moteur, ce qui est exactement le contenu du trigger."
+    },
+    "trigger_2": {
+      "trigger_node_id": "trigger_2",
+      "should_get_triggered": false,
+      "justification": "Bien que le bouton de démarrage puisse être interprété comme un « petit train », le contenu du nœud ne mentionne pas explicitement cette activité."
     }
+  },
+  "node_2": {
+    "trigger_3": {
+      "trigger_node_id": "trigger_3",
+      "should_get_triggered": false,
+      "justification": "Le repas de homard ne permet pas de traverser l'océan, même si le mot « ocean » est utilisé dans le contenu du trigger."
+    },
+    "trigger_4": {
+      "trigger_node_id": "trigger_4",
+      "should_get_triggered": true,
+      "justification": "Le nœud décrit un repas de homard, ce qui est exactement le contenu du trigger."
+    }
+  }
 }
 
-Voici les noeuds à traiter :
+Ta réponse doit respecter strictement le format JSON suivant, compatible avec le modèle Pydantic ci-dessous :
+class TriggerEvaluation(BaseModel):
+    trigger_node_id: str
+    should_get_triggered: bool
+    justification: str
+
+class NodeTriggerEvaluations(BaseModel):
+    trigger_evaluations: Dict[str, TriggerEvaluation]
+
+class TriggerEvaluationBatch(BaseModel):
+    nodes: Dict[str, NodeTriggerEvaluations]
+
+Format de réponse attendu :
+{
+  "node_id": {
+    "trigger_id": {
+      "trigger_node_id": "trigger_id",
+      "should_get_triggered": true ou false,
+      "justification": "ta justification"
+    }
+    // autres triggers si présents
+  }
+  // autres nœuds si présents
+}
+
+Pour chaque available trigger, la justification doit être rédigée en français. Elle doit brièvement expliquer l'interprétation du node et doit clairement montrer pourquoi ça devrait enclencher le trigger node ou non.
+Si un node a N available triggers, alors la réponse doit contenir la réponse pour les N triggers.
+
+Voici les nœuds à traiter:
