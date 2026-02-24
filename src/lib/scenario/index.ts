@@ -16,7 +16,9 @@ export async function createScenario(
 		firstNodeText: firstNodeData.text,
 		firstNodeAuthor: firstNodeData.author
 	};
-	return await pb.collection('scenario').create({ ...scenarioData, ...firstNode });
+	return await pb
+		.collection('scenario')
+		.create({ ...scenarioData, ...firstNode });
 }
 
 export async function createEventsAndEnds(

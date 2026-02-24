@@ -11,6 +11,7 @@
 	import type { ActionData } from './$types';
 	import type { PreviewNode, Side } from '$types/pocketBase/TableTypes';
 	import { PreviewGraph } from '$stores/graph/Classes/PreviewGraph.svelte';
+	import { goto } from '$app/navigation';
 
 	interface Props {
 		form: ActionData;
@@ -68,7 +69,7 @@
 		if (form?.error) {
 			toast.error(form.error, { duration: 5000, position: 'bottom-center' });
 		} else if (form?.success) {
-			toast.success($t('misc.success'), { duration: 3000, position: 'bottom-center' });
+			toast.success($t('misc.success'), { duration: 10000, position: 'bottom-center' });
 		}
 	});
 
@@ -156,7 +157,7 @@
 		use:enhance={({ cancel }) => {
 			nProgress.start();
 			return async ({ update }) => {
-				await update();
+				await update({ reset: false });
 				nProgress.done();
 			};
 		}}

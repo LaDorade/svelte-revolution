@@ -52,13 +52,13 @@ export async function createSession(
 	image: File | null | undefined
 ) {
 	const scenario = await pb.collection('Scenario').getOne(scenarioId);
-	const sessions = await pb.collection('Session').getFullList({ fields: 'id' });
+	const sessions = await pb.collection('Session').getFullList({ fields: 'id, slug' });
 
 	const session = await pb.collection('Session').create({
 		name,
 		scenario: scenarioId,
 		author,
-		slug: sessions.length + 1,
+		slug: Math.max(...sessions.map(s => s.slug || 0)) + 1,
 		public: true,
 		visible: true,
 		completed: false,

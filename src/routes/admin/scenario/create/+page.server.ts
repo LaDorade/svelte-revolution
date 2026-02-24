@@ -49,17 +49,21 @@ export const actions = {
 				try {
 					await createEventsAndEnds(pb, scenario.id, events, ends);
 					try {
-						parsed.sides.forEach(async (side) => {
-							await pb
+						await Promise.all(parsed.sides.map(async (side) => {
+							return pb
 								.collection('Side')
-								.create({ scenario: scenario.id, name: side.title }, { requestKey: null });
-						});
-					} catch {
-						pb.collection('Scenario').delete(scenario.id);
+								.create({
+									scenario: scenario.id,
+									name: side.title
+								}, { requestKey: null });
+						})).catch((e) => console.error(e));
+					} catch (err) {
+						console.error(err);
+						await pb.collection('Scenario').delete(scenario.id);
 						return fail(500, { error: 'Fail creating sides' });
 					}
 				} catch {
-					pb.collection('Scenario').delete(scenario.id);
+					await pb.collection('Scenario').delete(scenario.id);
 					return fail(500, { error: 'Fail creating events and ends' });
 				}
 
