@@ -65,7 +65,7 @@
 						<Tooltip>
 							<a
 								tabindex="0"
-								class="grid hover:z-20 w-full h-full grid-cols-[3fr,1fr] p-4 hover:scale-105 transition-all rounded-lg {completed
+								class="grid hover:z-20 w-full h-full grid-cols-[3fr_1fr] p-4 hover:scale-105 transition-all rounded-lg {completed
 									? ' bg-amber-700'
 									: 'bg-primary-500'}"
 								href={resolve(getSessionUrl(session))}

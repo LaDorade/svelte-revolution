@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin "daisyui";
+@config "../tailwind.config.js";
 
 @layer base {
 	@font-face {
@@ -15,24 +15,5 @@
 		src: url('/fonts/Altertype/Altertype.otf');
 		font-weight: normal;
 		font-style: normal;
-	}
-
-	h1 {
-		@apply p-4 text-5xl text-center;
-	}
-	h2 {
-		@apply text-3xl text-center;
-	}
-
-	input {
-		@apply bg-transparent;
-	}
-
-	textarea {
-		@apply bg-transparent;
-	}
-
-	select {
-		@apply bg-transparent;
 	}
 }
