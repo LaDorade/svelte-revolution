@@ -117,6 +117,7 @@
 		nodeLayer = svgElement.append('g');
 		labelLayer = svgElement.append('g');
 
+		//@ts-expect-error d3...
 		label = labelLayer
 			.append('g')
 			.selectAll('text')
@@ -136,6 +137,7 @@
 				homeStore.selectedNode = d;
 			});
 
+		//@ts-expect-error d3...
 		link = nodeLayer
 			.append('g')
 			.selectAll('line')
@@ -145,6 +147,7 @@
 			.attr('stroke', '#999')
 			.attr('stroke-width', 2);
 
+		//@ts-expect-error d3...
 		node = nodeLayer
 			.append('g')
 			.selectAll('g')
@@ -158,6 +161,7 @@
 				homeStore.selectedNode = d;
 			});
 
+		//@ts-expect-error d3...
 		node.append('path')
 			.attr('d', graphAssets.exampleIcon)
 			.attr('fill', 'white')
@@ -167,32 +171,37 @@
 		simulation.on('tick', () => {
 			if (!node || !link || !label) return;
 
+			//@ts-expect-error d3...
 			node.attr('transform', (d) => `translate(${d.x},${d.y})`);
 
 			// Mettre à jour la taille et la couleur du cercle
+			//@ts-expect-error d3...
 			node.select('circle')
-				.attr('r', (d) => (d.id === homeStore.selectedNode?.id ? 15 : 10))
+				.attr('r', (d: {id: number}) => (d.id === homeStore.selectedNode?.id ? 15 : 10))
 				.attr('fill', 'transparent');
 
 			// Mettre à jour la taille et la position de l'image
+			//@ts-expect-error d3...
 			node.select('path')
-				.attr('transform', (d) => {
+				.attr('transform', (d: {id: number}) => {
 					if (d.id === homeStore.selectedNode?.id) {
 						return 'scale(1.5)';
 					} else {
 						return 'scale(1)';
 					}
 				})
-				.attr('fill', (d) => (d.id === homeStore.selectedNode?.id ? 'black' : 'white'))
-				.attr('stroke', (d) => (d.id === homeStore.selectedNode?.id ? 'white' : 'black'));
+				.attr('fill', (d: {id: number}) => (d.id === homeStore.selectedNode?.id ? 'black' : 'white'))
+				.attr('stroke', (d: {id: number}) => (d.id === homeStore.selectedNode?.id ? 'white' : 'black'));
 
-			link.attr('x1', (d) => d.source.x ?? 0)
-				.attr('y1', (d) => Number(d.source.y) ?? 0)
-				.attr('x2', (d) => Number(d.target.x) ?? 0)
-				.attr('y2', (d) => Number(d.target.y) ?? 0);
-
+			//@ts-expect-error d3...
+			link.attr('x1', (d: {source: {x: number}}) => d.source.x ?? 0)
+				.attr('y1', (d: {source: {y: number}}) => Number(d.source.y ?? 0))
+				.attr('x2', (d: {target: {x: number}}) => Number(d.target.x ?? 0))
+				.attr('y2', (d: {target: {y: number}}) => Number(d.target.y ?? 0));
+				
 			// Mettre à jour la position des labels
-			label.attr('x', (d) => d.x).attr('y', (d) => d.y);
+			//@ts-expect-error d3...
+			label.attr('x', (d) => d.x).attr('y', (d: {y: number}) => d.y);
 		});
 
 		simulation.alpha(1).restart();

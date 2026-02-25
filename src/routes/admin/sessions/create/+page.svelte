@@ -56,11 +56,11 @@
 		<h2 class="p-4 text-3xl font-bold">{$t('admin.session.createSession')}</h2>
 		<div class="flex flex-col gap-4 p-4 text-center border-t shadow-md">
 			<div class="flex flex-col gap-4">
-				<label for={'name'} class="text-xl font-thin">{$t('admin.session.name')}</label>
+				<label for="name" class="text-xl font-thin">{$t('admin.session.name')}</label>
 				<input
 					required
 					bind:value={form.name}
-					name={'name'}
+					name="name"
 					placeholder="Votre nouvelle session"
 					class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
 				/>
@@ -90,12 +90,12 @@
 				>
 					<option value="" disabled selected>{$t('admin.session.selectScenario')}</option>
 					<optgroup label={$t('scenario.scenarios')} class="text-gray-600">
-						{#each data.scenarios.filter((s) => !s.ai) as scenario}
+						{#each data.scenarios.filter((s) => !s.ai) as scenario (scenario.id)}
 							<option value={scenario.id} class="text-gray-600">{scenario.title}</option>
 						{/each}
 					</optgroup>
 					<optgroup label={$t('admin.session.aiScenarios')} class="text-gray-600">
-						{#each data.scenarios.filter((s) => s.ai) as scenario}
+						{#each data.scenarios.filter((s) => s.ai) as scenario (scenario.id)}
 							<option value={scenario.id} class="text-gray-600">{scenario.title}</option>
 						{/each}
 					</optgroup>

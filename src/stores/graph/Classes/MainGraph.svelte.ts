@@ -81,7 +81,7 @@ export class MainGraph extends Graph<GraphNode, LinkMessage> {
 		}
 		return values.graphColors.links.default;
 	};
-	getNodeStroke = (d: GraphNode) => {
+	getNodeStroke = (_d: GraphNode) => {
 		/*if (this.selectedNode?.type === 'contribution' && d.id === this.selectedNode?.id) {
 			return values.graphColors.nodes.selected;
 		}*/

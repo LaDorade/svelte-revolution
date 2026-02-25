@@ -1,6 +1,7 @@
 <script lang="ts">
-	import type { NodeMessage } from '$types/graph';
 	import { t } from 'svelte-i18n';
+	import { SvelteMap } from 'svelte/reactivity';
+	import type { NodeMessage } from '$types/graph';
 	import type { PageData } from '../print/$types';
 
 	interface Props {
@@ -9,7 +10,7 @@
 	let { data }: Props = $props();
 
 	let sortedNodes = $derived.by(() => {
-		const map = new Map<string | null, NodeMessage[]>();
+		const map = new SvelteMap<string | null, NodeMessage[]>();
 		const nodes = data.nodes;
 		nodes.forEach((node) => {
 			if (node.parent) {
@@ -55,7 +56,7 @@
 </div>
 
 {#snippet leafs(nodes: NodeMessage[], level: number)}
-	{#each nodes as node}
+	{#each nodes as node (node.id)}
 		{@const childrens = sortedNodes.get(String(node.id))}
 		<div class="node border-l p-1 pr-0 m-1 mr-0 bg-black">
 			<div class="pr-2">

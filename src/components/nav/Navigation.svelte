@@ -8,6 +8,7 @@
 	import type { User } from '$types/pocketBase/TableTypes';
 	import { invalidateAll } from '$app/navigation';
 	import nProgress from 'nprogress';
+	import { resolve } from '$app/paths';
 
 	let { isAdmin, user } = $props();
 
@@ -42,21 +43,21 @@
 				tabindex="0"
 				class="z-50 p-2 mt-3 bg-secondary-800 shadow menu dropdown-content rounded-box w-52"
 			>
-				<li><a href="/">{$t('nav.home')}</a></li>
-				<li><a href="/sessions">{$t('nav.sessions')}</a></li>
+				<li><a href={resolve('/')}>{$t('nav.home')}</a></li>
+				<li><a href={resolve('/sessions')}>{$t('nav.sessions')}</a></li>
 				{#if isAdmin}
 					<li>
-						<a href="/admin">{$t('nav.admin')}</a>
+						<a href={resolve('/admin')}>{$t('nav.admin')}</a>
 						<ul class="p-2">
 							<li>
-								<a href="/admin">{$t('sessions.yourSessions')}</a>
+								<a href={resolve('/admin')}>{$t('sessions.yourSessions')}</a>
 							</li>
 							<li>
-								<a href="/admin/scenario/create">{$t('admin.scenario.createScenario')}</a>
+								<a href={resolve('/admin/scenario/create')}>{$t('admin.scenario.createScenario')}</a>
 							</li>
 							<li>
-								<a class="text-nowrap" href="/admin/sessions/create"
-									>{$t('admin.session.createSession')}</a
+								<a class="text-nowrap" href={resolve('/admin/sessions/create')}
+								>{$t('admin.session.createSession')}</a
 								>
 							</li>
 						</ul>
@@ -64,19 +65,19 @@
 				{/if}
 				{#if viewportStore.actualBreakpoint === 'sm'}
 					<select bind:value={$locale} class="select select-ghost">
-						{#each $locales as loc}
+						{#each $locales as loc (loc)}
 							<option class="uppercase" value={loc}>{loc.split('-')[0]}</option>
 						{/each}
 					</select>
 				{/if}
 			</ul>
 		</div>
-		<a href="/" class="text-xl btn btn-ghost font-alterType">{titleStore.navTitle}</a>
+		<a href={resolve('/')} class="text-xl btn btn-ghost font-alterType">{titleStore.navTitle}</a>
 	</div>
 	<div class="navbar-end">
 		{#if viewportStore.actualBreakpoint !== 'sm'}
 			<select bind:value={$locale} class="select select-ghost">
-				{#each $locales as loc}
+				{#each $locales as loc (loc)}
 					<option value={loc}>{loc.split('-')[0]}</option>
 				{/each}
 			</select>
@@ -94,25 +95,12 @@
 						role="menu"
 						class="z-40 p-2 mt-3 bg-gray-800 shadow menu menu-sm dropdown-content rounded-box w-52"
 					>
-						<li class="text-gray-500">
-							<a href="/" class="justify-between">
-								{$t('nav.profile')}
-								<span class="badge">{$t('misc.soon')}</span>
-							</a>
-						</li>
-						<li class="text-gray-500">
-							<a href="/"
-								>{$t('nav.settings')}
-								<span class="badge">{$t('misc.soon')}</span>
-							</a>
-						</li>
-
 						<button onclick={logout} class="z-50 w-full" type="submit">{$t('nav.logout')}</button>
 					</ul>
 				</div>
 			</div>
 		{:else}
-			<a href="/login" class="justify-between btn btn-ghost">{$t('admin.administration')}</a>
+			<a href={resolve('/login')} class="justify-between btn btn-ghost">{$t('admin.administration')}</a>
 		{/if}
 	</div>
 </nav>

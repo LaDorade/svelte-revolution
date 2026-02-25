@@ -7,25 +7,16 @@ const checkOrigin = process.env.CSRF_CHECK_ORIGIN === 'true';
 
 const adapter = () => {
 	switch (adapterType) {
-		case 'node':
-			return adapterNode();
-		case 'auto':
-		default:
-			return adapterAuto();
+	case 'node':
+		return adapterNode();
+	case 'auto':
+	default:
+		return adapterAuto();
 	}
 };
 
+/** @type {import('@sveltejs/kit').Config} */
 const config = {
-	compilerOptions: {
-		runes: true
-	},
-	vitePlugin: {
-		dynamicCompileOptions({ filename }) {
-			if (filename.includes('node_modules')) {
-				return { runes: undefined };
-			}
-		}
-	},
 	kit: {
 		adapter: adapter(),
 		alias: {
@@ -34,7 +25,11 @@ const config = {
 			$types: './src/types'
 		},
 		csrf: {
-			checkOrigin
+			trustedOrigins: checkOrigin ? [
+				'https://new.babel-revolution.fr',
+				'https://svelte-revolution.vercel.app',
+				'http://localhost:5173'
+			] : []
 		}
 	}
 };

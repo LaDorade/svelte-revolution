@@ -7,6 +7,7 @@
 
 	import Tooltip from '$components/Tooltip.svelte';
 	import { fade } from 'svelte/transition';
+	import { resolve } from '$app/paths';
 	import type { Session } from '$types/pocketBase/TableTypes';
 
 	interface Props {
@@ -18,7 +19,7 @@
 	sessions = sessions?.sort((a) => (a.completed ? 1 : -1));
 
 	function getSessionUrl(session: Session) {
-		return `/sessions/${session.slug}?${admin ? 'admin=true' : ''}`;
+		return `/sessions/${session.slug}?${admin ? 'admin=true' : ''}` as const;
 	}
 
 	function getSessionImage(session: Session) {
@@ -67,7 +68,7 @@
 								class="grid hover:z-20 w-full h-full grid-cols-[3fr,1fr] p-4 hover:scale-105 transition-all rounded-lg {completed
 									? ' bg-amber-700'
 									: 'bg-primary-500'}"
-								href={getSessionUrl(session)}
+								href={resolve(getSessionUrl(session))}
 							>
 								<div>
 									<h3 class="text-lg font-semibold text-ellipsis capitalize justify-self-start">
@@ -77,7 +78,7 @@
 										{$t('scenario.scenario')}:
 										<span
 											class="italic underline text-pretty text-ellipsis font-light cursor-default hover:underline"
-											>{scenario?.title}</span
+										>{scenario?.title}</span
 										>
 									</div>
 								</div>

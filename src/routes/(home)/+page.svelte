@@ -12,6 +12,7 @@
 
 	import graph1 from '$lib/assets/graphe1.png';
 	import Sessions from '$components/listing/Sessions.svelte';
+	import { resolve } from '$app/paths';
 
 	let visible = $state(false);
 	let userMessage = $state('');
@@ -31,7 +32,7 @@
 				text: userMessage,
 				type: 'contribution'
 			});
-			homeStore.addLink({ source: Number(id), target: Number(homeStore.selectedNode?.id) ?? 3 });
+			homeStore.addLink({ source: Number(id), target: Number(homeStore.selectedNode?.id ?? 3)});
 			userMessage = '';
 			homeStore.selectedNode = node;
 		} else {
@@ -46,6 +47,7 @@
 		const url = new URL(window.location.href);
 		const newUrl = url.toString().split('#');
 		if (newUrl[1]) {
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			replaceState(newUrl[0], {});
 		}
 
@@ -70,6 +72,7 @@
 			{/if}
 		</h1>
 		<div class="tradStyle text-lg text-pretty text-gray-100">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags-->
 			{@html $t('home.intro')}
 			<p class="text-white">
 				{$t('home.introHighlight')}
@@ -78,11 +81,11 @@
 		</div>
 		<div id="intro" class="grid grid-cols-2 grid-rows-2 gap-4">
 			<a class="btn dark:bg-white dark:text-black hover:bg-gray-200" href="#intro">{$t('home.discoverBabel')}</a>
-			<a class="text-white bg-secondary-700 btn w-fit hover:bg-secondary-800" href="/sessions"
-				>{$t('home.joinSession')}</a
+			<a class="text-white bg-secondary-700 btn w-fit hover:bg-secondary-800" href={resolve('/sessions')}
+			>{$t('home.joinSession')}</a
 			>
 			<a class="btn col-span-2 bg-primary-600 hover:bg-primary-500 text-black border-none" href="#animer"
-				>{$t('home.animateYourSession')}</a
+			>{$t('home.animateYourSession')}</a
 			>
 		</div>
 	</section>
@@ -117,7 +120,7 @@
 								class="max-w-xs input border-primary-500 appearance-none bg-black"
 							/>
 							<button type="submit" class=" btn btn-accent bg-primary-400 hover:bg-primary-500"
-								>{$t('home.send')}</button
+							>{$t('home.send')}</button
 							>
 						</form>
 					{:else if homeStore.selectedNode?.id === 5}
