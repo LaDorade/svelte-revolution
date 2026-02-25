@@ -495,6 +495,7 @@
 </div>
 
 <style lang="postcss">
+	@reference "../../../../app.css";
 	.standardLabel {
 		@apply bg-gray-950/50 border border-gray-200/20 shadow-lg backdrop-blur-[2px] w-full rounded-md appearance-none p-4;
 	}
