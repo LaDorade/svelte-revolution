@@ -83,20 +83,23 @@
 		<div id="intro" class="grid grid-cols-2 grid-rows-2 gap-4">
 			<Button
 				variant="tertiary"
-				children={$t('home.discoverBabel')}
 				href="#intro"
-			/>
+			>
+				{$t('home.discoverBabel')}
+			</Button>
 			<Button
 				variant="secondary"
-				children={$t('home.joinSession')}
 				href={resolve('/sessions')}
-			/>
+			>
+				{$t('home.joinSession')}
+			</Button>
 			<Button
 				class="col-span-2 bg"
 				variant="primary"
-				children={$t('home.animateYourSession')}
 				href="#animer"
-			/>
+			>
+				{$t('home.animateYourSession')}
+			</Button>
 		</div>
 	</section>
 	<div
@@ -164,8 +167,10 @@
 			sessions={data.sessions?.filter((session) => session.completed && session.visible && session.public)}
 		/>
 	</div>
-	<div class="flex flex-col w-full text-gray-200 gap-4 items-cente">
-		<h2 id="animer" class="text-3xl text-gray-100 font-bold">{$t('home.animateYourSession')}</h2>
+	<div class="flex flex-col w-full text-gray-200 gap-4 items-center">
+		<h2 id="animer" class="text-3xl text-gray-100 font-bold">
+			{$t('home.animateYourSession')}
+		</h2>
 		<div class="lg:w-2/3 md:w-3/4 text-pretty p-8 bg-black bg-opacity-30 mx-auto rounded">
 			{$t('home.animateSession')}
 		</div>

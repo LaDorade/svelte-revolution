@@ -7,10 +7,12 @@
 	});
 
 	type Props = {
+		triggerClass?: string;
 		trigger: Snippet;
 		content: Snippet;
 	};
-	let { 
+	let {
+		triggerClass = '',
 		trigger,
 		content
 	}: Props = $props();
@@ -24,7 +26,7 @@
 	<button
 		id={id}
 		tabindex="0" 
-		class="cursor-pointer block"
+		class="cursor-pointer block {triggerClass}"
 		onclick={() => (isOpen = !isOpen)}
 	>
 		{@render trigger()}

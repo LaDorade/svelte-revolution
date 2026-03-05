@@ -1,14 +1,17 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { HTMLAnchorAttributes, HTMLButtonAttributes } from 'svelte/elements';
 
-	type Props = {
-		onclick?: () => void;
-		href?: string;
-		variant: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'link';
+	type Props = (HTMLButtonAttributes| HTMLAnchorAttributes) & {
 		children: string | Snippet;
-		class?: string;
-	}
-	let { onclick, href, variant, children, class: className }: Props = $props();
+		variant: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'link';
+	};
+	let {
+		variant,
+		children,
+		class: className,
+		...rest
+	}: Props = $props();
 
 	function getVariantClasses() {
 		switch (variant) {
@@ -23,21 +26,24 @@
 		case 'tertiary':
 			return 'bg-white text-black hover:bg-white/90';
 		default: {
-			console.warn(`Unknown button variant: ${variant satisfies never}`);
+			console.warn(
+				`Unknown button variant: ${variant satisfies never}`,
+			);
 			return variant;
 		}
 		}
 	}
 </script>
 
-{#if href}
-	<a {href}
+{#if 'href' in rest}
+	<a
+		{...rest}
 		class={[
-			'h-fit w-full cursor-pointer',
-			'text-center text-nowrap w-full',
+			'h-fit cursor-pointer',
+			'text-center text-nowrap',
 			'px-4 py-2 rounded-lg transition-colors duration-200',
 			getVariantClasses(),
-			className
+			className,
 		]}
 	>
 		{#if typeof children === 'string'}
@@ -48,13 +54,13 @@
 	</a>
 {:else}
 	<button
-		onclick={onclick}
+		{...rest as HTMLButtonAttributes}
 		class={[
-			'h-fit w-full cursor-pointer',
-			'text-center text-nowrap w-full',
+			'h-fit cursor-pointer',
+			'text-center text-nowrap',
 			'px-4 py-2 rounded-lg transition-colors duration-200',
 			getVariantClasses(),
-			className
+			className,
 		]}
 	>
 		{#if typeof children === 'string'}

@@ -4,6 +4,8 @@
 	import toast from 'svelte-french-toast';
 	import { pb } from '$lib/client/pocketbase';
 	import { invalidateAll } from '$app/navigation';
+	import Input from '$components/form/Input.svelte';
+	import Button from '$components/Button.svelte';
 
 	let username = $state('');
 	let password = $state('');
@@ -29,34 +31,31 @@
 			nProgress.done();
 		}}
 		method="post"
-		class="flex flex-col items-center self-center w-full gap-4 sm:w-1/2"
+		class="self-center flex flex-col w-full gap-4 sm:w-1/2"
 	>
-		<div class="flex flex-col items-start w-full gap-4 text-black dark:text-white">
-			<label class="flex items-center w-full gap-2 input input-bordered input-accent">
-				{$t('login.username')} |
-				<input
-					type="text"
-					class="grow"
-					bind:value={username}
-					placeholder="Snoup !"
-					autocomplete="username"
-					name="username"
-				/>
-			</label>
-			<label class="flex items-center w-full gap-2 input input-bordered input-accent">
-				{$t('login.password')} |
-				<input
-					type="password"
-					bind:value={password}
-					class="grow"
-					placeholder="••••••••"
-					autocomplete="current-password"
-					name="password"
-				/>
-			</label>
-			<div class="flex flex-row items-center justify-center w-full h-12">
-				<button type="submit" class="p-4 font-bold w-fit btn btn-accent">{$t('login.login')}</button>
-			</div>
-		</div>
+		<Input
+			{@attach (node) => node.focus()}
+			label={$t('login.username')}
+			bind:value={username}
+			placeholder="Snoup !"
+			type="text"
+			autocomplete="username"
+			name="username"
+		/>
+		<Input
+			label={$t('login.password')}
+			bind:value={password}
+			placeholder="••••••••"
+			type="password"
+			autocomplete="current-password"
+			name="password"
+		/>
+		<Button
+			variant="primary"
+			type="submit"
+			class="w-fit self-end"
+		>
+			{$t('login.login')}
+		</Button>
 	</form>
 </div>

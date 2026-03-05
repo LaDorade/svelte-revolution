@@ -59,23 +59,25 @@
 					{#each navItems as item (item.href)}
 						<li class="w-full">
 							<Button
-								class="pl-2 w-full"
+								class="p-2 w-full"
 								variant="secondary"
-								children={item.label}
 								href={item.href}
-							/>
+							>
+								{item.label}
+							</Button>
 						</li>
 					{/each}
-					<span class="w-full border-b border-secondary-100"></span>
 					{#if isAdmin}
+						<span class="w-full border-b border-secondary-100"></span>
 						{#each adminNavItems as item, i (item.href)}
 							<li class="w-full">
 								<Button
 									class={i === 0 ? 'pl-2' : 'pl-4'}
 									variant="secondary"
-									children={item.label}
 									href={item.href}
-								/>
+								>
+									{item.label}
+								</Button>
 							</li>
 						{/each}
 					{/if}
@@ -104,21 +106,20 @@
 			</select>
 		{/if}
 		{#if user}
-			<Dropdown>
+			<Dropdown triggerClass="flex items-center justify-center h-full">
 				{#snippet trigger()}
-					<div tabindex="0" role="button" class="">
-						<div class="max-w-8 rounded-full">
-							<img alt="avatar" src={user ? getUserAvatar(user) : graph1} />
-						</div>
+					<div class="max-w-10 flex rounded-full">
+						<img alt="avatar" src={user ? getUserAvatar(user) : graph1} />
 					</div>
 				{/snippet}
 				{#snippet content()}
 					<div class="z-10 bg-secondary-300 rounded-lg flex flex-col gap-2">
 						<Button
 							variant="secondary"
-							children={$t('nav.logout')}
 							onclick={logout}
-						/>
+						>
+							{$t('nav.logout')}
+						</Button>
 					</div>
 				{/snippet}
 			</Dropdown>
