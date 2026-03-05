@@ -5,13 +5,12 @@
 	import { t } from 'svelte-i18n';
 	import nProgress from 'nprogress';
 	import { availableLocales } from '$lib/i18n';
-	import { fullScenarioSchema, sideSchema } from '$lib/zschemas/scenario.schema';
+	import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
 	import { Sparkles, TriangleAlert } from 'lucide-svelte';
+	import { PreviewGraph } from '$stores/graph/Classes/PreviewGraph.svelte';
 	import type { z } from 'zod';
 	import type { ActionData } from './$types';
-	import type { PreviewNode, Side } from '$types/pocketBase/TableTypes';
-	import { PreviewGraph } from '$stores/graph/Classes/PreviewGraph.svelte';
-	import { goto } from '$app/navigation';
+	import type { PreviewNode } from '$types/pocketBase/TableTypes';
 
 	interface Props {
 		form: ActionData;
@@ -154,7 +153,7 @@
 	<h1 class="p-4 text-3xl font-bold">{$t('admin.scenario.newScenario')}</h1>
 	<form
 		method="POST"
-		use:enhance={({ cancel }) => {
+		use:enhance={() => {
 			nProgress.start();
 			return async ({ update }) => {
 				await update({ reset: false });
@@ -471,7 +470,7 @@
 			bind:this={svg}
 			width="500"
 			height="500"
-			class="relative bg-dotted-gray bg-dotted-40 bg-black border border-white/20 rounded-md"
+			class="relative bg-dotted-gray bg-dotted-40 border border-white/20 rounded-md"
 		>
 		</svg>
 		<div class=" absolute top-2 left-2 border border-white/20 bg-black p-2 rounded-md">
@@ -496,6 +495,7 @@
 </div>
 
 <style lang="postcss">
+	@reference "../../../../app.css";
 	.standardLabel {
 		@apply bg-gray-950/50 border border-gray-200/20 shadow-lg backdrop-blur-[2px] w-full rounded-md appearance-none p-4;
 	}

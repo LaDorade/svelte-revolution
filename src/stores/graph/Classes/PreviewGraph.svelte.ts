@@ -54,7 +54,7 @@ export class PreviewGraph extends Graph<PreviewNode, LinkMessage> {
 		}
 		return values.graphColors.links.default;
 	};
-	getNodeStroke = (d: PreviewNode) => {
+	getNodeStroke = (_d: PreviewNode) => {
 		/*if (this.selectedNode?.type === 'contribution' && d.id === this.selectedNode?.id) {
 			return values.graphColors.nodes.selected;
 		}*/
@@ -71,7 +71,7 @@ export class PreviewGraph extends Graph<PreviewNode, LinkMessage> {
 			return values.nodeRadius.default;
 		}
 	};
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	 
 	getNodeScale = (d: PreviewNode) => {
 		const selected = this.selectedNode?.id === d.id;
 		if (d.type === 'startNode') {

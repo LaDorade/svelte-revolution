@@ -41,6 +41,7 @@
 		} else {
 			url.searchParams.delete('prologueSeen');
 		}
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		replaceState(url.toString(), '');
 	}
 
@@ -61,6 +62,7 @@
 	>
 		<h1 class="text-2xl font-bold text-center p-0">{$t('scenario.prologue')}</h1>
 		<p class="text-balance h-40 overflow-auto border border-gray-200/30 p-2 rounded leading-7 text-gray-300">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags-->
 			{@html scenario?.prologue}
 		</p>
 		{#if !sessionData.completed}
@@ -83,7 +85,7 @@
 						bind:value={userSideId}
 					>
 						<option disabled value={null} selected>{$t('side.chooseSide')}</option>
-						{#each sides as side}
+						{#each sides as side (side.id)}
 							<option disabled={sideLocked} value={side.id} class="text-gray-500">{side.name}</option>
 						{/each}
 					</select>

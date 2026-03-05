@@ -8,6 +8,11 @@
 	import type { User } from '$types/pocketBase/TableTypes';
 	import { invalidateAll } from '$app/navigation';
 	import nProgress from 'nprogress';
+	import { resolve } from '$app/paths';
+	import { Menu } from 'lucide-svelte';
+	import Dropdown from '$components/Dropdown.svelte';
+	import Button from '$components/Button.svelte';
+	import { SvelteSet } from 'svelte/reactivity';
 
 	let { isAdmin, user } = $props();
 
@@ -21,98 +26,111 @@
 		await invalidateAll();
 		nProgress.done();
 	}
+
+	const navItems = new SvelteSet([
+		{ label: $t('nav.home'), href: resolve('/') },
+		{ label: $t('nav.sessions'), href: resolve('/sessions') }
+	]);
+	const adminNavItems = new SvelteSet([
+		{ label: $t('admin.administration'), href: resolve('/admin') },
+		{ label: $t('admin.scenario.createScenario'), href: resolve('/admin/scenario/create') },
+		{ label: $t('admin.session.createSession'), href: resolve('/admin/sessions/create') }
+	]);
 </script>
 
-<nav class="print:hidden sticky top-0 z-50 border-b border-gray-500 bg-black navbar text-gray-200 bg-opacity-70">
-	<div class="navbar-start">
-		<div class="dropdown">
-			<button tabindex="0" aria-label="menu" class="btn btn-ghost">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="w-5 h-5"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
+<nav class={[
+	'print:hidden sticky top-0 z-50 border-b border-gray-500 bg-black text-gray-200 bg-opacity-70',
+	'flex items-center'
+]}>
+	<div class="flex gap-4 items-center p-4">
+		<Dropdown>
+			{#snippet trigger()}
+				<Menu class="h-fit w-fit" />
+			{/snippet}
+			{#snippet content()}
+				<ul
+					class={[
+						'flex flex-col gap-4 w-fit',
+						'rounded-lg overflow-hidden',
+						'z-10 p-4 bg-secondary-300 shadow',
+						'absolute'
+					]}
 				>
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
-				</svg>
-			</button>
-			<ul
-				role="menu"
-				tabindex="0"
-				class="z-50 p-2 mt-3 bg-secondary-800 shadow menu dropdown-content rounded-box w-52"
-			>
-				<li><a href="/">{$t('nav.home')}</a></li>
-				<li><a href="/sessions">{$t('nav.sessions')}</a></li>
-				{#if isAdmin}
-					<li>
-						<a href="/admin">{$t('nav.admin')}</a>
-						<ul class="p-2">
-							<li>
-								<a href="/admin">{$t('sessions.yourSessions')}</a>
-							</li>
-							<li>
-								<a href="/admin/scenario/create">{$t('admin.scenario.createScenario')}</a>
-							</li>
-							<li>
-								<a class="text-nowrap" href="/admin/sessions/create"
-									>{$t('admin.session.createSession')}</a
+					{#each navItems as item (item.href)}
+						<li class="w-full">
+							<Button
+								class="p-2 w-full"
+								variant="secondary"
+								href={item.href}
+							>
+								{item.label}
+							</Button>
+						</li>
+					{/each}
+					{#if isAdmin}
+						<span class="w-full border-b border-secondary-100"></span>
+						{#each adminNavItems as item, i (item.href)}
+							<li class="w-full">
+								<Button
+									class={i === 0 ? 'pl-2' : 'pl-4'}
+									variant="secondary"
+									href={item.href}
 								>
+									{item.label}
+								</Button>
 							</li>
-						</ul>
-					</li>
-				{/if}
-				{#if viewportStore.actualBreakpoint === 'sm'}
-					<select bind:value={$locale} class="select select-ghost">
-						{#each $locales as loc}
-							<option class="uppercase" value={loc}>{loc.split('-')[0]}</option>
 						{/each}
-					</select>
-				{/if}
-			</ul>
-		</div>
-		<a href="/" class="text-xl btn btn-ghost font-alterType">{titleStore.navTitle}</a>
+					{/if}
+					{#if viewportStore.actualBreakpoint === 'sm'}
+						<select bind:value={$locale} class="select select-ghost">
+							{#each $locales as loc (loc)}
+								<option class="uppercase" value={loc}>{loc.split('-')[0]}</option>
+							{/each}
+						</select>
+					{/if}
+				</ul>
+			{/snippet}
+		</Dropdown>
+		<a href={resolve('/')} class="font-bold font-alterType">{titleStore.navTitle}</a>
 	</div>
-	<div class="navbar-end">
+	<div class="ml-auto flex p-2 gap-4">
 		{#if viewportStore.actualBreakpoint !== 'sm'}
-			<select bind:value={$locale} class="select select-ghost">
-				{#each $locales as loc}
-					<option value={loc}>{loc.split('-')[0]}</option>
+			<select bind:value={$locale} class={[
+				'cursor-pointer',
+				'border rounded-lg p-2 border-gray-500 bg-black',
+				''
+			]}>
+				{#each $locales as loc (loc)}
+					<option class="cursor-pointer" value={loc}>{loc.split('-')[0]}</option>
 				{/each}
 			</select>
 		{/if}
 		{#if user}
-			<div class="flex-none gap-2">
-				<div class="z-50 dropdown dropdown-end">
-					<div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-						<div class="w-10 rounded-full">
-							<img alt="avatar" src={user ? getUserAvatar(user) : graph1} />
-						</div>
+			<Dropdown triggerClass="flex items-center justify-center h-full">
+				{#snippet trigger()}
+					<div class="max-w-10 flex rounded-full">
+						<img alt="avatar" src={user ? getUserAvatar(user) : graph1} />
 					</div>
-					<ul
-						tabindex="0"
-						role="menu"
-						class="z-40 p-2 mt-3 bg-gray-800 shadow menu menu-sm dropdown-content rounded-box w-52"
-					>
-						<li class="text-gray-500">
-							<a href="/" class="justify-between">
-								{$t('nav.profile')}
-								<span class="badge">{$t('misc.soon')}</span>
-							</a>
-						</li>
-						<li class="text-gray-500">
-							<a href="/"
-								>{$t('nav.settings')}
-								<span class="badge">{$t('misc.soon')}</span>
-							</a>
-						</li>
-
-						<button onclick={logout} class="z-50 w-full" type="submit">{$t('nav.logout')}</button>
-					</ul>
-				</div>
-			</div>
+				{/snippet}
+				{#snippet content()}
+					<div class="z-10 bg-secondary-300 rounded-lg flex flex-col gap-2">
+						<Button
+							variant="secondary"
+							onclick={logout}
+						>
+							{$t('nav.logout')}
+						</Button>
+					</div>
+				{/snippet}
+			</Dropdown>
 		{:else}
-			<a href="/login" class="justify-between btn btn-ghost">{$t('admin.administration')}</a>
+			<Button 
+				href={resolve('/login')} 
+				class=""
+				variant="ghost"
+			>
+				{$t('admin.administration')}
+			</Button>
 		{/if}
 	</div>
 </nav>

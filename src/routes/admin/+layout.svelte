@@ -2,6 +2,7 @@
 	import { t } from 'svelte-i18n';
 	import { titleStore } from '$stores/titles/index.svelte.js';
 	import { onDestroy, onMount, type Snippet } from 'svelte';
+	import { resolve } from '$app/paths';
 	import type { LayoutData } from './$types.js';
 
 	interface Props {
@@ -14,11 +15,9 @@
 
 	const tabs = [
 		{ href: '/admin/scenario/create', label: $t('admin.scenario.createScenario') },
-		{ href: '/admin/sessions/create', label: $t('admin.session.createSession') }
-	];
-	if (data.user?.role === 'superAdmin') {
-		tabs.push({ href: '/admin/user/create', label: $t('admin.user.createUser') });
-	}
+		{ href: '/admin/sessions/create', label: $t('admin.session.createSession') },
+		{ href: '/admin/user/create', label: $t('admin.user.createUser') }
+	] as const;
 
 	onMount(() => {
 		titleStore.setNavTitle('Admin');
@@ -29,13 +28,13 @@
 </script>
 
 <div class="flex flex-col items-center gap-4 py-4">
-	<a href="/admin" class="text-4xl font-thin text-center text-white hover:text-green-500 first-letter:capitalize">
+	<a href={resolve('/admin')} class="text-4xl font-thin text-center text-white hover:text-green-500 first-letter:capitalize">
 		{$t('admin.administration')}
 	</a>
 	<div role="tablist" class="tabs tabs-lifted">
-		{#each tabs as tab}
+		{#each tabs.filter(tab => tab.href !== '/admin/user/create' || data.user?.role === 'superAdmin') as tab (tab.href)}
 			<a
-				href={tab.href}
+				href={resolve(tab.href)}
 				role="tab"
 				class="tab hover:text-primary-500 {activeTab === tab.href ? 'tab-active' : 'text-white'}"
 			>

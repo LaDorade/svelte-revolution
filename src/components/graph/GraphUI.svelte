@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { t } from 'svelte-i18n';
-	import type { End, GraphEvent, Session, Side, User } from '$types/pocketBase/TableTypes';
+	import type {
+		End,
+		GraphEvent,
+		Session,
+		Side,
+	} from '$types/pocketBase/TableTypes';
 	import { applyAction, enhance } from '$app/forms';
 	import nProgress from 'nprogress';
 	import toast from 'svelte-french-toast';
 	import type { ActionResult } from '@sveltejs/kit';
-	import { blur, fade, slide } from 'svelte/transition';
+	import { blur, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import * as values from '$lib/mainGraph/values';
 	import {
@@ -16,7 +21,7 @@
 		Info,
 		MessageCirclePlus,
 		MessageCircleWarning,
-		X
+		X,
 	} from 'lucide-svelte';
 	import GraphTree from './GraphTree.svelte';
 	import { watch } from '$lib/runes/watch.svelte';
@@ -46,7 +51,7 @@
 		ends = [],
 		sides,
 		pseudo,
-		userSideId = $bindable()
+		userSideId = $bindable(),
 	}: Props = $props();
 
 	function attributeIcons() {
@@ -58,13 +63,12 @@
 
 	let nodeTitle = $state('');
 	let nodeText = $state('');
-	let ai = $derived.by(() => session.expand?.scenario?.ai);
 
 	const states = $state({
 		nodeInfo: false,
 		addNode: false,
 		sessionEnd: false,
-		admin: false
+		admin: false,
 	});
 
 	const stateActive = $derived.by(() => {
@@ -74,7 +78,10 @@
 	let treeView = $state(false);
 
 	function storePanelInLocalStorage() {
-		localStorage.setItem('seeDebugPanel', viewportStore.seeDebugPanel.toString());
+		localStorage.setItem(
+			'seeDebugPanel',
+			viewportStore.seeDebugPanel.toString(),
+		);
 	}
 
 	/**
@@ -82,16 +89,20 @@
 	 * Depending on the viewport, only one state can be active at a time
 	 * @param type - The type of the state to set
 	 */
-	function setCheck(type: 'addNode' | 'nodeInfo' | 'admin' | 'sessionEnd' | 'close') {
+	function setCheck(
+		type: 'addNode' | 'nodeInfo' | 'admin' | 'sessionEnd' | 'close',
+	) {
 		if (type === 'close') {
 			for (const key in states) {
-				states[key as 'nodeInfo' | 'addNode' | 'admin' | 'sessionEnd'] = false;
+				states[key as 'nodeInfo' | 'addNode' | 'admin' | 'sessionEnd'] =
+					false;
 			}
 			return;
 		}
 		for (const key in states) {
 			if (key !== type) {
-				states[key as 'nodeInfo' | 'addNode' | 'admin' | 'sessionEnd'] = false;
+				states[key as 'nodeInfo' | 'addNode' | 'admin' | 'sessionEnd'] =
+					false;
 			}
 		}
 
@@ -102,22 +113,28 @@
 
 	function handleSubmit(result: ActionResult) {
 		switch (result.type) {
-			case 'failure':
-				toast.error(result.data?.error, { duration: 3000, position: 'bottom-center' });
-				break;
-			case 'success':
-				toast.success(result.data?.body.message, { duration: 3000, position: 'top-center' });
-				states.addNode = false;
-				nodeTitle = '';
-				nodeText = '';
+		case 'failure':
+			toast.error(result.data?.error, {
+				duration: 3000,
+				position: 'bottom-center',
+			});
+			break;
+		case 'success':
+			toast.success(result.data?.body.message, {
+				duration: 3000,
+				position: 'top-center',
+			});
+			states.addNode = false;
+			nodeTitle = '';
+			nodeText = '';
 
-				// Add the new event to the list of events
-				if (result.data?.body?.event && session.expand?.events) {
-					session.expand.events.push(result.data.body.event);
-				}
-				break;
-			default:
-				break;
+			// Add the new event to the list of events
+			if (result.data?.body?.event && session.expand?.events) {
+				session.expand.events.push(result.data.body.event);
+			}
+			break;
+		default:
+			break;
 		}
 		nProgress.done();
 	}
@@ -127,18 +144,20 @@
 		await pb.collection('Session').subscribe(session.id, async (res) => {
 			if (!res.record || !res.record.completed) return;
 			try {
-				const end = await pb.collection('End').getOne(res.record.end ?? '');
+				const end = await pb
+					.collection('End')
+					.getOne(res.record.end ?? '');
 				session.completed = res.record.completed;
 				session.end = res.record.end;
 				setCheck('sessionEnd');
 				session.expand = session.expand
 					? {
-							...session.expand,
-							...end
-						}
+						...session.expand,
+						...end,
+					}
 					: {};
 				toast.success($t('sessions.sessionIsOver'), {
-					position: 'top-left'
+					position: 'top-left',
 				});
 			} catch (e) {
 				console.error(e);
@@ -166,7 +185,12 @@
 	});
 </script>
 
-{#snippet formTemplate(values: { id: string; title: string }[], action: string, name: string, trad: string)}
+{#snippet formTemplate(
+	values: { id: string; title: string }[],
+	action: string,
+	name: string,
+	trad: string,
+)}
 	<form
 		method="POST"
 		action="/sessions/{session.id}?/{action}"
@@ -184,13 +208,17 @@
 		<label class="form-control w-full max-w-xs">
 			<select {name} id={name} class="bg-black rounded-md">
 				<option disabled selected>{trad}</option>
-				{#each values as value}
+				{#each values as value (value.id)}
 					<option value={value.id}>{value.title}</option>
 				{/each}
 			</select>
 		</label>
 		<input type="hidden" name="session" value={session.id} />
-		<input type="hidden" name="pb_cookie" value={pb.authStore.exportToCookie()} />
+		<input
+			type="hidden"
+			name="pb_cookie"
+			value={pb.authStore.exportToCookie()}
+		/>
 		<button type="submit" class="self-center btn btn-sm btn-accent">
 			{trad}
 		</button>
@@ -203,7 +231,8 @@
 		<!-- button to open the small menu -->
 		<button
 			class=" p-2 flex justify-center shadow-2xl items-center border z-50 rounded-full bg-black bg-opacity-90"
-			onclick={() => (stateActive ? setCheck('close') : setCheck('nodeInfo'))}
+			onclick={() =>
+				stateActive ? setCheck('close') : setCheck('nodeInfo')}
 		>
 			{#if type === 'dots'}
 				<Ellipsis strokeWidth={2} color="white" />
@@ -223,7 +252,10 @@
 					? 'bg-white'
 					: ''} border transition-all p-2 top-0 -translate-x-[200%] rounded-full bg-black bg-opacity-90 z-50"
 			>
-				<MessageCircleWarning strokeWidth={1.5} color={states.nodeInfo ? 'black' : 'white'} />
+				<MessageCircleWarning
+					strokeWidth={1.5}
+					color={states.nodeInfo ? 'black' : 'white'}
+				/>
 			</button>
 			{#if admin && user}
 				<button
@@ -234,7 +266,10 @@
 						? 'bg-white'
 						: ''} border p-2 top-0 -translate-x-[144%] -translate-y-[144%] rounded-full bg-black bg-opacity-90 z-50"
 				>
-					<Codesandbox strokeWidth={1.5} color={states.admin ? 'black' : 'white'} />
+					<Codesandbox
+						strokeWidth={1.5}
+						color={states.admin ? 'black' : 'white'}
+					/>
 				</button>
 			{/if}
 			<!-- Add Node Or Session End infos -->
@@ -247,7 +282,10 @@
 						? 'bg-white'
 						: ''} border p-2 top-0 -translate-y-[200%] rounded-full bg-black bg-opacity-90 z-50"
 				>
-					<Info strokeWidth={1.5} color={states.sessionEnd ? 'black' : 'white'} />
+					<Info
+						strokeWidth={1.5}
+						color={states.sessionEnd ? 'black' : 'white'}
+					/>
 				</button>
 			{:else}
 				<button
@@ -258,7 +296,10 @@
 						? 'bg-white'
 						: ''} border p-2 top-0 -translate-y-[200%] rounded-full bg-black bg-opacity-90 z-50"
 				>
-					<MessageCirclePlus strokeWidth={1.5} color={states.addNode ? 'black' : 'white'} />
+					<MessageCirclePlus
+						strokeWidth={1.5}
+						color={states.addNode ? 'black' : 'white'}
+					/>
 				</button>
 			{/if}
 		{:else}
@@ -268,11 +309,13 @@
 </div>
 
 <!-- Sides legend -->
-<div class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 bottom-0 left-0 bg-black bg-opacity-30">
-	{#each sides as side}
+<div
+	class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 bottom-0 left-0 bg-black bg-opacity-30"
+>
+	{#each sides as side (side.id)}
 		<div class="text-white flex items-center">
 			<svg class="w-4 h-4 mr-1" viewBox="-12 -12 24 24">
-				<path d={side.icon} fill="white"/>
+				<path d={side.icon} fill="white" />
 			</svg>
 			{side.name}
 		</div>
@@ -296,32 +339,54 @@
 								duration: 300,
 								easing: quintOut,
 								amount: 2,
-								opacity: 0.4
+								opacity: 0.4,
 							}}
 							class="flex flex-col items-center gap-2"
 						>
-							<div class="text-xl text-white font-semibold first-letter:capitalize">
+							<div
+								class="text-xl text-white font-semibold first-letter:capitalize"
+							>
 								{graph?.selectedNode.title}
 							</div>
 							<div class="text-green-400 flex items-center">
 								{#if graph?.selectedNode?.side}
-									<svg class="w-4 h-4 mr-1" viewBox="-12 -12 24 24">
-										<path d={sides.find((side) => side.id === graph?.selectedNode?.side)?.icon} fill="rgb(74 222 128)"/>
+									<svg
+										class="w-4 h-4 mr-1"
+										viewBox="-12 -12 24 24"
+									>
+										<path
+											d={sides.find(
+												(side) =>
+													side.id ===
+														graph?.selectedNode?.side,
+											)?.icon}
+											fill="rgb(74 222 128)"
+										/>
 									</svg>
 								{/if}
-								{sides.find((side) => side.id === graph?.selectedNode?.side)?.name}
+								{sides.find(
+									(side) =>
+										side.id === graph?.selectedNode?.side,
+								)?.name}
 							</div>
 							<div>
 								{$t('inSession.from')}
-								<span class="text-white">{graph?.selectedNode.author}</span>
+								<span class="text-white"
+								>{graph?.selectedNode.author}</span
+								>
 							</div>
-							<div class="max-h-60 overflow-auto text-justify text-gray-300">
+							<div
+								class="max-h-60 overflow-auto text-justify text-gray-300"
+							>
+								<!-- eslint-disable-next-line svelte/no-at-html-tags-->
 								{@html graph?.selectedNode.text}
 							</div>
 						</div>
 					{/key}
 				{:else}
-					<div class="text-xl text-center font-semibold first-letter:capitalize">
+					<div
+						class="text-xl text-center font-semibold first-letter:capitalize"
+					>
 						{$t('inSession.noNodeSelected')}
 					</div>
 				{/if}
@@ -338,7 +403,10 @@
 				use:enhance={() => {
 					nProgress.start();
 					if (!graph?.selectedNode) {
-						toast.error($t('inSession.noNodeSelected'), { duration: 3000, position: 'bottom-center' });
+						toast.error($t('inSession.noNodeSelected'), {
+							duration: 3000,
+							position: 'bottom-center',
+						});
 						nProgress.done();
 						return;
 					}
@@ -351,7 +419,9 @@
 			>
 				<label class="form-control w-full max-w-xs">
 					<div class="label p-0">
-						<span class="label-text text-inherit">{$t('home.messageTitle')}</span>
+						<span class="label-text text-inherit"
+						>{$t('home.messageTitle')}</span
+						>
 					</div>
 					<input
 						name="title"
@@ -363,7 +433,9 @@
 				</label>
 				<label class="form-control w-full max-w-xs">
 					<div class="label p-0">
-						<span class="label-text text-inherit">{$t('home.yourMessage')}</span>
+						<span class="label-text text-inherit"
+						>{$t('home.yourMessage')}</span
+						>
 					</div>
 					<textarea
 						name="text"
@@ -375,12 +447,26 @@
 				{#if admin}
 					<label class="form-control w-full max-w-xs">
 						<div class="label p-0">
-							<span class="label-text text-inherit">{$t('side.yourSide')}</span>
+							<span class="label-text text-inherit"
+							>{$t('side.yourSide')}</span
+							>
 						</div>
-						<select bind:value={userSideId} name="side" class="text-primary-500">
-							<option value={null} disabled selected class="text-gray-700">{$t('side.chooseSide')}</option>
-							{#each sides as side}
-								<option value={side.id} class="text-gray-600">{side.name}</option>
+						<select
+							bind:value={userSideId}
+							name="side"
+							class="text-primary-500"
+						>
+							<option
+								value={null}
+								disabled
+								selected
+								class="text-gray-700"
+							>{$t('side.chooseSide')}</option
+							>
+							{#each sides as side (side.id)}
+								<option value={side.id} class="text-gray-600"
+								>{side.name}</option
+								>
 							{/each}
 						</select>
 					</label>
@@ -407,33 +493,42 @@
 					<input
 						value={pseudo}
 						name="author"
-						type={'hidden'}
+						type="hidden"
 						placeholder="Pseudo"
 						class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
 					/>
 				{:else}
 					<label class="form-control w-full max-w-xs">
 						<div class="label p-0">
-							<span class="label-text text-inherit">{$t('home.yourName')}</span>
+							<span class="label-text text-inherit"
+							>{$t('home.yourName')}</span
+							>
 						</div>
 						<input
 							value={pseudo}
 							name="author"
-							type={'text'}
+							type="text"
 							placeholder="Pseudo"
 							class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
 						/>
 					</label>
 				{/if}
 				<input type="hidden" name="session" value={session.id} />
-				<input type="hidden" name="parent" value={graph?.selectedNode?.id ?? null} />
-				<button class="btn w-fit btn-accent btn-sm self-center" type="submit">{$t('misc.submit')}</button>
+				<input
+					type="hidden"
+					name="parent"
+					value={graph?.selectedNode?.id ?? null}
+				/>
+				<button
+					class="btn w-fit btn-accent btn-sm self-center"
+					type="submit">{$t('misc.submit')}</button
+				>
 			</form>
 		{:else if states.admin}
 			<div
 				in:fade={{
 					duration: 200,
-					easing: quintOut
+					easing: quintOut,
 				}}
 				class="flex flex-col items-center gap-4 p-2 text-primary-500 z-10"
 			>
@@ -450,18 +545,30 @@
 						/>
 					</label>
 				</div>
-				{@render formTemplate(events, 'addEvent', 'eventId', $t('admin.event.triggerEvent'))}
-				{@render formTemplate(ends, 'endSession', 'endId', $t('admin.session.endSession'))}
+				{@render formTemplate(
+					events,
+					'addEvent',
+					'eventId',
+					$t('admin.event.triggerEvent'),
+				)}
+				{@render formTemplate(
+					ends,
+					'endSession',
+					'endId',
+					$t('admin.session.endSession'),
+				)}
 			</div>
 		{:else if states.sessionEnd}
 			<div
 				in:fade={{
 					duration: 200,
-					easing: quintOut
+					easing: quintOut,
 				}}
 				class="flex flex-col items-center gap-2 p-2 text-primary-500 z-10"
 			>
-				<div class="text-xl font-semibold text-white first-letter:capitalize">
+				<div
+					class="text-xl font-semibold text-white first-letter:capitalize"
+				>
 					{session.expand?.end?.title}
 				</div>
 				<div>

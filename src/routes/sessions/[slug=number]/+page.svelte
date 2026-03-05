@@ -21,7 +21,14 @@
 		data: LayoutData;
 	}
 	let { data }: Props = $props();
-	let { events = [], user = null, ends = [], sides, aiConnected = false, scenario } = data;
+	let {
+		events = [],
+		user = null,
+		ends = [],
+		sides,
+		aiConnected = false,
+		scenario,
+	} = data;
 
 	let sessionData = $state(data.sessionData);
 
@@ -30,7 +37,9 @@
 	// Intro related
 	let prologueSeen = $state(false);
 	let userSideId: string | null = $state(null);
-	let validSide = $derived(!!sides.find((side) => side.id === userSideId)?.id);
+	let validSide = $derived(
+		!!sides.find((side) => side.id === userSideId)?.id,
+	);
 	let sideLocked = $state(false);
 	let pseudo: string | null = $state(null);
 	let validPseudo = $derived(pseudoSchema.safeParse(pseudo).success);
@@ -57,9 +66,11 @@
 		if ((!sideLocked || !pseudoLocked) && !admin) {
 			url.searchParams.delete('prologueSeen');
 		}
-		prologueSeen = new URL(location.href).searchParams.get('prologueSeen') === 'true';
+		prologueSeen =
+			new URL(location.href).searchParams.get('prologueSeen') === 'true';
 
 		await tick(); // wait for the router to be ready
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		replaceState(url.toString(), '');
 	}
 
@@ -67,7 +78,7 @@
 		titleStore.setNavTitle(sessionTitle);
 		if (scenario?.ai && aiConnected) {
 			toast.success($t('ia.connected'), {
-				position: 'top-left'
+				position: 'top-left',
 			});
 		}
 		userSideId = localStorage.getItem('side_' + sessionData.id);
@@ -79,16 +90,28 @@
 			pseudoLocked = true;
 		}
 		await manageSearchParams();
-		viewportStore.seeDebugPanel = localStorage.getItem('seeDebugPanel') === 'true';
+		viewportStore.seeDebugPanel =
+			localStorage.getItem('seeDebugPanel') === 'true';
 	});
 </script>
 
 <svelte:head>
 	<title>{sessionTitle}</title>
-	<meta content={sessionData.expand?.scenario?.prologue} property="description" />
-	<meta content={sessionData.image ? pb.files.getURL(sessionData, sessionData.image) : graph1} property="og:image" />
+	<meta
+		content={sessionData.expand?.scenario?.prologue}
+		property="description"
+	/>
+	<meta
+		content={sessionData.image
+			? pb.files.getURL(sessionData, sessionData.image)
+			: graph1}
+		property="og:image"
+	/>
 	<meta content={sessionData.name} property="og:title" />
-	<meta content={sessionData.expand?.scenario?.prologue} property="og:description" />
+	<meta
+		content={sessionData.expand?.scenario?.prologue}
+		property="og:description"
+	/>
 	<meta content="Babel Révolution" property="og:site_name" />
 	<meta content={$page.url.href} property="og:url" />
 </svelte:head>
@@ -99,13 +122,34 @@
 
 {#await data.nodesPromise}
 	<div class=" w-full h-screen flex justify-center items-center bg-black">
-		<LoaderPinwheel color="white" class="w-20 z-50 opacity-100 h-20 loader animate-spin" />
+		<LoaderPinwheel
+			color="white"
+			class="w-20 z-50 opacity-100 h-20 loader animate-spin"
+		/>
 	</div>
 {:then nodes}
 	<div class="">
 		{#if prologueSeen && accessToPage}
-			<GraphUi {graph} bind:session={sessionData} {admin} {user} {events} {pseudo} {userSideId} {ends} {sides} />
-			<MainGraph bind:graph {admin} {userSideId} ai={scenario?.ai} {nodes} sessionId={sessionData.id} {sides} />
+			<GraphUi
+				{graph}
+				bind:session={sessionData}
+				{admin}
+				{user}
+				{events}
+				{pseudo}
+				{userSideId}
+				{ends}
+				{sides}
+			/>
+			<MainGraph
+				bind:graph
+				{admin}
+				{userSideId}
+				ai={scenario?.ai}
+				{nodes}
+				sessionId={sessionData.id}
+				{sides}
+			/>
 		{:else}
 			<ShowPrologue
 				{graph}

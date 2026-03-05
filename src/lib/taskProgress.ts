@@ -31,7 +31,7 @@ export const tasks: Task[] = [
 				completed: true
 			},
 			{
-				taskName: "Affichage sur la page d'accueil",
+				taskName: 'Affichage sur la page d\'accueil',
 				duration: 1,
 				completed: true
 			},
@@ -96,7 +96,7 @@ export const tasks: Task[] = [
 		]
 	},
 	{
-		taskName: "Page d'accueil",
+		taskName: 'Page d\'accueil',
 		duration: 0,
 		completed: false,
 		inCharge: 'Eva',
