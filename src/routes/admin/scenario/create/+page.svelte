@@ -470,7 +470,7 @@
 			bind:this={svg}
 			width="500"
 			height="500"
-			class="relative bg-dotted-gray bg-dotted-40 bg-black border border-white/20 rounded-md"
+			class="relative bg-dotted-gray bg-dotted-40 border border-white/20 rounded-md"
 		>
 		</svg>
 		<div class=" absolute top-2 left-2 border border-white/20 bg-black p-2 rounded-md">

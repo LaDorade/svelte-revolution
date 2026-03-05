@@ -1,6 +1,4 @@
 @import 'tailwindcss';
-@plugin "daisyui";
-@config "../tailwind.config.js";
 
 @layer base {
 	@font-face {
@@ -16,4 +14,41 @@
 		font-weight: normal;
 		font-style: normal;
 	}
+}
+
+@theme {
+	--breakpoint-print: {
+		'raw': 'print'
+	};
+
+	--font-alterType: 'AlterType', sans-serif;
+	--font-redditSans: 'RedditSans', sans-serif;
+
+	--color-dotted-white: radial-gradient(white 1px, transparent 1px);
+	--color-dotted-lightGray: radial-gradient(#edf2f7 1px, transparent 1px);
+	--color-dotted-midGray: radial-gradient(#646E7E 1px, transparent 1px);
+	--color-dotted-gray: radial-gradient(#4a5568 1px, transparent 1px);
+	--color-dotted-darkGray: radial-gradient(#333 1px, transparent 1px);
+	--color-dotted-black: radial-gradient(#000 1px, transparent 1px);
+
+	--background-size-dotted-20: 20px 20px;
+	--background-size-dotted-40: 40px 40px;
+
+	--color-dark-bg: #1a202c;
+
+	--color-primary-100: #e7fcee;
+	--color-primary-200: #cff9de;
+	--color-primary-300: #b6f5cd;
+	--color-primary-400: #9ef2bd;
+	--color-primary-500: #86efac;
+	--color-primary-600: #6bbf8a;
+	--color-primary-700: #508f67;
+	--color-primary-800: #366045;
+	--color-primary-900: #1b3022;
+
+	--color-secondary-100: #3F3E67;
+	--color-secondary-200: #3A3964;
+	--color-secondary-300: #2D2D51;
+
+	--color-dark: #232249;
 }

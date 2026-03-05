@@ -13,6 +13,7 @@
 	import graph1 from '$lib/assets/graphe1.png';
 	import Sessions from '$components/listing/Sessions.svelte';
 	import { resolve } from '$app/paths';
+	import Button from '$components/Button.svelte';
 
 	let visible = $state(false);
 	let userMessage = $state('');
@@ -80,13 +81,22 @@
 			</p>
 		</div>
 		<div id="intro" class="grid grid-cols-2 grid-rows-2 gap-4">
-			<a class="btn dark:bg-white dark:text-black hover:bg-gray-200" href="#intro">{$t('home.discoverBabel')}</a>
-			<a class="text-white bg-secondary-700 btn w-fit hover:bg-secondary-800" href={resolve('/sessions')}
-			>{$t('home.joinSession')}</a
-			>
-			<a class="btn col-span-2 bg-primary-600 hover:bg-primary-500 text-black border-none" href="#animer"
-			>{$t('home.animateYourSession')}</a
-			>
+			<Button
+				variant="tertiary"
+				children={$t('home.discoverBabel')}
+				href="#intro"
+			/>
+			<Button
+				variant="secondary"
+				children={$t('home.joinSession')}
+				href={resolve('/sessions')}
+			/>
+			<Button
+				class="col-span-2 bg"
+				variant="primary"
+				children={$t('home.animateYourSession')}
+				href="#animer"
+			/>
 		</div>
 	</section>
 	<div

@@ -30,6 +30,12 @@ const config = {
 				'https://svelte-revolution.vercel.app',
 				'http://localhost:5173'
 			] : []
+		},
+	},
+	vitePlugin: {
+		inspector: {
+			showToggleButton: 'always',
+			toggleButtonPos: 'bottom-right',
 		}
 	}
 };
