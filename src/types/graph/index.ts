@@ -5,6 +5,8 @@ export type BaseNode = SimulationNodeDatum & {
 	id: string | number;
 	title: string;
 	text: string;
+	type: string;
+	parent?: string | number;
 };
 
 export type NodeMessage = GraphNode & SimulationNodeDatum;

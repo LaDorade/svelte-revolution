@@ -1,6 +1,6 @@
 import type { BaseNode } from '$types/graph';
 
-export type NodeType = 'contribution' | 'event' | 'startNode';
+export type NodeType = 'contribution' | 'event' | 'startNode' | 'hidden'; // hidden is not in the database
 export type Lang = 'fr' | 'en' | 'jp';
 export type Role = 'admin' | 'user' | 'superAdmin'; // see in the database
 
@@ -10,16 +10,20 @@ export interface GraphNode extends BaseNode {
 	type: NodeType;
 	parent: string;
 	side: string;
+	sideNumber: number;
 	expand?: {
 		side?: Side;
 	};
 }
+
+export type PreviewNode = Pick<GraphNode, 'id' | 'title' | 'text' | 'type' | 'side' | 'sideNumber' | 'parent'>;
 
 export interface Scenario {
 	id: string;
 	title: string;
 	prologue: string;
 	lang: Lang;
+	ai?: boolean;
 	firstNodeTitle: string;
 	firstNodeText: string;
 	firstNodeAuthor: string;
@@ -62,6 +66,8 @@ export interface Session {
 export interface Side {
 	id: string;
 	name: string;
+	number: number;
+	icon?: string;
 }
 
 export interface User {

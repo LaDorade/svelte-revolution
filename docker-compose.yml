@@ -1,0 +1,19 @@
+services:
+    sveltekit:
+        build: .
+        container_name: sveltekit_c
+        ports:
+            - '8080:8080'
+
+    iaserver:
+        build: ./ia_server
+        container_name: iaserver_c
+        ports:
+            - 8000:8000
+        volumes:
+            - ia-server-data:/data
+
+volumes:
+    pocketbase-data:
+    pocketbase-migration:
+    ia-server-data:

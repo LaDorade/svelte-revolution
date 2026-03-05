@@ -10,14 +10,6 @@ node_modules
 .DS_Store
 Thumbs.db
 
-# Env
-.env
-.env.*
-!.env.example
-!.env.*.example
-!.env.production
-!.env.test
-
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
@@ -26,3 +18,12 @@ vite.config.ts.timestamp-*
 .idea
 .vscode
 .fleet
+
+# Test
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+ia_server/resources/frWac_no_postag_phrase_500_cbow_cut100.bin
+ia_server/resources/frWac_non_lem_no_postag_no_phrase_200_cbow_cut100.bin
+ia_server/resources/omw-fr.xml

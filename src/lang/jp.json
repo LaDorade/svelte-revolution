@@ -1,127 +1,201 @@
 {
-	"page_title": "ホームページ",
-	"sessions": {
-		"addNode": "ノードを追加",
-		"addEvent": "イベントを追加",
-		"session": "セッション",
-		"sessions": "セッション",
-		"yourSessions": "あなたのセッション",
-		"createSession": "セッションを開始",
-		"endSession": "セッションを終了",
-		"sessionEnded": "セッションが終了しました",
-		"sortByNotCompleted": "未完了で並べ替え",
-		"noSessions": "セッションがありません",
-		"otherSessions": "他のセッション"
-	},
-	"scenario": {
-		"scenario": "シナリオ",
-		"scenarios": "シナリオ",
-		"yourScenarios": "あなたのシナリオ",
-		"createScenario": "シナリオを作成",
-		"newScenario": "新しいシナリオ",
-		"editScenario": "シナリオを編集",
-		"deleteScenario": "シナリオを削除",
-		"noScenarios": "シナリオがありません",
-		"add": "追加",
-		"delete": "削除",
-		"essentials": "基本",
-		"firstNode": "最初のノード",
-		"title": "タイトル",
-		"text": "テキスト",
-		"prologue": "プロローグ",
-		"eventTitle": "イベントタイトル",
-		"eventText": "イベントテキスト",
-		"endTitle": "終了タイトル",
-		"endText": "終了テキスト",
-		"firstNodeTitle": "最初のノードのタイトル",
-		"firstNodeText": "最初のノードのテキスト",
-		"firstNodeAuthor": "最初のノードの著者",
-		"events": "イベント",
-		"author": "著者",
-		"ends": "終了",
-		"side": "側",
-		"sides": "側"
-	},
-	"side": {
-		"side": "側",
-		"sides": "側",
-		"chooseSide": "側を選択",
-		"yourSide": "あなたの側"
-	},
-	"form": {
-		"submit": "提出する",
-		"save": "保存",
-		"cancel": "キャンセル",
-		"next": "次",
-		"previous": "前"
-	},
-	"user": {
-		"user": "ユーザー",
-		"users": "ユーザー",
-		"createUser": "ユーザーを作成",
-		"username": "ユーザー名",
-		"password": "パスワード",
-		"creationSuccess": "ユーザーが正常に作成されました"
-	},
-	"home": {
-		"home" : "ホーム",
-		"intro": "BⱯBEL RËVOLUㅏION は、言語のように豊かで多様な壮大なプロジェクトです。それは、絶えず進化する作品であり、完成した創作物であり、共同で物語を作り上げるためのインタラクティブなプラットフォームでもあります。このサイトでは、誰もが自分のスタイルで貢献し、共創できるデジタルライティングスペースを提供しています。",
-		"introHighlight": "物語を再創造してみませんか,",
-		"introHyperHighlight": "あなたの方法で",
-		"writeMessage": "メッセージを書く",
-		"send": "送信",
-		"discoverBabel": "BⱯBELを発見",
-		"joinSession": "セッションに参加",
-		"yourMessage": "あなたのメッセージ",
-		"emptyMessage": "さあ、何か書いてみてください！",
-		"tryDragGraph": "グラフをドラッグしてみてください"
-	},
-	"exampleGraph": {
-		"title1": "ネットワークを考察する",
-		"text1": "グラフは、少なくとも4つの相互接続されたノードで表示されます。各ノードはタイトルを持ち、アイデアへの入口となります。全体を観察し、接続を感じ、各思考の間の関係を発見してください。",
-		"title2": "言葉の中に飛び込む",
-		"text2": "ノードをクリックして、詳細を明らかにします：著者とメッセージの内容。各インタラクションは、あなたの入力に先立つ交流を理解するための新しいステップを明らかにします。",
-		"title3": "あなたの声を追加する",
-		"text3": "ノードをクリックすることで、あなたの貢献を付加できます。自分のメッセージを作成し、それがネットワークに追加され、新しいリンクを作成するか、会話を続けます。",
-		"title4": "全体を操作する",
-		"text4": "ノードをつかんで移動させ、リンクが反応するのを見てください。グラフ全体をシフトし、ビューを再配置し、思考を結ぶ重力で遊びます。",
-		"title5": "あなたの方法で探検する",
-		"text5": "ズーム機能を使って、グラフのビューを拡大または縮小します。特定のセクションの詳細に深く入りたいか、全体を把握したいかは、あなたが選ぶ角度次第です。"
-	},
-	"nav": {
-		"home": "ホーム",
-		"sessions": "セッション",
-		"admin": "管理者",
-		"login": "ログイン",
-		"logout": "ログアウト",
-		"register": "登録",
-		"profile": "プロフィール",
-		"settings": "設定"
-	},
-	"join": "参加する",
-	"createSession": "セッションを開始",
-	"createScenario": "シナリオを作成",
-	"language": "言語",
-	"days": "日",
-	"hours": "時間",
-	"minutes": "分",
-	"seconds": "秒",
-	"writeMessage": "メッセージを書く",
-	"nodeInformation": "ノード情報",
-	"from": "著者:",
-	"noNodeSelected": "ノードが選択されていません",
-	"returnInSafePlace": "安全な場所に戻る",
-	"login": "ログイン",
-	"logout": "ログアウト",
-	"admin": "管理者",
-	"administration": "管理",
-	"register": "登録",
-	"username": "ユーザー名",
-	"password": "パスワード",
-	"email": "メール",
-	"yourTitle": "タイトル",
-	"yourMessage": "メッセージ",
-	"yourName": "名前",
-	"publish": "公開",
-	"messageTitle": "メッセージタイトル"
+  "admin": {
+    "admin": "管理者",
+    "administration": "管理",
+    "youAreAdmin": "あなたは管理者です",
+    "debugPanel": "デバッグパネル",
+    "session": {
+      "createSession": "セッションを作成",
+      "endSession": "セッションを終了",
+      "name": "セッション名",
+      "selectScenario": "シナリオを選択",
+      "chooseScenario": "シナリオを選ぶ",
+      "image": "画像",
+      "creationSuccess": "セッションが正常に作成されました",
+      "createTheSession": "セッションを作成",
+      "goto": "セッションへ移動"
+    },
+    "scenario": {
+      "language": "言語",
+      "yourScenarios": "あなたのシナリオ",
+      "createYourScenario": "シナリオを作成",
+      "createScenario": "シナリオを作成",
+      "newScenario": "新しいシナリオ",
+      "editScenario": "シナリオを編集",
+      "deleteScenario": "シナリオを削除",
+      "success": "シナリオが正常に作成されました",
+      "scenarioIsValide": "シナリオは有効です！",
+      "scenarioIsNotValide": "シナリオは無効です",
+      "useAi": "AIを使用",
+      "start": "開始",
+      "informations": "Information"
+    },
+    "user": {
+      "createUser": "ユーザーを作成",
+      "creationSuccess": "ユーザーが正常に作成されました"
+    }
+  },
+  "login": {
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "register": "登録",
+    "profile": "プロフィール",
+    "email": "メール",
+    "username": "ユーザー名",
+    "password": "パスワード"
+  },
+  "sessions": {
+    "addNode": "ノードを追加",
+    "session": "セッション",
+    "sessions": "セッション",
+    "yourSessions": "あなたのセッション",
+    "sessionEnded": "セッションが終了しました",
+    "sortByNotCompleted": "未完了で並べ替え",
+    "noSessions": "セッションがありません",
+    "otherSessions": "他のセッション",
+    "sessionIsOver": "セッションは終了しました！",
+    "openSessions": "開いているセッション",
+    "endedSessions": "終了したセッション"
+  },
+  "inSession": {
+    "writeMessage": "メッセージを書く",
+    "nodeInformation": "ノード情報",
+    "from": "送信者：",
+    "noNodeSelected": "ノードが選択されていません",
+    "eventHidden": "別のチーム向けのイベント"
+  },
+  "scenario": {
+    "scenario": "シナリオ",
+    "scenarios": "シナリオ",
+    "noScenarios": "シナリオがありません",
+    "essentials": "基本情報",
+    "firstNode": {
+      "firstNode": "最初のノード",
+      "firstNodeTitle": "最初のノードのタイトル",
+      "firstNodeText": "最初のノードのテキスト",
+      "firstNodeAuthor": "最初のノードの作者"
+    },
+    "title": "タイトル",
+    "text": "テキスト",
+    "prologue": "プロローグ",
+    "end": {
+      "ends": "エンディング",
+      "end": "エンディング",
+      "title": "エンディングのタイトル",
+      "text": "エンディングのテキスト"
+    },
+    "author": "作者",
+    "event": {
+      "events": "イベント",
+      "event": "イベント",
+      "title": "イベントのタイトル",
+      "text": "イベントのテキスト",
+      "author": "作者"
+    }
+  },
+  "side": {
+    "side": "陣営",
+    "sides": "陣営",
+    "chooseSide": "陣営を選択",
+    "sideChosen": "あなたは陣営を選びました",
+    "choose": "陣営を選んでください",
+    "yourSide": "あなたの陣営",
+    "sideSaved": "陣営が保存されました",
+    "title": "陣営のタイトル"
+  },
+  "user": {
+    "pseudo": "ニックネーム",
+    "yourPseudo": "あなたのニックネーム",
+    "pseudoLocked": "ニックネームがロックされています",
+    "user": "ユーザー",
+    "users": "ユーザー"
+  },
+  "home": {
+    "home": "ホーム",
+    "intro": "BⱯBEL RËVOLUㅏIONは、参加型ストーリーを作成するためのプラットフォームです。これは、常に進化する作品、完成した創作物、そして参加型セッションやシナリオを作成するためのインターフェースです。このサイトは、誰もが自分の方法で貢献し、共創できるデジタルライティングスペースに飛び込むことを招待します。",
+    "introHighlight": "進行中のセッションに参加するか、自分のセッションを作成してリードする、あなたの",
+    "introHyperHighlight": "BⱯBEL RËVOLUㅏION。",
+    "writeMessage": "メッセージを書く",
+    "send": "送信",
+    "discoverBabel": "BⱯBELを発見する",
+    "joinSession": "セッションに参加する",
+    "yourMessage": "あなたのメッセージ",
+    "emptyMessage": "さあ、何か書いてみてください！",
+    "tryDragGraph": "グラフをドラッグしてみてください！",
+    "yourTitle": "あなたのタイトル",
+    "yourName": "あなたの名前",
+    "publish": "公開",
+    "messageTitle": "メッセージのタイトル",
+    "animateYourSession": "セッションをリードする",
+    "animateSession": "教師、ワークショップファシリテーター、または単に革命家の心を持っていますか？自分のBⱯBEL RËVOLUㅏIONをリードしたい場合は、サイト管理者に連絡してアカウントを開設し、冒険を案内してもらってください。連絡先：Serge Bouchardon（serge.bouchardon@utc.fr）およびIsabelle Cros（isabelle.CROS@univ-amu.fr）",
+    "footer": {
+      "citation": "ほんの少し前まで生きていて揺るぎないように見えた表現が、突然消えることがある。それはそれを生み出した状況と共に消え、一日化石として証言するだろう。",
+      "ciationInfos": "",
+      "mainText": "BⱯBEL RËVOLUㅏIONは、インタラクティブで協力的な多言語ディストピアストーリーです。この創作は、生物多様性の劣化と言語的および文化的多様性の劣化との関係を探求しようとしています。",
+      "techUsed": "使用技術",
+      "devAndDesign": "開発とデザイン",
+      "credits": "クレジット",
+      "title": "Babel Revolution"
+    },
+    "exampleGraph": {
+      "title1": "ネットワークを眺める",
+      "text1": "グラフには、いくつかの相互接続されたノードが表示されます。各ノードにはタイトル、テキスト、著者が含まれており、メッセージへの入り口となります。全体を観察し、つながりを感じ、各メッセージ間の関係を発見してください。",
+      "title2": "言葉に飛び込む",
+      "text2": "ノードをクリックして詳細を表示します：著者とメッセージの内容。各インタラクションは、あなたの介入に先立つ交換の新しいステップを明らかにします。",
+      "title3": "あなたの声を追加する",
+      "text3": "ノードをクリックして、あなたの貢献を追加します。あなた自身のメッセージを書き、それがネットワークに追加され、新しいリンクを作成するか、会話を続けます。",
+      "title4": "全体を操作する",
+      "text4": "ノードをつかんで移動させ、リンクの反応を見てください。グラフ全体を移動させ、ビューを再編成し、メッセージを結びつける重力で遊んでください。",
+      "title5": "自分の方法で探索する",
+      "text5": "ズームを使用して、グラフのビューを拡大または縮小します。特定のセクションの詳細を掘り下げるか、全体像を把握するか、あなたに合った角度を選ぶのはあなた次第です。"
+    }
+  },
+  "nav": {
+    "home": "ホーム",
+    "sessions": "セッション",
+    "admin": "管理者",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "register": "登録",
+    "profile": "プロフィール",
+    "settings": "設定"
+  },
+  "time": {
+    "seconds": "秒",
+    "minutes": "分",
+    "hours": "時間",
+    "days": "日"
+  },
+  "toast": {
+    "newMessageBy": "新しいメッセージ："
+  },
+  "ia": {
+    "connected": "AIが接続されています"
+  },
+  "misc": {
+    "add": "追加",
+    "edit": "編集",
+    "delete": "削除",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "close": "閉じる",
+    "yes": "はい",
+    "no": "いいえ",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "submit": "送信",
+    "start": "開始",
+    "end": "終了",
+    "success": "成功",
+    "or": "または",
+    "soon": "近日公開"
+  },
+  "errors": {
+    "returnInSafePlace": "安全な場所に戻る",
+    "missingTitle": "タイトルがありません",
+    "missingText": "テキストがありません",
+    "missingAuthor": "作者がありません",
+    "internalError": "内部エラー",
+    "unauthorized": "許可されていません"
+  }
 }

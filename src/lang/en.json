@@ -1,126 +1,201 @@
 {
-	"page_title": "Home page",
-	"sessions": {
-		"addNode": "Add Node",
-		"addEvent": "Add Event",
-		"session": "Session",
-		"sessions": "Sessions",
-		"yourSessions": "Your Sessions",
-		"createSession": "Start Session",
-		"endSession": "End Session",
-		"sessionEnded": "Session Ended",
-		"sortByNotCompleted": "Sort by not completed",
-		"noSessions": "No sessions",
-		"otherSessions": "Other Sessions"
-	},
-	"scenario": {
-		"scenario": "Scenario",
-		"scenarios": "Scenarios",
-		"yourScenarios": "Your Scenarios",
-		"createScenario": "Create Scenario",
-		"newScenario": "New Scenario",
-		"editScenario": "Edit Scenario",
-		"deleteScenario": "Delete Scenario",
-		"noScenarios": "No scenarios",
-		"add": "Add",
-		"delete": "Delete",
-		"essentials": "Essentials",
-		"firstNode": "First Node",
-		"title": "Title",
-		"text": "Text",
-		"prologue": "Prologue",
-		"eventTitle": "Event Title",
-		"eventText": "Event Text",
-		"endTitle": "End Title",
-		"endText": "End Text",
-		"firstNodeTitle": "First Node Title",
-		"firstNodeText": "First Node Text",
-		"firstNodeAuthor": "First Node Author",
-		"events": "Events",
-		"author": "Author",
-		"ends": "Ends",
-		"side": "Side",
-		"sides": "Sides"
-	},
-	"side": {
-		"side": "Side",
-		"sides": "Sides",
-		"chooseSide": "Choose Side",
-		"yourSide": "Your Side"
-	},
-	"form": {
-		"submit": "Submit",
-		"save": "Save",
-		"cancel": "Cancel",
-		"next": "Next",
-		"previous": "Previous"
-	},
-	"join": "Join",
-	"createScenario": "Create Scenario",
-	"user": {
-		"user": "User",
-		"users": "Users",
-		"createUser": "Create User",
-		"username": "Username",
-		"password": "Password",
-		"creationSuccess": "User created successfully"
-	},
-	"home": {
-		"home": "Home",
-		"intro": "BⱯBEL RËVOLUㅏION is a monumental project, as rich and diverse as languages themselves. It is both a constantly evolving work, finished creations, and an interactive platform for crafting collaborative stories. This site invites you to dive into a digital writing space where everyone can contribute and co-create, in their own style.",
-		"introHighlight": "Come and reinvent stories, ",
-		"introHyperHighlight": "your way.",
-		"writeMessage": "Write a message",
-		"yourMessage": "Your message",
-		"emptyMessage": "Come on, try to write something!",
-		"send": "Send",
-		"discoverBabel": "Discover BⱯBEL",
-		"joinSession": "Join a Session",
-		"tryDragGraph": "Let's try to drag the graph!"
-	},
-	"exampleGraph": {
-		"title1": "Contemplate the Network",
-		"text1": "The graph appears with at least four interconnected nodes. Each node holds a title, a gateway to an idea. Observe the whole, feel the connections, and discover the relationships between each thought.",
-		"title2": "Dive into the Words",
-		"text2": "Click on a node to unveil the details: the author and the content of the message. Each interaction reveals a new step in understanding the exchanges that precede your input.",
-		"title3": "Add Your Voice",
-		"text3": "By clicking on a node, you can attach your contribution. Write your own message, which will be added to the network, creating a new link or continuing the conversation.",
-		"title4": "Manipulate the Whole",
-		"text4": "Grab a node and move it to see the links react. Shift the entire graph, rearrange your view, and play with the gravity that binds thoughts together.",
-		"title5": "Explore Your Way",
-		"text5": "Use the zoom feature to enlarge or shrink your view of the graph. Whether you want to delve into the details of a specific section or get an overview, it’s up to you to choose the perfect angle."
-	},
-	"nav": {
-		"home": "Home",
-		"sessions": "Sessions",
-		"admin": "Admin",
-		"login": "Login",
-		"logout": "Logout",
-		"register": "Register",
-		"profile": "Profile",
-		"settings": "Settings"
-	},
-	"language": "Language",
-	"days": "days",
-	"hours": "hours",
-	"minutes": "minutes",
-	"seconds": "seconds",
-	"writeMessage": "Write a message",
-	"nodeInformation": "Node Information",
-	"from": "From:",
-	"noNodeSelected": "No node selected",
-	"returnInSafePlace": "Return in safe place",
-	"login": "Login",
-	"logout": "Logout",
-	"admin": "Admin",
-	"administration": "Administration",
-	"register": "Register",
-	"username": "Username",
-	"password": "Password",
-	"email": "Email",
-	"yourTitle": "Your title",
-	"messageTitle": "Message title",
-	"yourMessage": "Your message",
-	"yourName": "Your name",
-	"publish": "Publish"
+  "admin": {
+    "admin": "Admin",
+    "administration": "Administration",
+    "youAreAdmin": "You are admin",
+    "debugPanel": "Debug panel",
+    "session": {
+      "createSession": "Create a session",
+      "endSession": "End session",
+      "name": "Session name",
+      "selectScenario": "Select a scenario",
+      "chooseScenario": "Choose a scenario",
+      "image": "Image",
+      "creationSuccess": "Session created successfully",
+      "createTheSession": "Create the session",
+      "goto": "Go to the session"
+    },
+    "scenario": {
+      "language": "Language",
+      "yourScenarios": "Your scenarios",
+      "createYourScenario": "Create your scenario",
+      "createScenario": "Create a scenario",
+      "newScenario": "New scenario",
+      "editScenario": "Edit scenario",
+      "deleteScenario": "Delete scenario",
+      "success": "Scenario created successfully",
+      "scenarioIsValide": "The scenario is valid!",
+      "scenarioIsNotValide": "The scenario is not valid",
+      "useAi": "Use AI",
+      "start": "Start",
+      "informations": "Information"
+    },
+    "user": {
+      "createUser": "Create a user",
+      "creationSuccess": "User created successfully"
+    }
+  },
+  "login": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "profile": "Profile",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password"
+  },
+  "sessions": {
+    "addNode": "Add a node",
+    "session": "Session",
+    "sessions": "Sessions",
+    "yourSessions": "Your sessions",
+    "sessionEnded": "Session ended",
+    "sortByNotCompleted": "Sort by not completed",
+    "noSessions": "No sessions",
+    "otherSessions": "Other sessions",
+    "sessionIsOver": "The session is over!",
+    "openSessions": "Open sessions",
+    "endedSessions": "Completed public sessions"
+  },
+  "inSession": {
+    "writeMessage": "Write a message",
+    "nodeInformation": "Node information",
+    "from": "From:",
+    "noNodeSelected": "No node selected",
+    "eventHidden": "Event for another side"
+  },
+  "scenario": {
+    "scenario": "Scenario",
+    "scenarios": "Scenarios",
+    "noScenarios": "No scenarios",
+    "essentials": "Essentials",
+    "firstNode": {
+      "firstNode": "First node",
+      "firstNodeTitle": "First node title",
+      "firstNodeText": "First node text",
+      "firstNodeAuthor": "First node author"
+    },
+    "title": "Title",
+    "text": "Text",
+    "prologue": "Prologue",
+    "end": {
+      "ends": "Endings",
+      "end": "Ending",
+      "title": "Ending title",
+      "text": "Ending text"
+    },
+    "author": "Author",
+    "event": {
+      "events": "Events",
+      "event": "Event",
+      "title": "Event title",
+      "text": "Event text",
+      "author": "Author"
+    }
+  },
+  "side": {
+    "side": "Side",
+    "sides": "Sides",
+    "chooseSide": "Choose a side",
+    "sideChosen": "You have chosen your side",
+    "choose": "Choose your side",
+    "yourSide": "Your side",
+    "sideSaved": "Side saved",
+    "title": "Side title"
+  },
+  "user": {
+    "pseudo": "Nickname",
+    "yourPseudo": "Your nickname",
+    "pseudoLocked": "Nickname locked",
+    "user": "User",
+    "users": "Users"
+  },
+  "home": {
+    "home": "Home",
+    "intro": "BⱯBEL RËVOLUㅏION is a platform for creating participatory stories. It is both an ever-evolving work, completed creations, and an interface for creating participatory sessions and scenarios. This site invites you to dive into a digital writing space where everyone can contribute and co-create in their own way (previous version: <a href='https://babel.utc.fr/' target='_blank'>https://babel.utc.fr/</a>).",
+    "introHighlight": "Join an ongoing session or create and lead your own session, your ",
+    "introHyperHighlight": "BⱯBEL RËVOLUㅏION.",
+    "writeMessage": "Write a message",
+    "send": "Send",
+    "discoverBabel": "Discover BⱯBEL",
+    "joinSession": "Join a session",
+    "yourMessage": "Your message",
+    "emptyMessage": "Come on, try to write something!",
+    "tryDragGraph": "Try dragging the graph!",
+    "yourTitle": "Your title",
+    "yourName": "Your name",
+    "publish": "Publish",
+    "messageTitle": "Message title",
+    "animateYourSession": "Lead your session",
+    "animateSession": "Are you a teacher, workshop facilitator, or simply a revolutionary at heart? If you want to lead your own BⱯBEL RËVOLUㅏION, contact the site administrators who will open an account for you and guide you through the adventure. Contact: Serge Bouchardon (serge.bouchardon@utc.fr) and Isabelle Cros (isabelle.CROS@univ-amu.fr)",
+    "footer": {
+      "citation": "An expression that, just a moment ago, was still alive and seemed even unshakable, could suddenly vanish: it disappeared with the situation that generated it and will one day testify as a fossil.",
+      "ciationInfos": "",
+      "mainText": "BⱯBEL RËVOLUㅏION is an interactive, collaborative, multilingual dystopian story. The original scenario invited us to reflect on the link between the degradation of biodiversity and the degradation of linguistic and cultural diversity.",
+      "techUsed": "Technologies used",
+      "devAndDesign": "Development and design",
+      "credits": "Credits",
+      "title": "Babel Revolution"
+    },
+    "exampleGraph": {
+      "title1": "Contemplate the network",
+      "text1": "The graph appears with several interconnected nodes. Each node contains a title, text, and author, serving as an entry point to a message. Observe the whole, feel the connections, and discover the relationships between each message.",
+      "title2": "Dive into the words",
+      "text2": "Click on a node to reveal the details: the author and the content of the message. Each interaction unveils a new step in understanding the exchanges that precede your intervention.",
+      "title3": "Add your voice",
+      "text3": "By clicking on a node, you can add your contribution. Write your own message, which will be added to the network, creating a new link or continuing the conversation.",
+      "title4": "Manipulate the whole",
+      "text4": "Grab a node and move it to see the links react. Move the entire graph, reorganize your view, and play with the gravity that binds the messages together.",
+      "title5": "Explore your way",
+      "text5": "Use the zoom to enlarge or shrink your view of the graph. Whether you want to delve into the details of a specific section or get an overview, it's up to you to choose the angle that suits you."
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "sessions": "Sessions",
+    "admin": "Admin",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "time": {
+    "seconds": "seconds",
+    "minutes": "minutes",
+    "hours": "hours",
+    "days": "days"
+  },
+  "toast": {
+    "newMessageBy": "New message by:"
+  },
+  "ia": {
+    "connected": "AI is connected"
+  },
+  "misc": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "error": "Error",
+    "submit": "Submit",
+    "start": "Start",
+    "end": "End",
+    "success": "Success",
+    "or": "or",
+    "soon": "Soon"
+  },
+  "errors": {
+    "returnInSafePlace": "Return to a safe place",
+    "missingTitle": "Missing title",
+    "missingText": "Missing text",
+    "missingAuthor": "Missing author",
+    "internalError": "Internal error",
+    "unauthorized": "Unauthorized"
+  }
 }

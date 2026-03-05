@@ -1,126 +1,201 @@
 {
-    "page_title": "Página principal",
-    "sessions": {
-        "addNode": "Agregar Nodo",
-        "addEvent": "Agregar Evento",
-        "session": "Sesión",
-        "sessions": "Sesiones",
-        "yourSessions": "Tus Sesiones",
-        "createSession": "Iniciar Sesión",
-        "endSession": "Terminar Sesión",
-        "sessionEnded": "Sesión Terminada",
-        "sortByNotCompleted": "Ordenar por no completadas",
-        "noSessions": "No hay sesiones",
-        "otherSessions": "Otras Sesiones"
-    },
-    "scenario": {
-        "scenario": "Escenario",
-        "scenarios": "Escenarios",
-        "yourScenarios": "Tus Escenarios",
-        "createScenario": "Crear Escenario",
-        "newScenario": "Nuevo Escenario",
-        "editScenario": "Editar Escenario",
-        "deleteScenario": "Eliminar Escenario",
-        "noScenarios": "No hay escenarios",
-        "add": "Agregar",
-        "delete": "Eliminar",
-        "essentials": "Esenciales",
-        "firstNode": "Primer Nodo",
-        "title": "Título",
-        "text": "Texto",
-        "prologue": "Prólogo",
-        "eventTitle": "Título del Evento",
-        "eventText": "Texto del Evento",
-        "endTitle": "Título del Final",
-        "endText": "Texto del Final",
-        "firstNodeTitle": "Título del Primer Nodo",
-        "firstNodeText": "Texto del Primer Nodo",
-        "firstNodeAuthor": "Autor del Primer Nodo",
-        "events": "Eventos",
-        "author": "Autor",
-        "ends": "Finales",
-        "side": "Lado",
-        "sides": "Lados"
-    },
-    "side": {
-        "side": "Lado",
-        "sides": "Lados",
-        "chooseSide": "Elegir Lado",
-        "yourSide": "Tu Lado"
-    },
-    "form": {
-        "submit": "Enviar",
-        "save": "Guardar",
-        "cancel": "Cancelar",
-        "next": "Siguiente",
-        "previous": "Anterior"
-    },
-    "join": "Unirse",
-    "createScenario": "Crear Escenario",
-    "user": {
-        "user": "Usuario",
-        "users": "Usuarios",
-        "createUser": "Crear Usuario",
-        "username": "Nombre de Usuario",
-        "password": "Contraseña",
-        "creationSuccess": "Usuario creado con éxito"
-    },
-    "home": {
-        "home": "Inicio",
-        "intro": "BⱯBEL RËVOLUㅏION es un proyecto monumental, tan rico y diverso como los propios idiomas. Es tanto una obra en constante evolución, creaciones terminadas y una plataforma interactiva para crear historias colaborativas. Este sitio te invita a sumergirte en un espacio de escritura digital donde todos pueden contribuir y co-crear, a su propio estilo.",
-        "introHighlight": "Ven y reinventa historias, ",
-        "introHyperHighlight": "a tu manera.",
-        "writeMessage": "Escribir un mensaje",
-        "yourMessage": "Tu mensaje",
-        "emptyMessage": "¡Vamos, intenta escribir algo!",
-        "send": "Enviar",
-        "discoverBabel": "Descubre BⱯBEL",
-        "joinSession": "Unirse a una Sesión",
-        "tryDragGraph": "¡Intenta arrastrar el gráfico!"
-    },
-    "exampleGraph": {
-        "title1": "Contempla la Red",
-        "text1": "El gráfico aparece con al menos cuatro nodos interconectados. Cada nodo tiene un título, una puerta de entrada a una idea. Observa el conjunto, siente las conexiones y descubre las relaciones entre cada pensamiento.",
-        "title2": "Sumérgete en las Palabras",
-        "text2": "Haz clic en un nodo para desvelar los detalles: el autor y el contenido del mensaje. Cada interacción revela un nuevo paso en la comprensión de los intercambios que preceden tu aporte.",
-        "title3": "Añade tu Voz",
-        "text3": "Al hacer clic en un nodo, puedes adjuntar tu contribución. Escribe tu propio mensaje, que se añadirá a la red, creando un nuevo enlace o continuando la conversación.",
-        "title4": "Manipula el Conjunto",
-        "text4": "Agarra un nodo y muévelo para ver cómo reaccionan los enlaces. Desplaza todo el gráfico, reorganiza tu vista y juega con la gravedad que une los pensamientos.",
-        "title5": "Explora a tu Manera",
-        "text5": "Usa la función de zoom para ampliar o reducir tu vista del gráfico. Ya sea que quieras profundizar en los detalles de una sección específica o tener una visión general, tú eliges el ángulo perfecto."
-    },
-    "nav": {
-        "home": "Inicio",
-        "sessions": "Sesiones",
-        "admin": "Admin",
-        "login": "Iniciar Sesión",
-        "logout": "Cerrar Sesión",
-        "register": "Registrarse",
-        "profile": "Perfil",
-        "settings": "Configuraciones"
-    },
-    "language": "Idioma",
-    "days": "días",
-    "hours": "horas",
-    "minutes": "minutos",
-    "seconds": "segundos",
-    "writeMessage": "Escribir un mensaje",
-    "nodeInformation": "Información del Nodo",
-    "from": "De:",
-    "noNodeSelected": "No se ha seleccionado ningún nodo",
-    "returnInSafePlace": "Regresar a un lugar seguro",
-    "login": "Iniciar Sesión",
-    "logout": "Cerrar Sesión",
+  "admin": {
     "admin": "Admin",
     "administration": "Administración",
+    "youAreAdmin": "Eres administrador",
+    "debugPanel": "Panel de depuración",
+    "session": {
+      "createSession": "Crear una sesión",
+      "endSession": "Terminar la sesión",
+      "name": "Nombre de la sesión",
+      "selectScenario": "Seleccionar un escenario",
+      "chooseScenario": "Elegir un escenario",
+      "image": "Imagen",
+      "creationSuccess": "Sesión creada con éxito",
+      "createTheSession": "Crear la sesión",
+      "goto": "Ir a la sesión"
+    },
+    "scenario": {
+      "language": "Idioma",
+      "yourScenarios": "Tus escenarios",
+      "createYourScenario": "Crea tu escenario",
+      "createScenario": "Crear un escenario",
+      "newScenario": "Nuevo escenario",
+      "editScenario": "Editar el escenario",
+      "deleteScenario": "Eliminar el escenario",
+      "success": "Escenario creado con éxito",
+      "scenarioIsValide": "¡El escenario es válido!",
+      "scenarioIsNotValide": "El escenario no es válido",
+      "useAi": "Usar IA",
+      "start": "Comenzar",
+      "informations": "Información"
+    },
+    "user": {
+      "createUser": "Crear un usuario",
+      "creationSuccess": "Usuario creado con éxito"
+    }
+  },
+  "login": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
     "register": "Registrarse",
-    "username": "Nombre de Usuario",
-    "password": "Contraseña",
-    "email": "Correo Electrónico",
-    "yourTitle": "Tu título",
-    "messageTitle": "Título del mensaje",
+    "profile": "Perfil",
+    "email": "Correo electrónico",
+    "username": "Nombre de usuario",
+    "password": "Contraseña"
+  },
+  "sessions": {
+    "addNode": "Agregar un nodo",
+    "session": "Sesión",
+    "sessions": "Sesiones",
+    "yourSessions": "Tus sesiones",
+    "sessionEnded": "Sesión terminada",
+    "sortByNotCompleted": "Ordenar por no completado",
+    "noSessions": "Ninguna sesión",
+    "otherSessions": "Otras sesiones",
+    "sessionIsOver": "¡La sesión ha terminado!",
+    "openSessions": "Sesiones abiertas",
+    "endedSessions": "Sesiones terminadas"
+  },
+  "inSession": {
+    "writeMessage": "Escribir un mensaje",
+    "nodeInformation": "Información del nodo",
+    "from": "De:",
+    "noNodeSelected": "Ningún nodo seleccionado",
+    "eventHidden": "Evento para otro bando"
+  },
+  "scenario": {
+    "scenario": "Escenario",
+    "scenarios": "Escenarios",
+    "noScenarios": "Ningún escenario",
+    "essentials": "Esencial",
+    "firstNode": {
+      "firstNode": "Primer nodo",
+      "firstNodeTitle": "Título del primer nodo",
+      "firstNodeText": "Texto del primer nodo",
+      "firstNodeAuthor": "Autor del primer nodo"
+    },
+    "title": "Título",
+    "text": "Texto",
+    "prologue": "Prólogo",
+    "end": {
+      "ends": "Finales",
+      "end": "Final",
+      "title": "Título del final",
+      "text": "Texto del final"
+    },
+    "author": "Autor",
+    "event": {
+      "events": "Eventos",
+      "event": "Evento",
+      "title": "Título del evento",
+      "text": "Texto del evento",
+      "author": "Autor"
+    }
+  },
+  "side": {
+    "side": "Bando",
+    "sides": "Bandos",
+    "chooseSide": "Elegir un bando",
+    "sideChosen": "Has elegido tu bando",
+    "choose": "Elige tu bando",
+    "yourSide": "Tu bando",
+    "sideSaved": "Bando guardado",
+    "title": "Título del bando"
+  },
+  "user": {
+    "pseudo": "Apodo",
+    "yourPseudo": "Tu apodo",
+    "pseudoLocked": "Apodo bloqueado",
+    "user": "Usuario",
+    "users": "Usuarios"
+  },
+  "home": {
+    "home": "Inicio",
+    "intro": "BⱯBEL RËVOLUㅏION es una plataforma de creación de relatos participativos. Es a la vez una obra en constante evolución, creaciones terminadas y una interfaz para crear sesiones y escenarios participativos. Este sitio invita a sumergirse en un espacio de escritura digital donde cada uno puede contribuir y co-crear a su manera (versión anterior: <a href='https://babel.utc.fr/' target='_blank'>https://babel.utc.fr/</a>).",
+    "introHighlight": "Únete a una sesión en curso o crea y dirige tu propia sesión, tu ",
+    "introHyperHighlight": "BⱯBEL RËVOLUㅏION.",
+    "writeMessage": "Escribe un mensaje",
+    "send": "Enviar",
+    "discoverBabel": "Descubrir BⱯBEL",
+    "joinSession": "Unirse a una sesión",
     "yourMessage": "Tu mensaje",
+    "emptyMessage": "¡Vamos, intenta escribir algo!",
+    "tryDragGraph": "¡Intenta mover el grafo!",
+    "yourTitle": "Tu título",
     "yourName": "Tu nombre",
-    "publish": "Publicar"
+    "publish": "Publicar",
+    "messageTitle": "Título del mensaje",
+    "animateYourSession": "Dirigir tu sesión",
+    "animateSession": "¿Eres docente, animador de talleres o simplemente revolucionario de corazón? Si quieres dirigir tu propia BⱯBEL RËVOLUㅏION, contacta a los administradores del sitio, quienes te abrirán una cuenta y te acompañarán en la aventura. Contacto: Serge Bouchardon (serge.bouchardon@utc.fr) e Isabelle Cros (isabelle.CROS@univ-amu.fr)",
+    "footer": {
+      "citation": "Una expresión que, hace apenas un instante, aún vivía y parecía incluso inquebrantable, podía desaparecer de repente: ha desaparecido con la situación que la había generado y de la que algún día dará testimonio como un fósil.",
+      "ciationInfos": "",
+      "mainText": "BⱯBEL RËVOLUㅏION es un relato distópico interactivo, colaborativo y multilingüe. El escenario original invitaba a reflexionar sobre el vínculo entre la degradación de la biodiversidad y la degradación de la diversidad lingüística y cultural.",
+      "techUsed": "Tecnologías utilizadas",
+      "devAndDesign": "Desarrollo y diseño",
+      "credits": "Créditos",
+      "title": "Babel Revolution"
+    },
+    "exampleGraph": {
+      "title1": "Contempla la red",
+      "text1": "El grafo aparece con varios nodos interconectados. Cada nodo contiene un título, un texto y un autor, es una puerta de entrada a un mensaje. Observa el conjunto, siente las conexiones y descubre las relaciones entre cada mensaje.",
+      "title2": "Sumérgete en las palabras",
+      "text2": "Haz clic en un nodo para revelar los detalles: el autor y el contenido del mensaje. Cada interacción revela una nueva etapa en la comprensión de los intercambios que preceden tu intervención.",
+      "title3": "Añade tu voz",
+      "text3": "Al hacer clic en un nodo, puedes agregar tu contribución. Escribe tu propio mensaje, que se añadirá a la red, creando un nuevo enlace o continuando la conversación.",
+      "title4": "Manipula el conjunto",
+      "text4": "Toma un nodo y muévelo para ver cómo reaccionan los enlaces. Mueve el grafo en su totalidad, reorganiza tu vista y juega con la gravedad que une los mensajes entre sí.",
+      "title5": "Explora a tu manera",
+      "text5": "Usa el zoom para ampliar o reducir tu vista del grafo. Ya sea que quieras entrar en los detalles de una sección específica o obtener una vista general, tú eliges el ángulo que te conviene."
+    }
+  },
+  "nav": {
+    "home": "Inicio",
+    "sessions": "Sesiones",
+    "admin": "Admin",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "register": "Registrarse",
+    "profile": "Perfil",
+    "settings": "Configuración"
+  },
+  "time": {
+    "seconds": "segundos",
+    "minutes": "minutos",
+    "hours": "horas",
+    "days": "días"
+  },
+  "toast": {
+    "newMessageBy": "Nuevo mensaje de:"
+  },
+  "ia": {
+    "connected": "La IA está conectada"
+  },
+  "misc": {
+    "add": "Agregar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "yes": "Sí",
+    "no": "No",
+    "loading": "Cargando...",
+    "error": "Error",
+    "submit": "Enviar",
+    "start": "Comenzar",
+    "end": "Terminar",
+    "success": "Éxito",
+    "or": "o",
+    "soon": "Pronto"
+  },
+  "errors": {
+    "returnInSafePlace": "Regresar a un lugar seguro",
+    "missingTitle": "Título faltante",
+    "missingText": "Texto faltante",
+    "missingAuthor": "Autor faltante",
+    "internalError": "Error interno",
+    "unauthorized": "No autorizado"
+  }
 }

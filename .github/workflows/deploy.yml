@@ -1,0 +1,40 @@
+name: Deploy to Server
+
+on:
+    push:
+        branches:
+            - staging
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Setup SSH
+              uses: webfactory/ssh-agent@v0.5.3
+              with:
+                  ssh-private-key: ${{ secrets.SSH_KEY }}
+
+            - name: Copy project files to server
+              env:
+                  SERVER_IP: ${{ secrets.SERVER_IP }}
+                  USERNAME: ${{ secrets.USERNAME }}
+              run: |
+                  rsync -avz -e "ssh -o StrictHostKeyChecking=no" --exclude '.git' ./ $USERNAME@$SERVER_IP:~/app/
+
+            - name: Deploy on server
+              env:
+                  SERVER_IP: ${{ secrets.SERVER_IP }}
+                  USERNAME: ${{ secrets.USERNAME }}
+              run: |
+                  ssh -o StrictHostKeyChecking=no $USERNAME@$SERVER_IP << 'EOF'
+                  cd ./app
+                  git stash -u -a
+                  git checkout staging
+                  git pull origin staging
+                  docker-compose down
+                  docker-compose up -d --build
+                  EOF

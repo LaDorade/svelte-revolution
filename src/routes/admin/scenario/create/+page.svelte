@@ -1,265 +1,502 @@
 <script lang="ts">
+	import { onMount, untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import toast from 'svelte-french-toast';
 	import { t } from 'svelte-i18n';
 	import nProgress from 'nprogress';
-
-	import Stepper from '$components/form/Stepper.svelte';
-	import Radio from '$components/form/Radio.svelte';
-	import MultiField from '$components/form/MultiField.svelte';
-
-	import type { ActionData, PageData } from './$types';
+	import { availableLocales } from '$lib/i18n';
+	import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
+	import { Sparkles, TriangleAlert } from 'lucide-svelte';
+	import { PreviewGraph } from '$stores/graph/Classes/PreviewGraph.svelte';
+	import type { z } from 'zod';
+	import type { ActionData } from './$types';
+	import type { PreviewNode } from '$types/pocketBase/TableTypes';
 
 	interface Props {
 		form: ActionData;
-		data: PageData;
 	}
-	let { form, data }: Props = $props();
+	let { form }: Props = $props();
 
-	let currentStep = $state(0);
-	let theForm: HTMLFormElement;
-	let validForm = $state(false);
+	let svg: SVGElement | null = $state.raw(null);
+	let graph: PreviewGraph | null = $state.raw(null);
+	let preview = $state(true);
 
-	function checkValidity() {
-		validForm = theForm?.checkValidity();
-	}
+	const formData: z.infer<typeof fullScenarioSchema> = $state({
+		title: '',
+		prologue: '',
+		lang: 'fr',
+		firstNode: {
+			title: '',
+			text: '',
+			author: ''
+		},
+		ai: false,
+		sides: [
+			{
+				title: ''
+			},
+			{
+				title: ''
+			}
+		],
+		events: [
+			{
+				title: '',
+				text: '',
+				author: ''
+			}
+		],
+		ends: [
+			{
+				title: '',
+				text: ''
+			}
+		]
+	});
+
+	const issues = $derived.by(() => {
+		try {
+			fullScenarioSchema.parse(formData);
+			return [];
+		} catch (e) {
+			const err = e as z.ZodError;
+			return err.issues;
+		}
+	});
 
 	$effect(() => {
 		if (form?.error) {
 			toast.error(form.error, { duration: 5000, position: 'bottom-center' });
 		} else if (form?.success) {
-			// TODO Traduction
-			toast.success('Scénario créé avec succès', { duration: 3000, position: 'bottom-center' });
+			toast.success($t('misc.success'), { duration: 10000, position: 'bottom-center' });
 		}
+	});
+
+	function generateNodes() {
+		if (!graph || !formData) return;
+		untrack(() => {
+			graph?.clearNodes();
+			const startNode = {
+				id: 'startNodeId',
+				type: 'startNode',
+				title: formData.firstNode.title,
+				text: formData.firstNode.text,
+				parent: 'null',
+				side: 'start',
+				sideNumber: 0
+			} as PreviewNode;
+			graph?.addNode(startNode);
+			formData.sides.forEach((side, i) => {
+				if (!side.title) return;
+				const node = {
+					id: `side-${i}`,
+					type: 'contribution',
+					title: side.title,
+					text: 'Message de test',
+					parent: 'startNodeId',
+					side: side.title,
+					sideNumber: i
+				} as PreviewNode;
+				graph?.addNode(node);
+			});
+			formData.events.forEach((event, i) => {
+				if (!event.title) return;
+				const node = {
+					id: `event-${i}`,
+					type: 'event',
+					title: event.title,
+					text: 'Message de test',
+					parent: 'startNodeId',
+					side: 'event',
+					sideNumber: i
+				} as PreviewNode;
+				graph?.addNode(node);
+			});
+		});
+	}
+
+	onMount(() => {
+		const data = localStorage.getItem('scenario');
+		if (data) {
+			const parsed = JSON.parse(data);
+			formData.title = parsed.title;
+			formData.prologue = parsed.prologue;
+			formData.lang = parsed.lang;
+			formData.firstNode = parsed.firstNode;
+			formData.ai = parsed.ai;
+			formData.sides = parsed.sides;
+			formData.events = parsed.events;
+			formData.ends = parsed.ends;
+			if (preview) {
+				generateNodes();
+			} else {
+				graph?.clearNodes();
+			}
+		}
+		$effect(() => {
+			localStorage.setItem('scenario', JSON.stringify(formData));
+			if (preview) {
+				generateNodes();
+			} else {
+				graph?.clearNodes();
+			}
+		});
+		if (!svg) return;
+		graph = new PreviewGraph(svg, [], [], {
+			width: 500,
+			height: 500
+		});
 	});
 </script>
 
-<div class="flex flex-col items-center">
-	<h1 class="p-4 text-3xl font-bold">{$t('scenario.newScenario')}</h1>
+<div class="flex flex-col items-center text-white pb-5">
+	<h1 class="p-4 text-3xl font-bold">{$t('admin.scenario.newScenario')}</h1>
 	<form
-		bind:this={theForm}
-		oninput={() => checkValidity()}
 		method="POST"
 		use:enhance={() => {
 			nProgress.start();
 			return async ({ update }) => {
-				await update();
+				await update({ reset: false });
 				nProgress.done();
 			};
 		}}
 		action="?/createScenario"
-		class="flex flex-col w-full gap-4 p-4 text-center border-t md:w-4/6"
+		class="flex flex-col w-full gap-4 p-4 items-center text-white text-center border-t md:w-4/6"
 	>
-		<Stepper
-			bind:currentStep
-			steps={[$t('scenario.essentials'), $t('scenario.firstNode'), $t('scenario.events'), $t('scenario.ends')]}
-		>
-			<!-- Step 1  -->
-			{#snippet step1()}
-				<div class="flex flex-col gap-4 p-2">
-					<label for="title" class="text-xl font-thin">{$t('scenario.title')}</label>
-					<input
-						required
-						id="title"
-						name="title"
-						class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-						placeholder="Votre super Scénario"
-					/>
-					<label for="prologue" class="text-xl font-thin">{$t('scenario.prologue')}</label>
-					<textarea
-						required
-						id="prologue"
-						name="prologue"
-						class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-						rows="3"
-						placeholder="La nuit était sombre..."
-					></textarea>
-					<Radio langs={[...data.lang]} />
-					<MultiField
-						props={{
-							name: 'sides',
-							title: $t('scenario.side'),
-							placeholderTitle: $t('scenario.side')
-						}}
-						min={2}
-						max={5}
-					>
-						{#snippet header()}
-							<span class="pb-2 text-xl font-thin border-b">{$t('scenario.sides')}</span>
-						{/snippet}
-						{#snippet main(item)}
-							<div class="flex flex-col items-center p-2">
-								<div class="flex gap-4">
-									<div class="w-full">
-										<label for={item.name} class="text-lg font-thin">{item.titleName}</label>
-										<input
-											required
-											id={item.name}
-											name={item.name}
-											placeholder={item.placeholderTitle}
-											class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-										/>
-									</div>
-								</div>
-							</div>
-						{/snippet}
-					</MultiField>
-				</div>
-			{/snippet}
-			<!-- Premier Noeud -->
-			{#snippet step2()}
-				<div class="flex flex-col gap-4 p-2">
-					<div class="flex gap-4">
-						<div class="flex flex-col w-full">
-							<label for="firstNodeTitle" class="text-xl font-thin">{$t('scenario.firstNodeTitle')}</label
-							>
-							<input
-								required
-								id="firstNodeTitle"
-								name="firstNodeTitle"
-								class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-								placeholder="Génialisime titre"
-							/>
-						</div>
+		<!-- Title and prologue -->
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
+			{$t('admin.scenario.informations')}
+		</h3>
+		<div class=" flex flex-col w-full gap-2">
+			<label class="standardLabel">
+				<input
+					class="appearance-none rounded w-full h-full p-4 bg-black/0"
+					type="text"
+					bind:value={formData.title}
+					placeholder={$t('scenario.title')}
+					name="title"
+				/>
+			</label>
+			<label class="standardLabel">
+				<textarea
+					class="appearance-none block rounded w-full h-full p-4 bg-black/0"
+					placeholder="Prologue"
+					bind:value={formData.prologue}
+					name="prologue"
+				></textarea>
+			</label>
+		</div>
 
-						<div>
-							<label for="firstNodeAuthor" class="text-xl font-thin"
-								>{$t('scenario.firstNodeAuthor')}</label
+		<!-- Lang -->
+		<div class=" flex gap-2 justify-center w-full">
+			{#each availableLocales as lang (lang)}
+				<label
+					class="standardLabel cursor-pointer h-full flex items-center justify-center {lang === formData.lang
+						? ' ring-white ring-1 ring-inset'
+						: 'text-white'}"
+				>
+					<input
+						class=" appearance-none"
+						type="radio"
+						name="lang"
+						bind:group={formData.lang}
+						value={lang}
+						checked={lang === formData.lang}
+					/>
+					<div>
+						{lang}
+					</div>
+				</label>
+			{/each}
+		</div>
+
+		<!-- AI -->
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
+			{$t('ia.ia')}
+		</h3>
+		<div class="flex">
+			<label class="standardLabel flex gap-4">
+				{$t('admin.scenario.useAi')}
+				<input
+					class="rounded p-2"
+					type="checkbox"
+					value={formData.ai}
+					bind:checked={formData.ai}
+					name="useAi"
+				/>
+			</label>
+		</div>
+
+		<!-- First node -->
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
+			{$t('scenario.firstNode.firstNode')}
+		</h3>
+		<div class="flex flex-col gap-4 items-center w-full">
+			<label class="standardLabel">
+				<input
+					class="rounded w-full h-full p-2 bg-black/0"
+					type="text"
+					bind:value={formData.firstNode.title}
+					placeholder={$t('scenario.firstNode.firstNodeTitle')}
+					name="firstNodeTitle"
+				/>
+			</label>
+			<label class="standardLabel">
+				<textarea
+					class="rounded block w-full h-full p-2 bg-black/0"
+					placeholder={$t('scenario.firstNode.firstNodeText')}
+					bind:value={formData.firstNode.text}
+					name="firstNodeText"
+				></textarea>
+			</label>
+			<label class="standardLabel">
+				<input
+					type="text"
+					class="rounded w-full h-full p-2 bg-black/0"
+					bind:value={formData.firstNode.author}
+					placeholder={$t('scenario.firstNode.firstNodeAuthor')}
+					name="firstNodeAuthor"
+				/>
+			</label>
+		</div>
+
+		<!-- Sides -->
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
+			{$t('side.sides')}
+		</h3>
+		<div class="standardLabel flex flex-col items-center gap-4 justify-center">
+			<div class=" flex flex-wrap gap-4 justify-center items-center">
+				{#each formData.sides as side, i (side)}
+					<div class=" flex-col gap-2 flex">
+						<h2 class="text-2xl font-bold">{$t('side.side')} {i + 1}</h2>
+						<div class="flex gap-2 items-center">
+							<label class="standardLabel">
+								<input
+									class="w-full h-full p-2 rounded bg-black/0"
+									type="text"
+									bind:value={side.title}
+									placeholder={$t('side.title')}
+									name="side"
+								/>
+							</label>
+							<button
+								class="rounded-md border px-4 py-2 {formData.sides.length <= 1
+									? 'cursor-not-allowed text-gray-500 border-gray-500'
+									: 'bg-black text-gray-50  '}"
+								type="button"
+								onclick={() => {
+									formData.sides = formData.sides.filter((_, index) => index !== i);
+								}}
+								disabled={formData.sides.length <= 1}
 							>
-							<input
-								required
-								id="firstNodeAuthor"
-								name="firstNodeAuthor"
-								class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-								placeholder="Snoup"
-							/>
+								{$t('misc.delete')}
+							</button>
 						</div>
 					</div>
-					<label for="firstNodeText" class="text-xl font-thin">{$t('scenario.firstNodeText')}</label>
-					<textarea
-						required
-						id="firstNodeText"
-						name="firstNodeText"
-						class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-						rows="3"
-						placeholder="ayayaya"
-					></textarea>
-				</div>
-			{/snippet}
-			<!-- Evenements -->
-			{#snippet step3()}
-				<div class="flex flex-col gap-4 p-2">
-					<MultiField
-						props={{
-							name: 'event',
-							title: $t('scenario.events'),
-							placeholderTitle: $t('scenario.eventTitle'),
-							placeholderText: $t('scenario.eventText')
-						}}
-					>
-						{#snippet header()}
-							<span class="pb-2 text-xl font-thin border-b">{$t('scenario.events')}</span>
-						{/snippet}
-						{#snippet main(item)}
-							<div class="flex flex-col items-center p-2">
-								<div class="flex gap-4">
-									<div class="w-full">
-										<label for={item.name} class="text-lg font-thin">{item.titleName}</label>
-										<input
-											required
-											id={item.name}
-											name={item.name}
-											placeholder={item.placeholderTitle}
-											class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-										/>
-									</div>
-									<div>
-										<label for={item.name + '-author'} class="text-lg font-thin"
-											>{$t('scenario.author')}</label
-										>
-										<input
-											required
-											id={item.name + '-author'}
-											name={item.name + '-author'}
-											placeholder="Auteur"
-											class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-										/>
-									</div>
-								</div>
-								<div class="w-full pt-6">
-									<label for={item.name + '-text'} class="text-lg font-thin">{item.textName}</label>
-									<textarea
-										rows="3"
-										required
-										id={item.name + '-text'}
-										name={item.name + '-text'}
-										placeholder={item.placeholderText}
-										class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-									></textarea>
-								</div>
+				{/each}
+			</div>
+			<button
+				class="rounded text-black px-4 w-60 py-2 font-bold bg-white"
+				type="button"
+				onclick={() => {
+					formData.sides = [...formData.sides, { title: '' }];
+				}}
+			>
+				{$t('misc.add')}
+			</button>
+		</div>
+
+		<!-- Events -->
+		<h3 class=" text-white text-3xl text-center w-full mt-5">
+			{$t('scenario.event.events')}
+		</h3>
+		<div class="w-full standardLabel flex flex-col items-center gap-4 p-4 justify-center">
+			<div class="flex flex-wrap gap-4 justify-center items-center">
+				{#each formData.events as event, i (event)}
+					<div class="flex flex-col justify-center items-center p-2 border-gray-800 border-l rounded-md">
+						<div class="flex items-center justify-center flex-col gap-2">
+							<h2 class="p-4 text-2xl font-bold">{$t('scenario.event.event')} {i + 1}</h2>
+							<label class="standardLabel">
+								<input
+									class="w-full h-full p-2 rounded bg-black/0"
+									type="text"
+									bind:value={event.title}
+									placeholder={$t('scenario.event.title')}
+									name="eventTitle"
+								/>
+							</label>
+							<label class="standardLabel">
+								<textarea
+									class="appearance-none block w-full h-full p-2 rounded bg-black/0"
+									bind:value={event.text}
+									placeholder={$t('scenario.event.text')}
+									name="eventText"
+								></textarea>
+							</label>
+							<label class="standardLabel">
+								<input
+									class="w-full h-full p-2 rounded bg-black/0"
+									type="text"
+									bind:value={event.author}
+									placeholder={$t('scenario.event.author')}
+									name="eventAuthor"
+								/>
+							</label>
+						</div>
+						<button
+							class="rounded-md border mt-2 px-4 py-2 h-fit {formData.events.length <= 1
+								? 'cursor-not-allowed text-gray-500 border-gray-500'
+								: 'bg-black text-gray-50  '}"
+							type="button"
+							onclick={() => {
+								formData.events = formData.events.filter((_, index) => index !== i);
+							}}
+							disabled={formData.events.length <= 1}
+						>
+							{$t('misc.delete')}
+						</button>
+					</div>
+				{/each}
+			</div>
+			<button
+				class="rounded text-black mt-2 mb-1 px-4 w-60 py-2 font-bold bg-white"
+				type="button"
+				onclick={() => {
+					formData.events = [...formData.events, { title: '', text: '', author: '' }];
+				}}
+			>
+				{$t('misc.add')}
+			</button>
+		</div>
+
+		<!-- Ends -->
+		<h3 class="text-white text-3xl text-center w-full mt-5">
+			{$t('scenario.end.ends')}
+		</h3>
+		<div class="standardLabel flex flex-col items-center gap-4 justify-center">
+			<div class="flex flex-wrap gap-4 justify-center items-center">
+				{#each formData.ends as end, i (end)}
+					<div class="flex flex-col items-center p-2 border-gray-800 border-l rounded-md">
+						<h2 class="p-4 text-2xl font-bold">{$t('scenario.end.end')} {i + 1}</h2>
+						<label class="standardLabel">
+							<input
+								class="w-full h-full p-2 rounded bg-black/0"
+								type="text"
+								bind:value={end.title}
+								placeholder={$t('scenario.end.title')}
+								name="endTitle"
+							/>
+						</label>
+						<label class="standardLabel">
+							<textarea
+								class="appearance-none block w-full h-full p-2 rounded"
+								bind:value={end.text}
+								placeholder={$t('scenario.end.text')}
+								name="endText"
+							></textarea>
+						</label>
+						<button
+							class="rounded-md border mt-2 px-4 py-2 {formData.ends.length <= 1
+								? 'cursor-not-allowed text-gray-500 border-gray-500'
+								: 'bg-black text-gray-50'}"
+							type="button"
+							onclick={() => {
+								formData.ends = formData.ends.filter((_, index) => index !== i);
+							}}
+							disabled={formData.ends.length <= 1}
+						>
+							{$t('misc.delete')}
+						</button>
+					</div>
+				{/each}
+			</div>
+			<button
+				class="rounded text-black mt-2 mb-1 px-4 w-60 py-2 font-bold bg-white"
+				type="button"
+				onclick={() => {
+					formData.ends = [...formData.ends, { title: '', text: '' }];
+				}}
+			>
+				{$t('misc.add')}
+			</button>
+		</div>
+		<button
+			class="rounded-md border px-4 py-2 h-fit disabled:cursor-not-allowed disabled:text-gray-500 disabled:border-gray-500 bg-black text-gray-50"
+			type="submit"
+			disabled={Boolean(issues.length)}
+		>
+			{$t('admin.scenario.createYourScenario')}
+		</button>
+
+		<!-- Errors -->
+		<div class="h-36 p-4 rounded-md overflow-auto">
+			{#if issues.length > 0}
+				<div class="bg-black flex flex-col items-center gap-4">
+					<h3 class=" font-semibold text-xl flex items-center gap-2 k">
+						<TriangleAlert class="w-8 h-8" />
+						{$t('errors.scenario.notValid')}
+						<TriangleAlert class="w-8 h-8" />
+					</h3>
+					<div class=" grid grid-cols-2 grid-flow-row w-full gap-4 justify-center items-center">
+						{#each issues as issue (issue)}
+							<div class="bg-red-500 grow p-2 rounded-md flex flex-col items-center gap-2">
+								<div>{$t(issue.message)}</div>
 							</div>
-						{/snippet}
-					</MultiField>
+						{/each}
+					</div>
 				</div>
-			{/snippet}
-			<!-- Fins -->
-			{#snippet step4()}
-				<div class="flex flex-col gap-4 p-2">
-					<MultiField
-						props={{
-							name: 'end',
-							title: $t('scenario.ends'),
-							placeholderTitle: $t('scenario.endTitle'),
-							placeholderText: $t('scenario.endText')
-						}}
-					>
-						{#snippet header()}
-							<span class="pb-2 text-xl font-thin border-b">{$t('scenario.ends')}</span>
-						{/snippet}
-						{#snippet main(item)}
-							<div class="flex flex-col items-center p-2">
-								<div class="w-full">
-									<label for={item.name} class="text-lg font-thin">{item.titleName}</label>
-									<input
-										required
-										id={item.name}
-										name={item.name}
-										placeholder={item.placeholderTitle}
-										class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-									/>
-								</div>
-								<div class="w-full pt-6">
-									<label for={item.name + '-text'} class="text-lg font-thin">{item.textName}</label>
-									<textarea
-										rows="3"
-										required
-										id={item.name + '-text'}
-										name={item.name + '-text'}
-										placeholder={item.placeholderText}
-										class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-									></textarea>
-								</div>
-							</div>
-						{/snippet}
-					</MultiField>
+			{:else}
+				<div class="bg-green-500 w-full p-4 rounded-md flex flex-col justify-center items-center mt-5">
+					<h3 class=" font-semibold text-xl flex items-center gap-2">
+						<Sparkles class="w-7 h-7" />
+						<div>{$t('admin.scenario.scenarioIsValide')}</div>
+						<Sparkles class="w-7 h-7" />
+					</h3>
 				</div>
-			{/snippet}
-			<!-- Submit -->
-			{#snippet submit()}
-				<button
-					type="submit"
-					disabled={!validForm}
-					class="text-black bg-white text-lg rounded disabled:cursor-not-allowed ease-linear disabled:opacity-50 transition-all {currentStep ===
-						3 || validForm
-						? 'disabled:opacity-50 block opacity-100'
-						: 'disabled:opacity-0 opacity-0 disabled:cursor-default'}"
-				>
-					{$t('form.submit')}
-				</button>
-			{/snippet}
-		</Stepper>
+			{/if}
+		</div>
 	</form>
-	{#if form?.error}
-		<p class="p-4 text-red-500">{form.error}</p>
-	{/if}
+
+	<!-- Session preview -->
+	<h3 class=" text-white text-3xl mt-10 mb-4 text-center w-full">
+		{$t('admin.session.preview')}
+	</h3>
+	<label class="rounded-md border px-4 py-2 bg-black text-gray-50">
+		{$t('admin.session.preview')}
+		<input type="checkbox" class="ml-1" bind:checked={preview} />
+	</label>
+	<div class=" text-gray-200 relative w-fit h-fit p-0 m-4">
+		<svg
+			bind:this={svg}
+			width="500"
+			height="500"
+			class="relative bg-dotted-gray bg-dotted-40 border border-white/20 rounded-md"
+		>
+		</svg>
+		<div class=" absolute top-2 left-2 border border-white/20 bg-black p-2 rounded-md">
+			{$t('scenario.title')} :
+			<span class=" text-white font-bold">
+				{formData.title}
+			</span>
+		</div>
+		<div class="absolute left-2 bottom-2 border border-white/20 bg-black p-2 rounded-md">
+			{$t('admin.scenario.language')} :
+			<span class=" text-white font-bold">
+				{formData.lang?.toUpperCase()}
+			</span>
+		</div>
+		<div class="absolute right-2 bottom-2 border border-white/20 bg-black p-2 rounded-md">
+			{$t('ia.ia')} :
+			<span class=" text-white font-semibold">
+				{formData.ai ? $t('misc.yes') : $t('misc.no')}
+			</span>
+		</div>
+	</div>
 </div>
+
+<style lang="postcss">
+	@reference "../../../../app.css";
+	.standardLabel {
+		@apply bg-gray-950/50 border border-gray-200/20 shadow-lg backdrop-blur-[2px] w-full rounded-md appearance-none p-4;
+	}
+</style>

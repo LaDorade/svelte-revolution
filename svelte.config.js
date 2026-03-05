@@ -1,36 +1,41 @@
 import adapterAuto from '@sveltejs/adapter-auto';
-import adapterBun from 'svelte-adapter-bun';
+import adapterNode from '@sveltejs/adapter-node';
 import 'dotenv/config';
 
 const adapterType = process.env.ADAPTER || 'auto';
+const checkOrigin = process.env.CSRF_CHECK_ORIGIN === 'true';
 
 const adapter = () => {
 	switch (adapterType) {
-		case 'bun':
-			return adapterBun();
-		case 'auto':
-		default:
-			return adapterAuto();
+	case 'node':
+		return adapterNode();
+	case 'auto':
+	default:
+		return adapterAuto();
 	}
 };
 
+/** @type {import('@sveltejs/kit').Config} */
 const config = {
-	compilerOptions: {
-		runes: true
-	},
-	vitePlugin: {
-		dynamicCompileOptions({ filename }) {
-			if (filename.includes('node_modules')) {
-				return { runes: undefined };
-			}
-		}
-	},
 	kit: {
-		adapter: adapter(), // See https://kit.svelte.dev/docs/adapters
+		adapter: adapter(),
 		alias: {
 			$components: './src/components',
 			$stores: './src/stores',
 			$types: './src/types'
+		},
+		csrf: {
+			trustedOrigins: checkOrigin ? [
+				'https://new.babel-revolution.fr',
+				'https://svelte-revolution.vercel.app',
+				'http://localhost:5173'
+			] : []
+		},
+	},
+	vitePlugin: {
+		inspector: {
+			showToggleButton: 'always',
+			toggleButtonPos: 'bottom-right',
 		}
 	}
 };

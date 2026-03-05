@@ -1,6 +1,6 @@
 import PocketBase from 'pocketbase';
-import type { MyPocketBase } from '$types/pocketBase';
 import { env } from '$env/dynamic/public';
+import type { MyPocketBase } from '$types/pocketBase';
 
 const DB_URL = env.PUBLIC_DB_URL;
 
