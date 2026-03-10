@@ -39,13 +39,15 @@ export const actions: Actions = {
 
 			const node = await createNode(
 				pb,
-				nodeData.title,
-				nodeData.text,
-				nodeData.author,
-				nodeData.session,
-				nodeData.parent,
-				'contribution',
-				nodeData.side
+				{
+					title: nodeData.title,
+					text: nodeData.text,
+					author: nodeData.author,
+					session: nodeData.session,
+					parent: nodeData.parent,
+					type: 'contribution',
+					side: nodeData.side
+				}
 			);
 
 			if (censorResponse.triggerEvent && censorResponse.events) {
@@ -111,13 +113,15 @@ export const actions: Actions = {
 			);
 			createdEventNode = await createNode(
 				pb,
-				title,
-				text,
-				author,
-				sessionId,
-				String(firstNode.id),
-				'event',
-				null
+				{
+					title,
+					text,
+					author,
+					session: sessionId,
+					parent: String(firstNode.id),
+					type: 'event',
+					side: null
+				}
 			);
 			await pb.collection('Session').update(sessionId, { events: eventId });
 		} catch (error) {

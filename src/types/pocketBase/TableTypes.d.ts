@@ -9,7 +9,7 @@ export interface GraphNode extends BaseNode {
 	session: string;
 	type: NodeType;
 	parent: string;
-	side: string;
+	side: string | null;
 	sideNumber: number;
 	expand?: {
 		side?: Side;
