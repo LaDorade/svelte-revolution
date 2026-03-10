@@ -29,8 +29,8 @@
 
 	function updateSVGSize() {
 		if (svg) {
-			svg.setAttribute('width', window.innerWidth.toString());
-			svg.setAttribute('height', window.innerHeight.toString());
+			svg.setAttribute('width', svg.parentElement?.clientWidth.toString() || window.innerWidth.toString());
+			svg.setAttribute('height', svg.parentElement?.clientHeight.toString() || window.innerHeight.toString());
 		}
 	}
 
@@ -70,11 +70,9 @@
 		if (!svg) return;
 
 		updateSVGSize();
-		window.addEventListener('resize', updateSVGSize);
-
 		graph = new MainGraph(svg, nodes, sides, {
-			width: window.innerWidth,
-			height: window.innerHeight
+			width: Number(svg.getAttribute('width')) || window.innerWidth,
+			height: Number(svg.getAttribute('height')) || window.innerHeight
 		});
 		if (ai && !admin) {
 			graph.filterNodeBySide(userSideId);
@@ -93,14 +91,19 @@
 </script>
 
 <svelte:window
-	on:resize={() =>
+	onresize={() => {
+		if (!svg) return;
+		updateSVGSize();
 		graph?.setOptions({
-			width: window.innerWidth,
-			height: window.innerHeight
-		})}
+			width: Number(svg.getAttribute('width')) || window.innerWidth,
+			height: Number(svg.getAttribute('height')) || window.innerHeight
+		});
+	}}
 />
 
-<svg 
-	bind:this={svg} 
-	class="bg-black z-10 cursor-grab bg-dotted-40 bg-dotted-gray">
-</svg>
+<div class="h-full w-full">
+	<svg
+		bind:this={svg} 
+		class="z-10 cursor-grab bg-dotted-40 bg-dotted-gray h-full w-full">
+	</svg>
+</div>

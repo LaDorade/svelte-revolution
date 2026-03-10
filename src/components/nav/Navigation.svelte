@@ -39,7 +39,7 @@
 </script>
 
 <nav class={[
-	'print:hidden sticky top-0 z-50 border-b border-gray-500 bg-black text-gray-200 bg-opacity-70',
+	'print:hidden z-50 border-b border-gray-500 bg-black text-gray-200 bg-opacity-70',
 	'flex items-center'
 ]}>
 	<div class="flex gap-4 items-center p-4">

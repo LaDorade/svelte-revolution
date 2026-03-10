@@ -128,7 +128,7 @@
 		/>
 	</div>
 {:then nodes}
-	<div class="">
+	<div class="h-full w-full">
 		{#if prologueSeen && accessToPage}
 			<GraphUi
 				{graph}
