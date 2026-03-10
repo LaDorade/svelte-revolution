@@ -70,7 +70,9 @@
     "nodeInformation": "Informations sur le nœud",
     "from": "De :",
     "noNodeSelected": "Aucun nœud sélectionné",
-    "eventHidden": "Événement pour un autre camp"
+    "eventHidden": "Événement pour un autre camp",
+	"replyingTo": "Répondre à",
+	"contribute": "Contribuer"
   },
   "scenario": {
     "scenario": "Scénario",

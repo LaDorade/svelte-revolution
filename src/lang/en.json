@@ -4,6 +4,12 @@
     "administration": "Administration",
     "youAreAdmin": "You are admin",
     "debugPanel": "Debug panel",
+    "event": {
+      "addEvent": "Add an event",
+      "triggerEvent": "Trigger an event",
+      "createEvent": "Create an event",
+      "creationSuccess": "Event created successfully"
+    },
     "session": {
       "createSession": "Create a session",
       "endSession": "End session",
@@ -13,7 +19,9 @@
       "image": "Image",
       "creationSuccess": "Session created successfully",
       "createTheSession": "Create the session",
-      "goto": "Go to the session"
+      "goto": "Go to the session",
+      "preview": "Session preview",
+      "aiScenarios": "AI scenarios"
     },
     "scenario": {
       "language": "Language",
@@ -62,7 +70,9 @@
     "nodeInformation": "Node information",
     "from": "From:",
     "noNodeSelected": "No node selected",
-    "eventHidden": "Event for another side"
+    "eventHidden": "Event for another side",
+    "replyingTo": "Replying to",
+    "contribute": "Contribute"
   },
   "scenario": {
     "scenario": "Scenario",
@@ -131,6 +141,7 @@
     "footer": {
       "citation": "An expression that, just a moment ago, was still alive and seemed even unshakable, could suddenly vanish: it disappeared with the situation that generated it and will one day testify as a fossil.",
       "ciationInfos": "",
+      "citationInfo": "Klemperer, LTI, the language of the Third Reich, 1947",
       "mainText": "BⱯBEL RËVOLUㅏION is an interactive, collaborative, multilingual dystopian story. The original scenario invited us to reflect on the link between the degradation of biodiversity and the degradation of linguistic and cultural diversity.",
       "techUsed": "Technologies used",
       "devAndDesign": "Development and design",
@@ -170,7 +181,8 @@
     "newMessageBy": "New message by:"
   },
   "ia": {
-    "connected": "AI is connected"
+    "connected": "AI is connected",
+    "ia": "Artificial Intelligence"
   },
   "misc": {
     "add": "Add",
@@ -195,7 +207,31 @@
     "missingTitle": "Missing title",
     "missingText": "Missing text",
     "missingAuthor": "Missing author",
+    "missingFirstNode": "Missing first node",
+    "addNode": {
+      "missingParent": "Missing parent node",
+      "missingSession": "Missing session",
+      "missingSide": "Missing side"
+    },
+    "createScenario": {
+      "missingFirstNodeTitle": "Missing first node title",
+      "missingFirstNodeText": "Missing first node text",
+      "missingFirstNodeAuthor": "Missing first node author",
+      "missingEventTitle": "Missing event title",
+      "missingEventText": "Missing event text",
+      "missingEndTitle": "Missing ending title",
+      "missingEndText": "Missing ending text"
+    },
+    "scenario": {
+      "notFound": "Scenario not found",
+      "notValid": "The scenario is not valid"
+    },
     "internalError": "Internal error",
     "unauthorized": "Unauthorized"
+  },
+  "print": {
+    "print": "Print",
+    "returnToGraph": "Return to graph",
+    "printTitle": "Print"
   }
 }

@@ -28,7 +28,10 @@ export const actions: Actions = {
 
 			const validation = addNodeSchema.safeParse(nodeData);
 			if (!validation.success) {
-				return fail(422, { success: false, error: validation.error.format() });
+				return fail(422, {
+					success: false,
+					error: validation.error.issues.map(e => e.message).join(', ')
+				});
 			}
 
 			const censorResponse = await censorNode(nodeData);

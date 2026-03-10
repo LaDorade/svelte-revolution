@@ -4,6 +4,12 @@
     "administration": "Administración",
     "youAreAdmin": "Eres administrador",
     "debugPanel": "Panel de depuración",
+    "event": {
+      "addEvent": "Agregar un evento",
+      "triggerEvent": "Activar un evento",
+      "createEvent": "Crear un evento",
+      "creationSuccess": "Evento creado con éxito"
+    },
     "session": {
       "createSession": "Crear una sesión",
       "endSession": "Terminar la sesión",
@@ -13,7 +19,9 @@
       "image": "Imagen",
       "creationSuccess": "Sesión creada con éxito",
       "createTheSession": "Crear la sesión",
-      "goto": "Ir a la sesión"
+      "goto": "Ir a la sesión",
+      "preview": "Vista previa de una sesión",
+      "aiScenarios": "Escenarios con IA"
     },
     "scenario": {
       "language": "Idioma",
@@ -62,7 +70,9 @@
     "nodeInformation": "Información del nodo",
     "from": "De:",
     "noNodeSelected": "Ningún nodo seleccionado",
-    "eventHidden": "Evento para otro bando"
+    "eventHidden": "Evento para otro bando",
+    "replyingTo": "Responder a",
+    "contribute": "Contribuir"
   },
   "scenario": {
     "scenario": "Escenario",
@@ -131,6 +141,7 @@
     "footer": {
       "citation": "Una expresión que, hace apenas un instante, aún vivía y parecía incluso inquebrantable, podía desaparecer de repente: ha desaparecido con la situación que la había generado y de la que algún día dará testimonio como un fósil.",
       "ciationInfos": "",
+      "citationInfo": "Klemperer, LTI, la lengua del Tercer Reich, 1947",
       "mainText": "BⱯBEL RËVOLUㅏION es un relato distópico interactivo, colaborativo y multilingüe. El escenario original invitaba a reflexionar sobre el vínculo entre la degradación de la biodiversidad y la degradación de la diversidad lingüística y cultural.",
       "techUsed": "Tecnologías utilizadas",
       "devAndDesign": "Desarrollo y diseño",
@@ -170,7 +181,8 @@
     "newMessageBy": "Nuevo mensaje de:"
   },
   "ia": {
-    "connected": "La IA está conectada"
+    "connected": "La IA está conectada",
+    "ia": "Inteligencia Artificial"
   },
   "misc": {
     "add": "Agregar",
@@ -195,7 +207,31 @@
     "missingTitle": "Título faltante",
     "missingText": "Texto faltante",
     "missingAuthor": "Autor faltante",
+    "missingFirstNode": "Falta el primer nodo",
+    "addNode": {
+      "missingParent": "Falta el nodo padre",
+      "missingSession": "Falta la sesión",
+      "missingSide": "Falta el bando"
+    },
+    "createScenario": {
+      "missingFirstNodeTitle": "Falta el título del primer nodo",
+      "missingFirstNodeText": "Falta el texto del primer nodo",
+      "missingFirstNodeAuthor": "Falta el autor del primer nodo",
+      "missingEventTitle": "Falta el título del evento",
+      "missingEventText": "Falta el texto del evento",
+      "missingEndTitle": "Falta el título del final",
+      "missingEndText": "Falta el texto del final"
+    },
+    "scenario": {
+      "notFound": "Escenario no encontrado",
+      "notValid": "El escenario no es válido"
+    },
     "internalError": "Error interno",
     "unauthorized": "No autorizado"
+  },
+  "print": {
+    "print": "Imprimir",
+    "returnToGraph": "Volver al grafo",
+    "printTitle": "Imprimir"
   }
 }

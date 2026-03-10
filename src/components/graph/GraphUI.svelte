@@ -1,16 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { t } from 'svelte-i18n';
-	import type {
-		End,
-		GraphEvent,
-		Session,
-		Side,
-	} from '$types/pocketBase/TableTypes';
-	import { applyAction, enhance } from '$app/forms';
+	import { enhance } from '$app/forms';
 	import nProgress from 'nprogress';
 	import toast from 'svelte-french-toast';
-	import type { ActionResult } from '@sveltejs/kit';
 	import { blur, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import * as values from '$lib/mainGraph/values';
@@ -26,9 +19,18 @@
 	import GraphTree from './GraphTree.svelte';
 	import { watch } from '$lib/runes/watch.svelte';
 	import { pb } from '$lib/client/pocketbase';
+	import { viewportStore } from '$stores/ui/index.svelte';
+	import AddNode from './GraphUI/AddNode.svelte';
+	
+	import type {
+		End,
+		GraphEvent,
+		Session,
+		Side,
+	} from '$types/pocketBase/TableTypes';
+	import type { ActionResult } from '@sveltejs/kit';
 	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
 	import type { RecordModel } from 'pocketbase';
-	import { viewportStore } from '$stores/ui/index.svelte';
 
 	interface Props {
 		graph: MainGraph | null;
@@ -60,9 +62,6 @@
 		}
 	}
 	attributeIcons();
-
-	let nodeTitle = $state('');
-	let nodeText = $state('');
 
 	const states = $state({
 		nodeInfo: false,
@@ -112,30 +111,38 @@
 	}
 
 	function handleSubmit(result: ActionResult) {
-		switch (result.type) {
-		case 'failure':
-			toast.error(result.data?.error, {
+		try {
+			switch (result.type) {
+			case 'failure':
+				toast.error(result.data?.error, {
+					duration: 3000,
+					position: 'bottom-center',
+				});
+				break;
+			case 'success':
+				toast.success(result.data?.body.message, {
+					duration: 3000,
+					position: 'top-center',
+				});
+				states.addNode = false;
+
+				// Add the new event to the list of events
+				if (result.data?.body?.event && session.expand?.events) {
+					session.expand.events.push(result.data.body.event);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		catch (e) {
+			console.error(e);
+			toast.error($t('error.unknownError'), {
 				duration: 3000,
 				position: 'bottom-center',
 			});
-			break;
-		case 'success':
-			toast.success(result.data?.body.message, {
-				duration: 3000,
-				position: 'top-center',
-			});
-			states.addNode = false;
-			nodeTitle = '';
-			nodeText = '';
-
-			// Add the new event to the list of events
-			if (result.data?.body?.event && session.expand?.events) {
-				session.expand.events.push(result.data.body.event);
-			}
-			break;
-		default:
-			break;
 		}
+
 		nProgress.done();
 	}
 
@@ -392,138 +399,15 @@
 				{/if}
 			</div>
 		{:else if states.addNode && !session.completed}
-			<form
-				in:fade={{ duration: 200 }}
-				method="POST"
-				action="/sessions/{session.slug}?/addNode"
-				class="flex flex-col items-center gap-2 cursor-default p-2 z-10 w-full"
-				onsubmit={(e) => {
-					e.preventDefault();
-				}}
-				use:enhance={() => {
-					nProgress.start();
-					if (!graph?.selectedNode) {
-						toast.error($t('inSession.noNodeSelected'), {
-							duration: 3000,
-							position: 'bottom-center',
-						});
-						nProgress.done();
-						return;
-					}
-					return async ({ result }) => {
-						applyAction(result);
-						handleSubmit(result);
-						nProgress.done();
-					};
-				}}
-			>
-				<label class="form-control w-full max-w-xs">
-					<div class="label p-0">
-						<span class="label-text text-inherit"
-						>{$t('home.messageTitle')}</span
-						>
-					</div>
-					<input
-						name="title"
-						type="text"
-						bind:value={nodeTitle}
-						placeholder="Youhouhou"
-						class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label p-0">
-						<span class="label-text text-inherit"
-						>{$t('home.yourMessage')}</span
-						>
-					</div>
-					<textarea
-						name="text"
-						bind:value={nodeText}
-						class="textarea textarea-accent text-primary-500 bg-gray-950"
-						placeholder="Ton message"
-					></textarea>
-				</label>
-				{#if admin}
-					<label class="form-control w-full max-w-xs">
-						<div class="label p-0">
-							<span class="label-text text-inherit"
-							>{$t('side.yourSide')}</span
-							>
-						</div>
-						<select
-							bind:value={userSideId}
-							name="side"
-							class="text-primary-500"
-						>
-							<option
-								value={null}
-								disabled
-								selected
-								class="text-gray-700"
-							>{$t('side.chooseSide')}</option
-							>
-							{#each sides as side (side.id)}
-								<option value={side.id} class="text-gray-600"
-								>{side.name}</option
-								>
-							{/each}
-						</select>
-					</label>
-				{:else}
-					<input type="hidden" name="side" value={userSideId} />
-					<div class=" flex gap-2">
-						<div class="">
-							{$t('side.yourSide')} :
-						</div>
-						<div class=" text-white">
-							{sides.find((side) => side.id === userSideId)?.name}
-						</div>
-					</div>
-				{/if}
-				{#if !admin}
-					<div class=" flex gap-2">
-						<div>
-							{$t('home.yourName')} :
-						</div>
-						<div class=" text-white">
-							{pseudo}
-						</div>
-					</div>
-					<input
-						value={pseudo}
-						name="author"
-						type="hidden"
-						placeholder="Pseudo"
-						class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
-					/>
-				{:else}
-					<label class="form-control w-full max-w-xs">
-						<div class="label p-0">
-							<span class="label-text text-inherit"
-							>{$t('home.yourName')}</span
-							>
-						</div>
-						<input
-							value={pseudo}
-							name="author"
-							type="text"
-							placeholder="Pseudo"
-							class="input input-sm input-accent text-primary-500 bg-gray-950 input-bordered w-full max-w-xs"
-						/>
-					</label>
-				{/if}
-				<input type="hidden" name="session" value={session.id} />
-				<input
-					type="hidden"
-					name="parent"
-					value={graph?.selectedNode?.id ?? null}
-				/>
-				<button
-					class="btn w-fit btn-accent btn-sm self-center"
-					type="submit">{$t('misc.submit')}</button
-				>
-			</form>
+			<AddNode
+				{graph}
+				{handleSubmit}
+				{admin}
+				{sides}
+				{pseudo}
+				{userSideId}
+				{session}
+			/>
 		{:else if states.admin}
 			<div
 				in:fade={{

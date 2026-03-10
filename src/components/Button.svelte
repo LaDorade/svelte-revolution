@@ -60,6 +60,7 @@
 			'text-center text-nowrap',
 			'px-4 py-2 rounded-lg transition-colors duration-200',
 			getVariantClasses(),
+			'disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed',
 			className,
 		]}
 	>
