@@ -4,7 +4,7 @@ import { createNewEvents, triggerEnd } from '$lib/server/ia/event';
 import { addNodeSchema } from '$lib/zschemas/addNode.schema';
 import PocketBase from 'pocketbase';
 import { DB_URL } from '$env/static/private';
-import type { ClientResponseError } from 'pocketbase';
+import { ClientResponseError } from 'pocketbase';
 import type { GraphNode } from '$types/pocketBase/TableTypes';
 import { type Actions, fail } from '@sveltejs/kit';
 
@@ -23,7 +23,8 @@ export const actions: Actions = {
 				author: data.get('author') as string,
 				parent: data.get('parent') as string,
 				session: data.get('session') as string,
-				side: data.get('side') as string
+				side: data.get('side') as string,
+				audio: (data.get('audio') ?? null) as File | null
 			};
 
 			const validation = addNodeSchema.safeParse(nodeData);
@@ -46,7 +47,8 @@ export const actions: Actions = {
 					session: nodeData.session,
 					parent: nodeData.parent,
 					type: 'contribution',
-					side: nodeData.side
+					side: nodeData.side,
+					audio: nodeData.audio
 				}
 			);
 
@@ -73,7 +75,17 @@ export const actions: Actions = {
 				body: { message: 'Node added', node: JSON.stringify(node) }
 			};
 		} catch (e) {
-			console.log(e);
+			if (e instanceof ClientResponseError) {
+				if (e.data.data?.audio?.code === 'validation_file_size_limit') {
+					return fail(413,
+						{succes: false, error: e.data.data?.audio?.message}
+					);
+				}
+				return fail(400, { 
+					success: false, 
+					error: e.message
+				});
+			}
 			return fail(500, { success: false, error: 'Error while adding node' });
 		}
 	},
@@ -125,10 +137,11 @@ export const actions: Actions = {
 			);
 			await pb.collection('Session').update(sessionId, { events: eventId });
 		} catch (error) {
-			const e = error as ClientResponseError;
-			console.error('Error creating event:', e.toJSON());
-			if (createdEventNode) {
-				await pb.collection('Node').delete(String(createdEventNode.id));
+			if (error instanceof ClientResponseError) {
+				console.error('Error creating event:', error.toJSON());
+				if (createdEventNode) {
+					await pb.collection('Node').delete(String(createdEventNode.id));
+				}
 			}
 			return fail(500, { success: false, error: 'Error while creating event' });
 		}

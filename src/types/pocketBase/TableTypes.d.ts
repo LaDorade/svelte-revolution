@@ -14,6 +14,7 @@ export interface GraphNode extends BaseNode {
 	expand?: {
 		side?: Side;
 	};
+	audio?: File | string | null
 }
 
 export type PreviewNode = Pick<GraphNode, 'id' | 'title' | 'text' | 'type' | 'side' | 'sideNumber' | 'parent'>;

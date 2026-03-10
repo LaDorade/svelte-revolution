@@ -4,7 +4,7 @@
 	import { enhance } from '$app/forms';
 	import nProgress from 'nprogress';
 	import toast from 'svelte-french-toast';
-	import { blur, fade } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import * as values from '$lib/mainGraph/values';
 	import {
@@ -21,6 +21,7 @@
 	import { pb } from '$lib/client/pocketbase';
 	import { viewportStore } from '$stores/ui/index.svelte';
 	import AddNode from './GraphUI/AddNode.svelte';
+	import SelectedNode from './GraphUI/SelectedNode.svelte';
 	
 	import type {
 		End,
@@ -233,7 +234,7 @@
 {/snippet}
 
 <!-- Buttons -->
-<div class="fixed m-4 right-0 bottom-0 z-50">
+<div class="fixed m-4 right-0 bottom-0 z-30">
 	{#snippet menuButton(type: string)}
 		<!-- button to open the small menu -->
 		<button
@@ -332,135 +333,70 @@
 <!-- Display -->
 {#if stateActive}
 	<!-- affichage détails message -->
-	<div
-		class="fixed w-1/2 max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl
-			p-2 m-4 bottom-0 left-0 bg-black bg-opacity-75"
-		transition:fade={{ duration: 200 }}
-	>
-		{#if states.nodeInfo}
-			<div in:fade={{ duration: 200, easing: quintOut }}>
-				{#if graph?.selectedNode}
-					{#key graph?.selectedNode}
-						<div
-							in:blur={{
-								duration: 300,
-								easing: quintOut,
-								amount: 2,
-								opacity: 0.4,
-							}}
-							class="flex flex-col items-center gap-2"
-						>
-							<div
-								class="text-xl text-white font-semibold first-letter:capitalize"
-							>
-								{graph?.selectedNode.title}
-							</div>
-							<div class="text-green-400 flex items-center">
-								{#if graph?.selectedNode?.side}
-									<svg
-										class="w-4 h-4 mr-1"
-										viewBox="-12 -12 24 24"
-									>
-										<path
-											d={sides.find(
-												(side) =>
-													side.id ===
-														graph?.selectedNode?.side,
-											)?.icon}
-											fill="rgb(74 222 128)"
-										/>
-									</svg>
-								{/if}
-								{sides.find(
-									(side) =>
-										side.id === graph?.selectedNode?.side,
-								)?.name}
-							</div>
-							<div>
-								{$t('inSession.from')}
-								<span class="text-white"
-								>{graph?.selectedNode.author}</span
-								>
-							</div>
-							<div
-								class="max-h-60 overflow-auto text-justify text-gray-300"
-							>
-								<!-- eslint-disable-next-line svelte/no-at-html-tags-->
-								{@html graph?.selectedNode.text}
-							</div>
-						</div>
-					{/key}
-				{:else}
-					<div
-						class="text-xl text-center font-semibold first-letter:capitalize"
-					>
-						{$t('inSession.noNodeSelected')}
-					</div>
-				{/if}
+	{#if states.nodeInfo}
+		<SelectedNode {graph} {sides} {pb} />
+	{:else if states.addNode && !session.completed}
+		<AddNode
+			{graph}
+			{handleSubmit}
+			{admin}
+			{sides}
+			{pseudo}
+			{userSideId}
+			{session}
+		/>
+	{:else if states.admin}
+		<div
+			in:fade={{
+				duration: 200,
+				easing: quintOut,
+			}}
+			class="flex flex-col items-center gap-4 p-2 text-primary-500 z-10"
+		>
+			<div>
+				<label>
+					{$t('admin.debugPanel')}
+					<input
+						class=" cursor-pointer"
+						type="checkbox"
+						name="seeDebugPane"
+						id="debugPaneCheck"
+						onchange={storePanelInLocalStorage}
+						bind:checked={viewportStore.seeDebugPanel}
+					/>
+				</label>
 			</div>
-		{:else if states.addNode && !session.completed}
-			<AddNode
-				{graph}
-				{handleSubmit}
-				{admin}
-				{sides}
-				{pseudo}
-				{userSideId}
-				{session}
-			/>
-		{:else if states.admin}
+			{@render formTemplate(
+				events,
+				'addEvent',
+				'eventId',
+				$t('admin.event.triggerEvent'),
+			)}
+			{@render formTemplate(
+				ends,
+				'endSession',
+				'endId',
+				$t('admin.session.endSession'),
+			)}
+		</div>
+	{:else if states.sessionEnd}
+		<div
+			in:fade={{
+				duration: 200,
+				easing: quintOut,
+			}}
+			class="flex flex-col items-center gap-2 p-2 text-primary-500 z-10"
+		>
 			<div
-				in:fade={{
-					duration: 200,
-					easing: quintOut,
-				}}
-				class="flex flex-col items-center gap-4 p-2 text-primary-500 z-10"
+				class="text-xl font-semibold text-white first-letter:capitalize"
 			>
-				<div>
-					<label>
-						{$t('admin.debugPanel')}
-						<input
-							class=" cursor-pointer"
-							type="checkbox"
-							name="seeDebugPane"
-							id="debugPaneCheck"
-							onchange={storePanelInLocalStorage}
-							bind:checked={viewportStore.seeDebugPanel}
-						/>
-					</label>
-				</div>
-				{@render formTemplate(
-					events,
-					'addEvent',
-					'eventId',
-					$t('admin.event.triggerEvent'),
-				)}
-				{@render formTemplate(
-					ends,
-					'endSession',
-					'endId',
-					$t('admin.session.endSession'),
-				)}
+				{session.expand?.end?.title}
 			</div>
-		{:else if states.sessionEnd}
-			<div
-				in:fade={{
-					duration: 200,
-					easing: quintOut,
-				}}
-				class="flex flex-col items-center gap-2 p-2 text-primary-500 z-10"
-			>
-				<div
-					class="text-xl font-semibold text-white first-letter:capitalize"
-				>
-					{session.expand?.end?.title}
-				</div>
-				<div>
-					{session.expand?.end?.text}
-				</div>
+			<div>
+				{session.expand?.end?.text}
 			</div>
-		{/if}
-	</div>
+		</div>
+	{/if}
 {/if}
 
 <!-- Graph Tree -->

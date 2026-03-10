@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { cn } from '$lib/utils';
 	import type { Snippet } from 'svelte';
 	import type { HTMLAnchorAttributes, HTMLButtonAttributes } from 'svelte/elements';
 
@@ -38,13 +39,12 @@
 {#if 'href' in rest}
 	<a
 		{...rest}
-		class={[
+		class={cn([
 			'h-fit cursor-pointer',
 			'text-center text-nowrap',
 			'px-4 py-2 rounded-lg transition-colors duration-200',
 			getVariantClasses(),
-			className,
-		]}
+		], className)}
 	>
 		{#if typeof children === 'string'}
 			{children}
@@ -55,14 +55,13 @@
 {:else}
 	<button
 		{...rest as HTMLButtonAttributes}
-		class={[
+		class={cn([
 			'h-fit cursor-pointer',
 			'text-center text-nowrap',
 			'px-4 py-2 rounded-lg transition-colors duration-200',
 			getVariantClasses(),
 			'disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed',
-			className,
-		]}
+		], className)}
 	>
 		{#if typeof children === 'string'}
 			{children}
