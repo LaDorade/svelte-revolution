@@ -4,6 +4,7 @@
     "administration": "Administration",
     "youAreAdmin": "Vous êtes admin",
     "debugPanel": "Panneau de debug",
+	"controlPanel": "Contrôle de la session",
     "event": {
       "addEvent": "Ajouter un événement",
       "triggerEvent": "Déclencher un événement",
@@ -72,7 +73,8 @@
     "noNodeSelected": "Aucun nœud sélectionné",
     "eventHidden": "Événement pour un autre camp",
 	"replyingTo": "Répondre à",
-	"contribute": "Contribuer"
+	"contribute": "Contribuer",
+	"addAudio": "Ajouter un fichier audio"
   },
   "scenario": {
     "scenario": "Scénario",

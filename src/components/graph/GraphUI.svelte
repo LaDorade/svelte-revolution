@@ -1,14 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { t } from 'svelte-i18n';
-	import { enhance } from '$app/forms';
 	import nProgress from 'nprogress';
 	import toast from 'svelte-french-toast';
-	import { fade } from 'svelte/transition';
-	import { quintOut } from 'svelte/easing';
 	import * as values from '$lib/mainGraph/values';
 	import {
-		Codesandbox,
+		UserLock,
 		Ellipsis,
 		GitPullRequest,
 		Info,
@@ -19,7 +16,6 @@
 	import GraphTree from './GraphTree.svelte';
 	import { watch } from '$lib/runes/watch.svelte';
 	import { pb } from '$lib/client/pocketbase';
-	import { viewportStore } from '$stores/ui/index.svelte';
 	import AddNode from './GraphUI/AddNode.svelte';
 	import SelectedNode from './GraphUI/SelectedNode.svelte';
 	
@@ -32,6 +28,8 @@
 	import type { ActionResult } from '@sveltejs/kit';
 	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
 	import type { RecordModel } from 'pocketbase';
+	import AdminPanel from './GraphUI/AdminPanel.svelte';
+	import SessionEnd from './GraphUI/SessionEnd.svelte';
 
 	interface Props {
 		graph: MainGraph | null;
@@ -77,12 +75,6 @@
 
 	let treeView = $state(false);
 
-	function storePanelInLocalStorage() {
-		localStorage.setItem(
-			'seeDebugPanel',
-			viewportStore.seeDebugPanel.toString(),
-		);
-	}
 
 	/**
 	 * Set the state of the UI
@@ -193,46 +185,6 @@
 	});
 </script>
 
-{#snippet formTemplate(
-	values: { id: string; title: string }[],
-	action: string,
-	name: string,
-	trad: string,
-)}
-	<form
-		method="POST"
-		action="/sessions/{session.id}?/{action}"
-		onsubmit={(e) => {
-			e.preventDefault();
-		}}
-		use:enhance={() => {
-			nProgress.start();
-			return async ({ result }) => {
-				handleSubmit(result);
-			};
-		}}
-		class="flex flex-col gap-2 p-x-4 cursor-default text-primary-500 w-full items-center"
-	>
-		<label class="form-control w-full max-w-xs">
-			<select {name} id={name} class="bg-black rounded-md">
-				<option disabled selected>{trad}</option>
-				{#each values as value (value.id)}
-					<option value={value.id}>{value.title}</option>
-				{/each}
-			</select>
-		</label>
-		<input type="hidden" name="session" value={session.id} />
-		<input
-			type="hidden"
-			name="pb_cookie"
-			value={pb.authStore.exportToCookie()}
-		/>
-		<button type="submit" class="self-center btn btn-sm btn-accent">
-			{trad}
-		</button>
-	</form>
-{/snippet}
-
 <!-- Buttons -->
 <div class="fixed m-4 right-0 bottom-0 z-30">
 	{#snippet menuButton(type: string)}
@@ -265,7 +217,7 @@
 					color={states.nodeInfo ? 'black' : 'white'}
 				/>
 			</button>
-			{#if admin && user}
+			{#if admin && user && !session.completed}
 				<button
 					onclick={() => {
 						setCheck('admin');
@@ -274,7 +226,7 @@
 						? 'bg-white'
 						: ''} border p-2 top-0 -translate-x-[144%] -translate-y-[144%] rounded-full bg-black bg-opacity-90 z-50"
 				>
-					<Codesandbox
+					<UserLock
 						strokeWidth={1.5}
 						color={states.admin ? 'black' : 'white'}
 					/>
@@ -345,57 +297,18 @@
 			{userSideId}
 			{session}
 		/>
-	{:else if states.admin}
-		<div
-			in:fade={{
-				duration: 200,
-				easing: quintOut,
-			}}
-			class="flex flex-col items-center gap-4 p-2 text-primary-500 z-10"
-		>
-			<div>
-				<label>
-					{$t('admin.debugPanel')}
-					<input
-						class=" cursor-pointer"
-						type="checkbox"
-						name="seeDebugPane"
-						id="debugPaneCheck"
-						onchange={storePanelInLocalStorage}
-						bind:checked={viewportStore.seeDebugPanel}
-					/>
-				</label>
-			</div>
-			{@render formTemplate(
-				events,
-				'addEvent',
-				'eventId',
-				$t('admin.event.triggerEvent'),
-			)}
-			{@render formTemplate(
-				ends,
-				'endSession',
-				'endId',
-				$t('admin.session.endSession'),
-			)}
-		</div>
+	{:else if states.admin && !session.completed}
+		<AdminPanel
+			{session}
+			{pb}
+			{handleSubmit}
+			{ends}
+			{events}
+		/>
 	{:else if states.sessionEnd}
-		<div
-			in:fade={{
-				duration: 200,
-				easing: quintOut,
-			}}
-			class="flex flex-col items-center gap-2 p-2 text-primary-500 z-10"
-		>
-			<div
-				class="text-xl font-semibold text-white first-letter:capitalize"
-			>
-				{session.expand?.end?.title}
-			</div>
-			<div>
-				{session.expand?.end?.text}
-			</div>
-		</div>
+		<SessionEnd
+			{session}
+		/>
 	{/if}
 {/if}
 

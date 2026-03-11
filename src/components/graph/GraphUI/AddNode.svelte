@@ -111,7 +111,7 @@
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger class="self-start" >
 					<Button
-						variant="secondary"
+						variant="ghost"
 						class="self-start"
 					>
 						{#if userSideId}
@@ -170,7 +170,7 @@
 			name="audio"
 			type="file"
 			accept="audio/ogg, audio/mpeg, audio/wav, audio/mp3"
-			label={$t('home.attachFile')}
+			label={$t('inSession.addAudio')}
 		/>
 		<Button variant="primary" type="submit" class="self-start mt-2">
 			{$t('misc.submit')}

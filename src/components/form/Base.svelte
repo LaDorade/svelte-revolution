@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { cn } from '$lib/utils';
 	import type { Snippet } from 'svelte';
 
 	interface Props  {
@@ -13,12 +14,11 @@
 	}: Props = $props();
 </script>
 
-<label class={[
+<label class={cn([
 	'text-gray-50',
 	'flex flex-col items-start w-full gap-2',
 	'bg-black/50 rounded-lg',
-	labelClass,
-]}>
+], labelClass)}>
 	{label}
 	{@render children()}
 </label>

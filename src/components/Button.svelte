@@ -21,7 +21,7 @@
 		case 'secondary':
 			return 'bg-secondary-300 text-white hover:bg-secondary-200';
 		case 'ghost':
-			return 'bg-transparent text-gray-300 hover:bg-gray-700';
+			return 'bg-transparent text-gray-300 hover:bg-gray-800 border border-gray-500 hover:border-gray-500 disabled:bg-gray-900/20 disabled:border-gray-700 disabled:text-gray-500';
 		case 'link':
 			return 'bg-transparent text-blue-500 hover:underline';
 		case 'tertiary':
@@ -59,9 +59,8 @@
 			'h-fit cursor-pointer',
 			'text-center text-nowrap',
 			'px-4 py-2 rounded-lg transition-colors duration-200',
-			getVariantClasses(),
 			'disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed',
-		], className)}
+		], getVariantClasses(), className)}
 	>
 		{#if typeof children === 'string'}
 			{children}
