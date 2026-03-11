@@ -26,7 +26,6 @@ export async function apiHealthy() {
 		return response.ok;
 	} catch (e) {
 		const err = e as Error;
-		console.error(import.meta.url);
 		console.error('IA server not reachable:', err.message);
 		console.log('IA server URL:', iaServerUrl);
 		return false;

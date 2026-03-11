@@ -2,8 +2,9 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { pb } from '$lib/client/pocketbase';
 	import { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
+	import { getCurrentSessionCtx } from '$stores/session.svelte';
 	import type { NodeMessage } from '$types/graph';
-	import type { GraphNode, Side } from '$types/pocketBase/TableTypes';
+	import type { GraphNode } from '$types/pocketBase/TableTypes';
 
 	// Dev Feature to reinstanciate the component when the file is changed
 	// ? It's because the hot reload is not working well with the d3 library
@@ -14,18 +15,17 @@
 	}
 
 	interface Props {
-		admin: boolean;
 		nodes: GraphNode[];
-		sessionId: string;
-		sides: Side[];
-		iaConnected?: boolean;
 		graph: MainGraph | null;
-		ai: boolean | undefined;
-		userSideId: string | number | null;
 	}
-	let { nodes, sessionId, sides, iaConnected, userSideId, admin, ai, graph = $bindable() }: Props = $props();
+	let {
+		nodes,
+		graph = $bindable()
+	}: Props = $props();
 
 	let svg: SVGElement | null = $state(null);
+
+	let currentSession = getCurrentSessionCtx();
 
 	function updateSVGSize() {
 		if (svg) {
@@ -36,8 +36,8 @@
 
 	const realTimeActions = {
 		create: (record: NodeMessage) => {
-			if (!admin && iaConnected && record?.type === 'event' && record.side) {
-				const userSide = localStorage.getItem('side_' + sessionId);
+			if (!currentSession.admin.isAdmin && currentSession.ai && record?.type === 'event' && record.side) {
+				const userSide = localStorage.getItem('side_' + currentSession.session.id);
 				if (userSide !== record.side) {
 					return;
 				}
@@ -61,7 +61,7 @@
 				await realTimeActions[action](record);
 			},
 			{
-				filter: `session="${sessionId}"`
+				filter: `session="${currentSession.session.id}"`
 			}
 		);
 	}
@@ -70,12 +70,15 @@
 		if (!svg) return;
 
 		updateSVGSize();
-		graph = new MainGraph(svg, nodes, sides, {
+		graph = new MainGraph(svg, nodes, currentSession.sides, {
 			width: Number(svg.getAttribute('width')) || window.innerWidth,
 			height: Number(svg.getAttribute('height')) || window.innerHeight
 		});
-		if (ai && !admin) {
-			graph.filterNodeBySide(userSideId);
+
+		// IA + not admin => filter the graph according to the chosen side
+		// for special scenario
+		if (currentSession.ai && !currentSession.admin && currentSession.sessionProfile.choosedSideId) {
+			graph.filterNodeBySide(currentSession.sessionProfile.choosedSideId);
 		}
 		await realTimeNodeUpdate();
 	});

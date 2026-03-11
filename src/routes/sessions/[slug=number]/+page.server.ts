@@ -162,9 +162,9 @@ export const actions: Actions = {
 		pb.authStore.loadFromCookie(pb_cookie);
 
 		// check if user is superAdmin or author
-		if (pb.authStore.model?.role !== 'superAdmin') {
+		if (pb.authStore.record?.role !== 'superAdmin') {
 			const session = await pb.collection('Session').getOne(sessionId, { fields: 'author' });
-			if (session.author !== pb.authStore.model?.id) {
+			if (session.author !== pb.authStore.record?.id) {
 				return fail(401, { success: false, error: 'Unauthorized' });
 			}
 		}

@@ -6,7 +6,7 @@
 	import { t } from 'svelte-i18n';
 	import graph1 from '$lib/assets/graphe1.png';
 	import type { User } from '$types/pocketBase/TableTypes';
-	import { invalidateAll } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import nProgress from 'nprogress';
 	import { resolve } from '$app/paths';
 	import { Menu } from 'lucide-svelte';
@@ -25,6 +25,7 @@
 		pb.authStore.clear();
 		await invalidateAll();
 		nProgress.done();
+		goto(resolve('/'));
 	}
 
 	const navItems = new SvelteSet([

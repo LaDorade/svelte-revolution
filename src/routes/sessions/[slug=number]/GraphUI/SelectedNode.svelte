@@ -2,25 +2,22 @@
 	import { t } from 'svelte-i18n';
 	import Overlay from './Overlay.svelte';
 	import { fade } from 'svelte/transition';
+	import Audio from './Audio.svelte';
+	import { getCurrentSessionCtx } from '$stores/session.svelte';
 
 	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
-	import type { Side } from '$types/pocketBase/TableTypes';
-	import type { MyPocketBase } from '$types/pocketBase';
-	import Audio from './Audio.svelte';
 
 
 	interface Props {
-		pb: MyPocketBase;
 		graph: MainGraph | null;
-		sides: Side[];
 	}
 	let {
-		pb,
 		graph,
-		sides
 	}: Props = $props();
 
-	let side = $derived(sides.find((side) => side.id === graph?.selectedNode?.side) || null);
+	const currentSession = getCurrentSessionCtx();
+
+	let side = $derived(currentSession.sides.find((side) => side.id === graph?.selectedNode?.side) || null);
 </script>
 
 <Overlay>
@@ -64,7 +61,7 @@
 					{@html graph?.selectedNode.text}
 				</div>
 				{#if graph?.selectedNode.audio}
-					<Audio audioPath={pb.files.getURL(
+					<Audio audioPath={currentSession.pb.files.getURL(
 						graph?.selectedNode,
 						graph?.selectedNode.audio as string,
 					)} />

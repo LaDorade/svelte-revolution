@@ -1,51 +1,65 @@
 import { getSession } from '$lib/sessions';
 import { pb } from '$lib/client/pocketbase';
-import { type ServerLoad } from '@sveltejs/kit';
-import type { End, GraphEvent, Session } from '$types/pocketBase/TableTypes';
+import { error, type ServerLoad } from '@sveltejs/kit';
+
+import type { Session } from '$types/pocketBase/TableTypes';
+import type { AdminInfo } from '$stores/session.svelte';
 
 export const load: ServerLoad = async ({ params, fetch }) => {
-	const sessionData = await getSession(Number(params.slug));
+	const session = await getSession(Number(params.slug));
+	const scenario = session.expand?.scenario || null;
+	if (!scenario) {
+		error(500, {
+			status: 500,
+			message: 'No scenario for session'
+		});
+	}
 
-	const { events, ends } = await adminCheck(sessionData);
-
-	const sides = await getSides(sessionData.scenario);
+	const sides = await getSides(session.scenario);
 
 	const aiHealty = await fetch('/api/ai/health', { method: 'POST' })
 		.then((res) => res.json())
 		.then((res) => res.aiHealthy);
-	const aiConnected = aiHealty && sessionData.expand?.scenario?.ai;
+	const aiConnected = aiHealty && session.expand?.scenario?.ai;
 
 	const nodes = pb
 		.collection('Node')
-		.getFullList({ filter: pb.filter('session = {:session}', { session: sessionData.id }), expand: 'side' });
+		.getFullList({ filter: pb.filter('session = {:session}', { session: session.id }), expand: 'side' });
 
 	return {
-		aiConnected,
-		sessionData,
-		scenario: sessionData.expand?.scenario,
-		nodesPromise: nodes,
-		events,
-		ends,
+		ai: {
+			connected: aiConnected
+		},
+		admin: {
+			...await adminCheck(session),
+		},
+		session,
+		scenario,
 		sides,
-		isAdmin: sessionData.author === pb.authStore.model?.id || pb.authStore.model?.role === 'superAdmin'
+		nodesPromise: nodes,
 	};
 };
 
-async function adminCheck(sessionData: Session) {
-	let events: GraphEvent[] = [];
-	let ends: End[] = [];
-	if (sessionData.author === pb.authStore.model?.id || pb.authStore.model?.role === 'superAdmin') {
+async function adminCheck(sessionData: Session): Promise<AdminInfo> {
+	if (sessionData.author === pb.authStore.record?.id || pb.authStore.record?.role === 'superAdmin') {
 		if (pb.authStore.isValid) {
 			const scenario = sessionData.scenario;
-			events = await pb.collection('Event').getFullList({
-				filter: pb.filter('scenario = {:scenario}', { scenario })
-			});
-			ends = await pb.collection('End').getFullList({
-				filter: pb.filter('scenario = {:scenario}', { scenario })
-			});
+			return {
+				isAdmin: true,
+				events: await pb.collection('Event').getFullList({
+					filter: pb.filter('scenario = {:scenario}', { scenario })
+				}),
+				ends: await pb.collection('End').getFullList({
+					filter: pb.filter('scenario = {:scenario}', { scenario })
+				}),
+			};
 		}
 	}
-	return { events, ends };
+	return {
+		isAdmin: false,
+		events: null,
+		ends: null
+	};
 }
 
 async function getSides(scenarioId: string) {

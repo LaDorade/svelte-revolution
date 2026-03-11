@@ -9,29 +9,21 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import Button from '$components/Button.svelte';
 	import Overlay from './Overlay.svelte';
+	import { getCurrentSessionCtx } from '$stores/session.svelte';
 
 	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
 	import type { ActionResult } from '@sveltejs/kit';
-	import type { Session, Side } from '$types/pocketBase/TableTypes';
 
 	interface Props {
 		graph: MainGraph | null;
 		handleSubmit: (result: ActionResult) => void;
-		admin: boolean;
-		userSideId: string | null;
-		sides: Side[];
-		pseudo: string | null;
-		session: Session;
 	}
 	let {
 		graph,
 		handleSubmit,
-		admin,
-		userSideId,
-		sides,
-		pseudo,
-		session
 	}: Props = $props();
+
+	const currentSession = getCurrentSessionCtx();
 
 	let nodeTitle = $state('');
 	let nodeText = $state('');
@@ -55,8 +47,8 @@
 // ? Its better to let the user get an error because right now its not explicit why the button is disabled
 	// let valid = $derived(
 	// 	graph.selectedNode && nodeTitle.trim() && nodeText.trim()
-	// 	&& (admin ? userSideId : true)
-	// 	&& (admin ? pseudo.trim() : true)
+	// 	&& (currentSession.admin.isAdmin ? userSideId : true)
+	// 	&& (currentSession.admin.isAdmin ? pseudo.trim() : true)
 	// );
 </script>
 
@@ -65,7 +57,7 @@
 		in:fade={{ duration: 150 }}
 		method="POST"
 		enctype="multipart/form-data"
-		action="/sessions/{session.slug}?/addNode"
+		action="/sessions/{currentSession.session.slug}?/addNode"
 		class="flex flex-col gap-4 cursor-default z-10 p-2 text-sm"
 		onsubmit={(e) => {
 			e.preventDefault();
@@ -100,12 +92,12 @@
 			bind:value={nodeText}
 			placeholder="Ton message"
 		/>
-		{#if admin}
+		{#if currentSession.admin.isAdmin}
 			<Input
 				required
 				name="author"
 				label={$t('home.yourName')}
-				bind:value={pseudo}
+				bind:value={currentSession.sessionProfile.pseudo}
 				placeholder="Pseudo"
 			/>
 			<DropdownMenu.Root>
@@ -114,10 +106,10 @@
 						variant="ghost"
 						class="self-start"
 					>
-						{#if userSideId}
+						{#if currentSession.sessionProfile.choosedSideId}
 							{$t('side.yourSide')} :
 							<span class="italic">
-								{sides.find((side) => side.id === userSideId)?.name}
+								{currentSession.sides.find((side) => side.id === currentSession.sessionProfile.choosedSideId)?.name}
 							</span>
 						{:else}
 							{$t('side.chooseSide')}
@@ -125,35 +117,34 @@
 					</Button>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content class="border-none gap-2 bg-gray-900" align="start">
-					{#each sides as side (side.id)}
+					{#each currentSession.sides as side (side.id)}
 						<DropdownMenu.Item
 							class="cursor-pointer hover:bg-gray-800"
-							onclick={() => (userSideId = side.id)}
+							onclick={() => (currentSession.sessionProfile.choosedSideId = side.id)}
 						>
 							{side.name}
 						</DropdownMenu.Item>
 					{/each}
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
-			<input type="hidden" name="side" value={userSideId} />
+			<input type="hidden" name="side" value={currentSession.sessionProfile.choosedSideId} />
 		{:else}
 			<Input
 				required
 				readonly
 				name="author"
 				label={$t('home.yourName')}
-				value={pseudo}
+				value={currentSession.sessionProfile.pseudo}
 			/>
 			<Input
 				required
 				readonly
-				name="side"
 				label={$t('side.yourSide')}
-				value={sides.find((side) => side.id === userSideId)?.name}
+				value={currentSession.sides.find((side) => side.id === currentSession.sessionProfile.choosedSideId)?.name}
 			/>
-			<input type="hidden" name="side" value={userSideId} />
+			<input type="hidden" name="side" value={currentSession.sessionProfile.choosedSideId} />
 		{/if}
-		<input type="hidden" name="session" value={session.id} />
+		<input type="hidden" name="session" value={currentSession.session.id} />
 		<Input
 			readonly
 			label={graph?.selectedNode ? $t('inSession.replyingTo') : $t('inSession.noNodeSelected')}

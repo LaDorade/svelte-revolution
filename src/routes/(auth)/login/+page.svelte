@@ -41,6 +41,7 @@
 			type="text"
 			autocomplete="username"
 			name="username"
+			labelClass="p-4"
 		/>
 		<Input
 			label={$t('login.password')}
@@ -49,6 +50,7 @@
 			type="password"
 			autocomplete="current-password"
 			name="password"
+			labelClass="p-4"
 		/>
 		<Button
 			variant="primary"

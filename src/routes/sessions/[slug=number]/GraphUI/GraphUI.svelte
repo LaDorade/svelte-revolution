@@ -13,50 +13,33 @@
 		MessageCircleWarning,
 		X,
 	} from 'lucide-svelte';
-	import GraphTree from './GraphTree.svelte';
+	import GraphTree from '../../../../components/graph/GraphTree.svelte';
 	import { watch } from '$lib/runes/watch.svelte';
-	import { pb } from '$lib/client/pocketbase';
-	import AddNode from './GraphUI/AddNode.svelte';
-	import SelectedNode from './GraphUI/SelectedNode.svelte';
+	import AddNode from './AddNode.svelte';
+	import SelectedNode from './SelectedNode.svelte';
+	import AdminPanel from './AdminPanel.svelte';
+	import SessionEnd from './SessionEnd.svelte';
+	import { getCurrentSessionCtx } from '$stores/session.svelte';
+	import LegendDisplay from './Ledend.svelte';
 	
-	import type {
-		End,
-		GraphEvent,
-		Session,
-		Side,
-	} from '$types/pocketBase/TableTypes';
 	import type { ActionResult } from '@sveltejs/kit';
 	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
 	import type { RecordModel } from 'pocketbase';
-	import AdminPanel from './GraphUI/AdminPanel.svelte';
-	import SessionEnd from './GraphUI/SessionEnd.svelte';
 
 	interface Props {
 		graph: MainGraph | null;
-		session: Session;
 		user?: RecordModel | null;
-		admin?: boolean;
-		events?: GraphEvent[];
-		ends?: End[];
-		sides: Side[];
-		pseudo: string | null;
-		userSideId: string | null;
 	}
 
 	let {
 		graph,
 		user = null,
-		session = $bindable(),
-		admin = false,
-		events = [],
-		ends = [],
-		sides,
-		pseudo,
-		userSideId = $bindable(),
 	}: Props = $props();
 
+	const currentSession = getCurrentSessionCtx();
+
 	function attributeIcons() {
-		for (let s of sides) {
+		for (let s of currentSession.sides) {
 			s.icon = values.graphIcons[s.number];
 		}
 	}
@@ -120,8 +103,9 @@
 				states.addNode = false;
 
 				// Add the new event to the list of events
-				if (result.data?.body?.event && session.expand?.events) {
-					session.expand.events.push(result.data.body.event);
+				// TODO: need to recheck, I dont understand
+				if (result.data?.body?.event && currentSession.session.expand?.events) {
+					currentSession.session.expand.events.push(result.data.body.event);
 				}
 				break;
 			default:
@@ -139,31 +123,6 @@
 		nProgress.done();
 	}
 
-	async function handleSessionEnd() {
-		// Listen for session completion
-		await pb.collection('Session').subscribe(session.id, async (res) => {
-			if (!res.record || !res.record.completed) return;
-			try {
-				const end = await pb
-					.collection('End')
-					.getOne(res.record.end ?? '');
-				session.completed = res.record.completed;
-				session.end = res.record.end;
-				setCheck('sessionEnd');
-				session.expand = session.expand
-					? {
-						...session.expand,
-						...end,
-					}
-					: {};
-				toast.success($t('sessions.sessionIsOver'), {
-					position: 'top-left',
-				});
-			} catch (e) {
-				console.error(e);
-			}
-		});
-	}
 
 	$effect(() => {
 		watch(() => {
@@ -177,7 +136,6 @@
 	});
 
 	onMount(async () => {
-		await handleSessionEnd();
 		if (graph?.selectedNode) {
 			graph.selectedNode = null;
 		}
@@ -217,7 +175,7 @@
 					color={states.nodeInfo ? 'black' : 'white'}
 				/>
 			</button>
-			{#if admin && user && !session.completed}
+			{#if currentSession.admin.isAdmin && user && !currentSession.session.completed}
 				<button
 					onclick={() => {
 						setCheck('admin');
@@ -233,7 +191,7 @@
 				</button>
 			{/if}
 			<!-- Add Node Or Session End infos -->
-			{#if session.end && session.completed}
+			{#if currentSession.session.end && currentSession.session.completed}
 				<button
 					onclick={() => {
 						setCheck('sessionEnd');
@@ -268,47 +226,24 @@
 	</div>
 </div>
 
-<!-- Sides legend -->
-<div
-	class="fixed max-h-3/4 overflow-y-auto z-40 rounded-xl shadow-2xl p-4 bottom-0 left-0 bg-black bg-opacity-30"
->
-	{#each sides as side (side.id)}
-		<div class="text-white flex items-center">
-			<svg class="w-4 h-4 mr-1" viewBox="-12 -12 24 24">
-				<path d={side.icon} fill="white" />
-			</svg>
-			{side.name}
-		</div>
-	{/each}
-</div>
+<LegendDisplay />
 
 <!-- Display -->
 {#if stateActive}
 	<!-- affichage détails message -->
 	{#if states.nodeInfo}
-		<SelectedNode {graph} {sides} {pb} />
-	{:else if states.addNode && !session.completed}
+		<SelectedNode {graph} />
+	{:else if states.addNode && !currentSession.session.completed}
 		<AddNode
 			{graph}
 			{handleSubmit}
-			{admin}
-			{sides}
-			{pseudo}
-			{userSideId}
-			{session}
 		/>
-	{:else if states.admin && !session.completed}
+	{:else if states.admin && !currentSession.session.completed}
 		<AdminPanel
-			{session}
-			{pb}
 			{handleSubmit}
-			{ends}
-			{events}
 		/>
 	{:else if states.sessionEnd}
-		<SessionEnd
-			{session}
-		/>
+		<SessionEnd />
 	{/if}
 {/if}
 
