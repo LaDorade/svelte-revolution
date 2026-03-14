@@ -95,7 +95,7 @@
 						bind:value={userSideId}
 						disabled={currentSession.userCanAccess}
 					>
-						<option value="" disabled selected class="text-gray-500">
+						<option value={null} selected disabled class="text-gray-500">
 							{$t('side.chooseSide')}
 						</option>
 						{#each currentSession.sides as side (side.id)}

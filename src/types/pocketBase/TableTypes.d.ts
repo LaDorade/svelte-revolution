@@ -14,7 +14,7 @@ export interface GraphNode extends BaseNode {
 	expand?: {
 		side?: Side;
 	};
-	audio?: File | string | null
+	audio?: File | string | null // File when we send, string (url) when in db
 }
 
 export type PreviewNode = Pick<GraphNode, 'id' | 'title' | 'text' | 'type' | 'side' | 'sideNumber' | 'parent'>;
@@ -55,6 +55,7 @@ export interface Session {
 	events: string[];
 	author: string;
 	end?: string;
+	useAudio: boolean;
 	created: Date;
 	expand?: {
 		scenario?: Scenario;

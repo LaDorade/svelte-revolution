@@ -58,7 +58,7 @@
 		method="POST"
 		enctype="multipart/form-data"
 		action="/sessions/{currentSession.session.slug}?/addNode"
-		class="flex flex-col gap-4 cursor-default z-10 p-2 text-sm"
+		class="flex flex-col gap-2 text-sm min-w-80"
 		onsubmit={(e) => {
 			e.preventDefault();
 		}}
@@ -75,22 +75,22 @@
 			return submit;
 		}}
 	>
-		<h3 class="text-gray-50 py-2 text-lg font-semibold">
+		<h3 class="text-gray-50 px-4 py-2 border-b border-gray-500 text-lg font-semibold">
 			{$t('inSession.contribute')}
 		</h3>
 		<Input
 			required
 			name="title"
 			label={$t('home.messageTitle')}
-			bind:value={nodeTitle}
 			placeholder="Youhouhou"
+			bind:value={nodeTitle}
 		/>
 		<Textarea
 			required
 			name="text"
 			label={$t('home.yourMessage')}
-			bind:value={nodeText}
 			placeholder="Ton message"
+			bind:value={nodeText}
 		/>
 		{#if currentSession.admin.isAdmin}
 			<Input
@@ -101,7 +101,7 @@
 				placeholder="Pseudo"
 			/>
 			<DropdownMenu.Root>
-				<DropdownMenu.Trigger class="self-start" >
+				<DropdownMenu.Trigger class="self-start px-4 py-2">
 					<Button
 						variant="ghost"
 						class="self-start"
@@ -127,7 +127,6 @@
 					{/each}
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
-			<input type="hidden" name="side" value={currentSession.sessionProfile.choosedSideId} />
 		{:else}
 			<Input
 				required
@@ -142,29 +141,27 @@
 				label={$t('side.yourSide')}
 				value={currentSession.sides.find((side) => side.id === currentSession.sessionProfile.choosedSideId)?.name}
 			/>
-			<input type="hidden" name="side" value={currentSession.sessionProfile.choosedSideId} />
 		{/if}
-		<input type="hidden" name="session" value={currentSession.session.id} />
 		<Input
 			readonly
 			label={graph?.selectedNode ? $t('inSession.replyingTo') : $t('inSession.noNodeSelected')}
 			value={graph?.selectedNode?.title ?? $t('inSession.noNodeSelected')}
 		/>
-		<input
-			readonly
-			required
-			type="hidden"
-			name="parent"
-			value={graph?.selectedNode?.id ?? null}
-		/>
-		<Input
-			name="audio"
-			type="file"
-			accept="audio/ogg, audio/mpeg, audio/wav, audio/mp3"
-			label={$t('inSession.addAudio')}
-		/>
-		<Button variant="primary" type="submit" class="self-start mt-2">
-			{$t('misc.submit')}
-		</Button>
+		{#if currentSession.session.useAudio}
+			<Input
+				name="audio"
+				type="file"
+				accept="audio/ogg, audio/mpeg, audio/wav, audio/mp3"
+				label={$t('inSession.addAudio')}
+			/>
+		{/if}
+		<div class="px-4 py-2">
+			<Button variant="primary" type="submit" class="self-start">
+				{$t('form.send')}
+			</Button>
+		</div>
+		<input readonly required type="hidden" name="parent"  value={graph?.selectedNode?.id}/>
+		<input readonly required type="hidden" name="side"    value={currentSession.sessionProfile.choosedSideId} />
+		<input readonly required type="hidden" name="session" value={currentSession.session.id} />
 	</form>
 </Overlay>

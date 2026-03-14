@@ -75,6 +75,8 @@ export const actions: Actions = {
 				body: { message: 'Node added', node: JSON.stringify(node) }
 			};
 		} catch (e) {
+			console.error(e);
+			
 			if (e instanceof ClientResponseError) {
 				if (e.data.data?.audio?.code === 'validation_file_size_limit') {
 					return fail(413,

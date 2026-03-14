@@ -11,6 +11,7 @@
       "creationSuccess": "Evento creado con éxito"
     },
     "session": {
+      "authorizeAudio": "Permitir el uso de audio en las sesiones",
       "createSession": "Crear una sesión",
       "endSession": "Terminar la sesión",
       "name": "Nombre de la sesión",
@@ -42,6 +43,10 @@
       "createUser": "Crear un usuario",
       "creationSuccess": "Usuario creado con éxito"
     }
+  },
+  "form": {
+    "notRequired": "No requerido",
+    "submit": "Enviar"
   },
   "login": {
     "login": "Iniciar sesión",

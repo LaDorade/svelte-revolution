@@ -45,24 +45,24 @@ export async function getSession(sessionId: number) {
 	return session;
 }
 
+type CreateSession = Pick<Session, 'name' | 'author' | 'scenario' | 'image' | 'useAudio'>
+
 export async function createSession(
-	name: FormDataEntryValue,
-	scenarioId: string,
-	author: FormDataEntryValue,
-	image: File | null | undefined
+	createData: CreateSession
 ) {
-	const scenario = await pb.collection('Scenario').getOne(scenarioId);
+	const scenario = await pb.collection('Scenario').getOne(createData.scenario);
 	const sessions = await pb.collection('Session').getFullList({ fields: 'id, slug' });
 
 	const session = await pb.collection('Session').create({
-		name,
-		scenario: scenarioId,
-		author,
+		name: createData.name,
+		scenario: createData.scenario,
+		author: createData.author,
 		slug: Math.max(...sessions.map(s => s.slug || 0)) + 1,
 		public: true,
 		visible: true,
 		completed: false,
-		image
+		image: createData.image,
+		useAudio: createData.useAudio
 	});
 
 	if (scenario.ai) {
@@ -72,7 +72,7 @@ export async function createSession(
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ sessionId: session.id, scenarioId, cookies })
+			body: JSON.stringify({ sessionId: session.id, scenarioId: createData.scenario, cookies })
 		});
 		if (!result.ok) {
 			console.error('Error creating AI session:', result);

@@ -23,8 +23,8 @@ export type UserSessionProfile = {
 	readonly admin: AdminInfo['isAdmin'];
 	readyToJoin: boolean;
 
-	choosedSideId?: string;
-	pseudo?: string;
+	choosedSideId: string | null;
+	pseudo: string | null;
 }
 
 export class CurrentSessionStore {
@@ -65,8 +65,8 @@ export class CurrentSessionStore {
 		this.sessionProfile = {
 			admin: this.admin.isAdmin,
 			readyToJoin: false,
-			pseudo: localStorage.getItem('pseudo_' + session.id) || undefined,
-			choosedSideId: localStorage.getItem('sideId_' + session.id) || undefined
+			pseudo: localStorage.getItem('pseudo_' + session.id) || null,
+			choosedSideId: localStorage.getItem('sideId_' + session.id) || null
 		};
 
 		this.init();

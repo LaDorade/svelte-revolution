@@ -11,6 +11,7 @@
       "creationSuccess": "Event created successfully"
     },
     "session": {
+      "authorizeAudio": "Allow the use of audio in sessions",
       "createSession": "Create a session",
       "endSession": "End session",
       "name": "Session name",
@@ -42,6 +43,10 @@
       "createUser": "Create a user",
       "creationSuccess": "User created successfully"
     }
+  },
+  "form": {
+    "notRequired": "Not required",
+    "submit": "Send"
   },
   "login": {
     "login": "Login",

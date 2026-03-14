@@ -11,6 +11,7 @@
       "creationSuccess": "イベントが正常に作成されました"
     },
     "session": {
+      "authorizeAudio": "セッションでオーディオを使用することを許可する",
       "createSession": "セッションを作成",
       "endSession": "セッションを終了",
       "name": "セッション名",
@@ -42,6 +43,10 @@
       "createUser": "ユーザーを作成",
       "creationSuccess": "ユーザーが正常に作成されました"
     }
+  },
+  "form": {
+    "notRequired": "不要",
+    "submit": "送信"
   },
   "login": {
     "login": "ログイン",

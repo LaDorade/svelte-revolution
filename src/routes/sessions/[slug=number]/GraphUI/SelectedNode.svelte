@@ -60,7 +60,7 @@
 					<!-- eslint-disable-next-line svelte/no-at-html-tags-->
 					{@html graph?.selectedNode.text}
 				</div>
-				{#if graph?.selectedNode.audio}
+				{#if currentSession.session.useAudio && graph?.selectedNode.audio}
 					<Audio audioPath={currentSession.pb.files.getURL(
 						graph?.selectedNode,
 						graph?.selectedNode.audio as string,

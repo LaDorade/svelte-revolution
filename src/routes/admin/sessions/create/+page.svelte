@@ -8,13 +8,18 @@
 	import { pb } from '$lib/client/pocketbase';
 	import { createStartNode } from '$lib/nodes';
 	import type { ClientResponseError } from 'pocketbase';
+	import Input from '$components/form/Input.svelte';
+	import Base from '$components/form/Base.svelte';
+	import Button from '$components/Button.svelte';
+	import Select from '$components/form/Select.svelte';
 
 	let { data } = $props();
 
 	let form = $state({
 		name: '',
 		scenarioId: '',
-		image: null as FileList | null
+		image: null as FileList | null,
+		useAudio: false
 	});
 
 	const validForm = $derived.by(() => {
@@ -37,7 +42,13 @@
 			}
 
 			const image = form.image?.item(0);
-			const session = await createSession(form.name, scenario.id, pb.authStore.record?.id, image);
+			const session = await createSession({
+				name: form.name,
+				scenario: form.scenarioId,
+				author: pb.authStore.record.id,
+				image: image as unknown as string, // we upload a file but we receive a string (url)
+				useAudio: form.useAudio
+			});
 			await createStartNode(pb, scenario, session.id);
 
 			toast.success($t('admin.session.creationSuccess'));
@@ -55,60 +66,59 @@
 	<div class="flex flex-col items-center p-4 shadow-xl rounded-xl bg-black/30">
 		<h2 class="p-4 text-3xl font-bold">{$t('admin.session.createSession')}</h2>
 		<div class="flex flex-col gap-4 p-4 text-center border-t shadow-md">
-			<div class="flex flex-col gap-4">
-				<label for="name" class="text-xl font-thin">{$t('admin.session.name')}</label>
-				<input
-					required
-					bind:value={form.name}
-					name="name"
-					placeholder="Votre nouvelle session"
-					class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-				/>
-			</div>
-			<div class="flex flex-col gap-4 p-4">
-				<label class="text-xl" for="image">{$t('admin.session.image')}</label>
+			<Input
+				label={$t('admin.session.name')}
+				placeholder="Votre nouvelle session"
+				bind:value={form.name}
+				required
+			/>
+			<Base>
+				{#snippet label()}
+					<div class="">
+						{$t('admin.session.image')}
+						<span class="text-xs text-gray-400 lowercase">
+							({$t('form.notRequired')})
+						</span>
+					</div>
+				{/snippet}
 				<input
 					bind:files={form.image}
 					type="file"
 					name="image"
 					accept="image/*"
-					class="p-4 border-b appearance-none focus-within:bg-transparent"
+					class="appearance-none text-sm font-light text-gray-500 w-full flex justify-between"
 				/>
-			</div>
+			</Base>
 			{#if form.image && form.image.item(0)}
 				<div class="flex flex-col gap-4 p-4 items-center">
 					<img src={URL.createObjectURL(form.image.item(0) as Blob)} alt="preview" class="w-1/2" />
 				</div>
 			{/if}
-			<div class="flex flex-col gap-4 p-4">
-				<label class="text-xl" for="scenarioId">{$t('admin.session.selectScenario')}</label>
-				<select
-					name="scenarioId"
-					class="p-4 border-b focus:ring-0 focus:border-white"
-					bind:value={form.scenarioId}
-					required
-				>
-					<option value="" disabled selected>{$t('admin.session.selectScenario')}</option>
-					<optgroup label={$t('scenario.scenarios')} class="text-gray-600">
-						{#each data.scenarios.filter((s) => !s.ai) as scenario (scenario.id)}
-							<option value={scenario.id} class="text-gray-600">{scenario.title}</option>
-						{/each}
-					</optgroup>
-					<optgroup label={$t('admin.session.aiScenarios')} class="text-gray-600">
-						{#each data.scenarios.filter((s) => s.ai) as scenario (scenario.id)}
-							<option value={scenario.id} class="text-gray-600">{scenario.title}</option>
-						{/each}
-					</optgroup>
-				</select>
-			</div>
-			<button
+			<Select
+				triggerClass="w-full"
+				label={$t('admin.session.selectScenario')}
+				values={data.scenarios.map((s) => ({ 
+					value: s.id,
+					label: s.title,
+					group: s.ai ? $t('admin.session.aiScenarios') : $t('scenario.scenarios')
+				}))}
+				groups={[$t('scenario.scenarios'), $t('admin.session.aiScenarios')]}
+				bind:value={form.scenarioId}
+			/>
+			<Base 
+				label={$t('admin.session.authorizeAudio')}
+				labelClass="w-full flex-row items-center justify-between"
+			>
+				<input type="checkbox" bind:checked={form.useAudio} />
+			</Base>
+			<Button
 				type="submit"
+				variant="primary"
 				onclick={createNewSession}
 				disabled={!validForm}
-				class="self-center px-4 py-2 text-lg text-black transition-all ease-linear bg-white rounded disabled:cursor-not-allowed disabled:opacity-50"
 			>
 				{$t('admin.session.createTheSession')}
-			</button>
+			</Button>
 		</div>
 	</div>
 </div>

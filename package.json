@@ -54,7 +54,7 @@
     "@types/eslint": "^9.6.1",
     "@types/nprogress": "^0.2.3",
     "autoprefixer": "^10.4.25",
-    "bits-ui": "^2.14.4",
+    "bits-ui": "^2.16.3",
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
     "eslint": "^10.0.2",
