@@ -44,6 +44,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json(response.ok);
 	} catch (e) {
 		console.error(e);
-		return json({ ok: false, message: e.message });
+		if (e instanceof Error) {
+
+			return json({ ok: false, message: e.message });
+		} else {
+			return json({ok: false, message: 'Unknown error'});
+		}
 	}
 };

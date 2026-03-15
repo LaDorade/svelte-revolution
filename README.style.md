@@ -32,5 +32,3 @@ Détails des classes :
 ## Documentation
 
 - [Tailwind CSS](https://tailwindcss.com/)
-- [DaisyUI](https://daisyui.com/) : Composants Tailwind CSS
-- [Tailwind CSS Cheat Sheet](https://nerdcave.com/tailwind-cheat-sheet)

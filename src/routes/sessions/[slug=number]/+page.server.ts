@@ -4,7 +4,7 @@ import { createNewEvents, triggerEnd } from '$lib/server/ia/event';
 import { addNodeSchema } from '$lib/zschemas/addNode.schema';
 import PocketBase from 'pocketbase';
 import { DB_URL } from '$env/static/private';
-import type { ClientResponseError } from 'pocketbase';
+import { ClientResponseError } from 'pocketbase';
 import type { GraphNode } from '$types/pocketBase/TableTypes';
 import { type Actions, fail } from '@sveltejs/kit';
 
@@ -23,12 +23,16 @@ export const actions: Actions = {
 				author: data.get('author') as string,
 				parent: data.get('parent') as string,
 				session: data.get('session') as string,
-				side: data.get('side') as string
+				side: data.get('side') as string,
+				audio: (data.get('audio') ?? null) as File | null
 			};
 
 			const validation = addNodeSchema.safeParse(nodeData);
 			if (!validation.success) {
-				return fail(422, { success: false, error: validation.error.format() });
+				return fail(422, {
+					success: false,
+					error: validation.error.issues.map(e => e.message).join(', ')
+				});
 			}
 
 			const censorResponse = await censorNode(nodeData);
@@ -36,13 +40,16 @@ export const actions: Actions = {
 
 			const node = await createNode(
 				pb,
-				nodeData.title,
-				nodeData.text,
-				nodeData.author,
-				nodeData.session,
-				nodeData.parent,
-				'contribution',
-				nodeData.side
+				{
+					title: nodeData.title,
+					text: nodeData.text,
+					author: nodeData.author,
+					session: nodeData.session,
+					parent: nodeData.parent,
+					type: 'contribution',
+					side: nodeData.side,
+					audio: nodeData.audio
+				}
 			);
 
 			if (censorResponse.triggerEvent && censorResponse.events) {
@@ -50,7 +57,7 @@ export const actions: Actions = {
 					await createNewEvents(pb, nodeData.session, censorResponse.events, node);
 				} catch (e) {
 					// TODO: Handle error
-					console.log(e);
+					console.error(e);
 				}
 			}
 
@@ -58,7 +65,7 @@ export const actions: Actions = {
 				try {
 					await triggerEnd(pb, nodeData.session, censorResponse.triggerEnd);
 				} catch (e) {
-					console.log(e);
+					console.error(e);
 				}
 			}
 
@@ -68,7 +75,19 @@ export const actions: Actions = {
 				body: { message: 'Node added', node: JSON.stringify(node) }
 			};
 		} catch (e) {
-			console.log(e);
+			console.error(e);
+			
+			if (e instanceof ClientResponseError) {
+				if (e.data.data?.audio?.code === 'validation_file_size_limit') {
+					return fail(413,
+						{succes: false, error: e.data.data?.audio?.message}
+					);
+				}
+				return fail(400, { 
+					success: false, 
+					error: e.message
+				});
+			}
 			return fail(500, { success: false, error: 'Error while adding node' });
 		}
 	},
@@ -108,20 +127,23 @@ export const actions: Actions = {
 			);
 			createdEventNode = await createNode(
 				pb,
-				title,
-				text,
-				author,
-				sessionId,
-				String(firstNode.id),
-				'event',
-				null
+				{
+					title,
+					text,
+					author,
+					session: sessionId,
+					parent: String(firstNode.id),
+					type: 'event',
+					side: null
+				}
 			);
 			await pb.collection('Session').update(sessionId, { events: eventId });
 		} catch (error) {
-			const e = error as ClientResponseError;
-			console.error('Error creating event:', e.toJSON());
-			if (createdEventNode) {
-				await pb.collection('Node').delete(String(createdEventNode.id));
+			if (error instanceof ClientResponseError) {
+				console.error('Error creating event:', error.toJSON());
+				if (createdEventNode) {
+					await pb.collection('Node').delete(String(createdEventNode.id));
+				}
 			}
 			return fail(500, { success: false, error: 'Error while creating event' });
 		}
@@ -142,9 +164,9 @@ export const actions: Actions = {
 		pb.authStore.loadFromCookie(pb_cookie);
 
 		// check if user is superAdmin or author
-		if (pb.authStore.model?.role !== 'superAdmin') {
+		if (pb.authStore.record?.role !== 'superAdmin') {
 			const session = await pb.collection('Session').getOne(sessionId, { fields: 'author' });
-			if (session.author !== pb.authStore.model?.id) {
+			if (session.author !== pb.authStore.record?.id) {
 				return fail(401, { success: false, error: 'Unauthorized' });
 			}
 		}

@@ -3,10 +3,14 @@
 	import { ClientResponseError } from 'pocketbase';
 	import toast from 'svelte-french-toast';
 	import { Pane, Button, Text, Textarea, Separator, ThemeUtils, type Theme } from 'svelte-tweakpane-ui';
+	import { getCurrentSessionCtx } from '$stores/session.svelte';
+	
 	import type { MainGraph } from '$stores/graph/Classes/MainGraph.svelte';
-	import type { Session } from '$types/pocketBase/TableTypes';
 
-	let { graph, session }: { graph: MainGraph | null; session: Session } = $props();
+	let { graph }: { graph: MainGraph | null; } = $props();
+	
+	const currentSession = getCurrentSessionCtx();
+	let session = $derived(currentSession.session);
 
 	let nodeModification = $state(false);
 	let nodeDeletion = $state(false);

@@ -1,11 +1,13 @@
 import { pb } from '$lib/client/pocketbase';
-import type { Session } from '$types/pocketBase/TableTypes';
 import { redirect } from '@sveltejs/kit';
+
+import type { Session } from '$types/pocketBase/TableTypes';
+import type { LayoutLoad } from './$types';
 
 export const ssr = false; // We don't need server-side rendering for admin pages
 // plus, it causes weird loops with the pb.authStore
 
-export const load = async ({ url }) => {
+export const load: LayoutLoad = async ({ url }) => {
 	if (!pb.authStore.isValid || !pb.authStore.record) {
 		pb.authStore.clear();
 		return redirect(303, '/login');

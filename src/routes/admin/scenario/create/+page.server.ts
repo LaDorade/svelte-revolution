@@ -1,7 +1,7 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import { createEventsAndEnds, createScenario } from '$lib/scenario';
 import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
-import type { z } from 'zod';
+import { z } from 'zod';
 import PocketBase from 'pocketbase';
 import { DB_URL } from '$env/static/private';
 
@@ -81,7 +81,7 @@ export const actions = {
 		} catch (error) {
 			const err = error as z.ZodError;
 			const { message, path } = err.issues[0];
-			console.log(err.format());
+			console.error(z.treeifyError(err));
 			return fail(400, { error: message, path });
 		}
 	}
