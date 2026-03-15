@@ -57,7 +57,7 @@ export const actions: Actions = {
 					await createNewEvents(pb, nodeData.session, censorResponse.events, node);
 				} catch (e) {
 					// TODO: Handle error
-					console.log(e);
+					console.error(e);
 				}
 			}
 
@@ -65,7 +65,7 @@ export const actions: Actions = {
 				try {
 					await triggerEnd(pb, nodeData.session, censorResponse.triggerEnd);
 				} catch (e) {
-					console.log(e);
+					console.error(e);
 				}
 			}
 

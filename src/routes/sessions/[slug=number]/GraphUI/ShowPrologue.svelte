@@ -38,7 +38,6 @@
 
 	function handleSideSubmit(e: SubmitEvent) {
 		e.preventDefault();
-		console.log(sideValid);
 		
 		if (sideValid && userSideId) {
 			currentSession.setSide(userSideId);
@@ -122,7 +121,7 @@
 				<form class:opacity-10={currentSession.admin.isAdmin} class="flex flex-col gap-4 items-start w-full" onsubmit={handlePseudoSubmit}>
 					<input
 						type="text"
-						class="p-4 border h-12 border-gray-100 text-gray-500 rounded w-fit disabled:opacity-50 w-full"
+						class="p-4 border h-12 border-gray-100 text-gray-500 rounded disabled:opacity-50 w-full"
 						placeholder={$t('user.pseudo')}
 						bind:value={pseudo}
 						disabled={currentSession.userCanAccess}

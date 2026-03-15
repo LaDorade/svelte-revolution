@@ -17,10 +17,13 @@ export const load: ServerLoad = async ({ params, fetch }) => {
 
 	const sides = await getSides(session.scenario);
 
-	const aiHealty = await fetch('/api/ai/health', { method: 'POST' })
-		.then((res) => res.json())
-		.then((res) => res.aiHealthy);
-	const aiConnected = aiHealty && session.expand?.scenario?.ai;
+	let aiConnected = false;
+	if (session.expand?.scenario?.ai) {
+		const aiHealty = await fetch('/api/ai/health', { method: 'POST' })
+			.then((res) => res.json())
+			.then((res) => res.aiHealthy);
+		aiConnected = aiHealty && session.expand?.scenario?.ai;
+	}
 
 	const nodes = pb
 		.collection('Node')

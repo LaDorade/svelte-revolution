@@ -54,7 +54,7 @@
 			toast.success($t('admin.session.creationSuccess'));
 		} catch (error) {
 			const err = error as ClientResponseError;
-			console.log(err.toJSON());
+			console.error(err.toJSON());
 			toast.error(errorMessage || err.message);
 		} finally {
 			nProgress.done();
