@@ -52,11 +52,13 @@
 <Toaster />
 <BackToTop />
 
-<Navigation isAdmin={data.isAdmin} user={data.user} />
 
 <!-- MAIN -->
-<div class="relative inset-0 w-full h-full text-gray-300">
-	{@render children()}
+<div class="relative flex flex-col inset-0 w-screen h-screen text-gray-300">
+	<Navigation isAdmin={data.isAdmin} user={data.user} />
+	<div class="h-full w-full overflow-auto">
+		{@render children()}
+	</div>
 	<div
 		class={[
 			'fixed top-0 left-0 -z-50 opacity-90 h-full w-full',

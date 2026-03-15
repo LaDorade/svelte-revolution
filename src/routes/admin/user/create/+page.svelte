@@ -3,6 +3,8 @@
 	import toast from 'svelte-french-toast';
 	import nProgress from 'nprogress';
 	import { pb } from '$lib/client/pocketbase';
+	import Input from '$components/form/Input.svelte';
+	import Button from '$components/Button.svelte';
 	import type { ClientResponseError } from 'pocketbase';
 
 	let formData = $state({
@@ -40,42 +42,36 @@
 	};
 </script>
 
-<div class="flex flex-col items-center justify-center w-full h-full">
-	<div class="flex flex-col items-center p-4 shadow-xl rounded-xl bg-black/30">
-		<h1 class="p-4 text-3xl font-bold">{$t('admin.user.createUser')}</h1>
-		<div class="flex flex-col gap-4 p-4 text-center border-t">
-			<div class="flex flex-col gap-4">
-				<div class="w-full">
-					<label for="username" class="text-lg font-thin">{$t('login.username')}</label>
-					<input
-						bind:value={formData.username}
-						pattern={'[a-zA-Z0-9]{3,}'}
-						required
-						name="username"
-						placeholder="Super Snoup"
-						class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white"
-					/>
-				</div>
-				<div class="w-full">
-					<label for="password" class="text-lg font-thin">{$t('login.password')}</label>
-					<input
-						bind:value={formData.password}
-						required
-						placeholder="Snoup mange des pommes tous les matins"
-						type="password"
-						name="password"
-						class="w-full p-4 border-b placeholder:font-thin placeholder:italic focus:border-white bg-black/0"
-					/>
-				</div>
-			</div>
-			<button
+<div class="flex flex-col items-center justify-center text-gray-100">
+	<div class="w-fit p-4 flex flex-col items-center shadow-xl rounded-xl bg-black/30">
+		<h1 class="py-4 text-3xl font-semibold">{$t('admin.user.createUser')}</h1>
+		<div class="w-full min-w-80 flex flex-col gap-4 p-4 text-center border-t">
+			<Input
+				labelClass="w-full"
+				name="username"
+				bind:value={formData.username}
+				pattern={'[a-zA-Z0-9]{3,}'}
+				required
+				label={$t('login.username')}
+				placeholder="Super Snoup"
+			/>
+			<Input
+				labelClass="w-full"
+				name="password"
+				bind:value={formData.password}
+				required
+				type="password"
+				label={$t('login.password')}
+				placeholder="Snoup mange des pommes tous les matins"
+			/>
+			<Button
 				type="submit"
 				disabled={!validForm}
 				onclick={createUser}
-				class="self-center px-4 py-2 text-lg text-black transition-all ease-linear bg-white rounded disabled:cursor-not-allowed disabled:opacity-50"
+				variant="primary"
 			>
 				{$t('admin.user.createUser')}
-			</button>
+			</Button>
 		</div>
 	</div>
 </div>

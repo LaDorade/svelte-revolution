@@ -4,6 +4,7 @@
     "administration": "Administration",
     "youAreAdmin": "Vous êtes admin",
     "debugPanel": "Panneau de debug",
+    "controlPanel": "Contrôle de la session",
     "event": {
       "addEvent": "Ajouter un événement",
       "triggerEvent": "Déclencher un événement",
@@ -11,6 +12,7 @@
       "creationSuccess": "Événement créé avec succès"
     },
     "session": {
+      "authorizeAudio": "Utiliser l'audio dans les sessions",
       "createSession": "Créer une session",
       "endSession": "Terminer la session",
       "name": "Nom de la session",
@@ -43,6 +45,11 @@
       "creationSuccess": "Utilisateur créé avec succès"
     }
   },
+  "form": {
+    "notRequired": "Non requis",
+    "submit": "Envoyer",
+    "send": "Envoyer"
+  },
   "login": {
     "login": "Connexion",
     "logout": "Déconnexion",
@@ -70,7 +77,10 @@
     "nodeInformation": "Informations sur le nœud",
     "from": "De :",
     "noNodeSelected": "Aucun nœud sélectionné",
-    "eventHidden": "Événement pour un autre camp"
+    "eventHidden": "Événement pour un autre camp",
+	"replyingTo": "Répondre à",
+	"contribute": "Contribuer",
+	"addAudio": "Ajouter un fichier audio"
   },
   "scenario": {
     "scenario": "Scénario",
@@ -198,7 +208,8 @@
     "end": "Terminer",
     "success": "Succès",
     "or": "ou",
-    "soon": "Bientôt"
+    "soon": "Bientôt",
+    "send": "Envoyer"
   },
   "errors": {
     "returnInSafePlace": "Retourner dans un endroit sûr",

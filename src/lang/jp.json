@@ -4,7 +4,14 @@
     "administration": "管理",
     "youAreAdmin": "あなたは管理者です",
     "debugPanel": "デバッグパネル",
+    "event": {
+      "addEvent": "イベントを追加",
+      "triggerEvent": "イベントを発動",
+      "createEvent": "イベントを作成",
+      "creationSuccess": "イベントが正常に作成されました"
+    },
     "session": {
+      "authorizeAudio": "セッションでオーディオを使用することを許可する",
       "createSession": "セッションを作成",
       "endSession": "セッションを終了",
       "name": "セッション名",
@@ -13,7 +20,9 @@
       "image": "画像",
       "creationSuccess": "セッションが正常に作成されました",
       "createTheSession": "セッションを作成",
-      "goto": "セッションへ移動"
+      "goto": "セッションへ移動",
+      "preview": "セッションのプレビュー",
+      "aiScenarios": "AIシナリオ"
     },
     "scenario": {
       "language": "言語",
@@ -34,6 +43,11 @@
       "createUser": "ユーザーを作成",
       "creationSuccess": "ユーザーが正常に作成されました"
     }
+  },
+  "form": {
+    "notRequired": "不要",
+    "submit": "送信",
+    "send": "送信"
   },
   "login": {
     "login": "ログイン",
@@ -62,7 +76,9 @@
     "nodeInformation": "ノード情報",
     "from": "送信者：",
     "noNodeSelected": "ノードが選択されていません",
-    "eventHidden": "別のチーム向けのイベント"
+    "eventHidden": "別のチーム向けのイベント",
+    "replyingTo": "返信先",
+    "contribute": "投稿する"
   },
   "scenario": {
     "scenario": "シナリオ",
@@ -131,6 +147,7 @@
     "footer": {
       "citation": "ほんの少し前まで生きていて揺るぎないように見えた表現が、突然消えることがある。それはそれを生み出した状況と共に消え、一日化石として証言するだろう。",
       "ciationInfos": "",
+      "citationInfo": "クレンペラー『LTI―第三帝国の言語』1947年",
       "mainText": "BⱯBEL RËVOLUㅏIONは、インタラクティブで協力的な多言語ディストピアストーリーです。この創作は、生物多様性の劣化と言語的および文化的多様性の劣化との関係を探求しようとしています。",
       "techUsed": "使用技術",
       "devAndDesign": "開発とデザイン",
@@ -170,7 +187,8 @@
     "newMessageBy": "新しいメッセージ："
   },
   "ia": {
-    "connected": "AIが接続されています"
+    "connected": "AIが接続されています",
+    "ia": "人工知能"
   },
   "misc": {
     "add": "追加",
@@ -195,7 +213,31 @@
     "missingTitle": "タイトルがありません",
     "missingText": "テキストがありません",
     "missingAuthor": "作者がありません",
+    "missingFirstNode": "最初のノードがありません",
+    "addNode": {
+      "missingParent": "親ノードがありません",
+      "missingSession": "セッションがありません",
+      "missingSide": "陣営がありません"
+    },
+    "createScenario": {
+      "missingFirstNodeTitle": "最初のノードのタイトルがありません",
+      "missingFirstNodeText": "最初のノードのテキストがありません",
+      "missingFirstNodeAuthor": "最初のノードの作者がありません",
+      "missingEventTitle": "イベントのタイトルがありません",
+      "missingEventText": "イベントのテキストがありません",
+      "missingEndTitle": "エンディングのタイトルがありません",
+      "missingEndText": "エンディングのテキストがありません"
+    },
+    "scenario": {
+      "notFound": "シナリオが見つかりません",
+      "notValid": "シナリオは有効ではありません"
+    },
     "internalError": "内部エラー",
     "unauthorized": "許可されていません"
+  },
+  "print": {
+    "print": "印刷",
+    "returnToGraph": "グラフに戻る",
+    "printTitle": "印刷"
   }
 }

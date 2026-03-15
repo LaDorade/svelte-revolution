@@ -25,23 +25,27 @@ export async function createNewEvents(
 
 	await createNode(
 		pb,
-		events.qg.title,
-		events.qg.text,
-		events.qg.author,
-		sessionId,
-		String(triggerNode.id), // parent
-		'event', // type
-		qgSide ? qgSide.id : '' // side
+		{
+			title: events.qg.title,
+			text: events.qg.text,
+			author: events.qg.author,
+			session: sessionId,
+			parent: String(triggerNode.id), // parent
+			type: 'event', // type
+			side: qgSide ? qgSide.id : '' // side
+		}
 	);
 	await createNode(
 		pb,
-		events.terrain.title,
-		events.terrain.text,
-		events.terrain.author,
-		sessionId,
-		String(triggerNode.id),
-		'event',
-		terrainSide ? terrainSide.id : ''
+		{
+			title: events.terrain.title,
+			text: events.terrain.text,
+			author: events.terrain.author,
+			session: sessionId,
+			parent: String(triggerNode.id),
+			type: 'event',
+			side: terrainSide ? terrainSide.id : ''
+		}
 	);
 }
 

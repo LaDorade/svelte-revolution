@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Base from './Base.svelte';
 	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	type Props = HTMLInputAttributes & {
@@ -15,21 +16,18 @@
 	}: Props = $props();
 </script>
 
-<label class={[
-	'text-gray-50',
-	'flex flex-col items-start w-full gap-2',
-	'bg-black/50 p-4 rounded-lg',
-	labelClass
-]}>
-	{label}
+<Base {label} {labelClass}>
 	<input
 		class={[
-			'ml-2 w-full border-b border-gray-300 focus:border-gray-100 focus:outline-none',
-			'text-gray-50 placeholder:text-gray-500'
+			'w-full border-b border-gray-500 focus:border-gray-100 focus:outline-none',
+			'text-gray-50 placeholder:text-gray-700',
+			'h-full',
+			'read-only:bg-transparent read-only:border-gray-700 read-only:text-gray-500',
+			'read-only:focus:border-gray-700 read-only:focus:ring-0',
 		]}
 		type={type}
 		bind:value
 		placeholder={placeholder}
 		{...rest}
 	/>
-</label>
+</Base>
