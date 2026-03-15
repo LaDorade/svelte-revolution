@@ -208,7 +208,7 @@
 			<div>
 				<div class="text-lg font-semibold">{$t('home.footer.devAndDesign')}</div>
 				<div class="text-primary-500 text-balance">
-					Mathis Jung, Eileen Lorenzo, Eva Guignabodet, Florestan Biaux, Benoît Chevillon, Lucas D'Aquaro,
+					Mathis Jung, Eileen Lorenzo, Eric Bjarstal, Sacha Malaterre, Eva Guignabodet, Florestan Biaux, Benoît Chevillon, Lucas D'Aquaro,
 					Solène Desvaux de Marigny, Ismaïl Kadiri, Mathilde Lange, Claire Malgonne, Gabrielle Van de Vijver
 				</div>
 			</div>
