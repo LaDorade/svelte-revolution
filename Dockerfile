@@ -2,13 +2,13 @@ FROM node:23
 
 WORKDIR /app
 
-RUN npm install -g bun
+RUN npm install -g pnpm
 
-COPY package.json bun.lockb ./
-RUN bun install
+COPY package.json pnpm.* ./
+RUN pnpm i
 
 COPY . .
-RUN bun run build
+RUN pnpm build
 
 EXPOSE 8080
-CMD ["bun", "run", "start:remote"]
+CMD ["pnpm", "start:remote"]

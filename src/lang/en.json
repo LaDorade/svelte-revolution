@@ -46,7 +46,8 @@
   },
   "form": {
     "notRequired": "Not required",
-    "submit": "Send"
+    "submit": "Send",
+    "send": "Send"
   },
   "login": {
     "login": "Login",

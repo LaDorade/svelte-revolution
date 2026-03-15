@@ -46,7 +46,8 @@
   },
   "form": {
     "notRequired": "不要",
-    "submit": "送信"
+    "submit": "送信",
+    "send": "送信"
   },
   "login": {
     "login": "ログイン",

@@ -46,7 +46,8 @@
   },
   "form": {
     "notRequired": "No requerido",
-    "submit": "Enviar"
+    "submit": "Enviar",
+    "send": "Enviar"
   },
   "login": {
     "login": "Iniciar sesión",
