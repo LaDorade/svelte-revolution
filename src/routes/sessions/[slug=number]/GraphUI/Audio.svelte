@@ -2,6 +2,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import Button from '$components/Button.svelte';
 	import { Pause, Play, Volume1, Volume2, VolumeOff } from 'lucide-svelte';
+	import { onMount } from "svelte";
 
 	interface Props {
 		audioPath: string;
@@ -14,6 +15,16 @@
 	let duration = $state(0);
 	let paused = $state(true);
 	let volume = $state(1);
+
+	function onVolumeChange() {
+	  localStorage.setItem("audioVolume", String(volume));
+	}
+	onMount(() => {
+	  const audioVolume = localStorage.getItem("audioVolume");
+	  if (!audioVolume) return;
+
+	  volume = Number(audioVolume);
+	});
 </script>
 
 <div class="flex items-center gap-2 w-full border border-gray-800 rounded-lg p-2">
@@ -57,6 +68,7 @@
 				max="1"
 				step="0.01"
 				bind:value={volume}
+				onchange={onVolumeChange}
 				class={[
 					'appearance-none w-1 h-20 rounded-full bg-gray-700 cursor-pointer [&::-webkit-slider-thumb]:appearance-none',
 					'[&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full',

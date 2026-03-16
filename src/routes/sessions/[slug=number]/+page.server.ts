@@ -35,8 +35,13 @@ export const actions: Actions = {
 				});
 			}
 
-			const censorResponse = await censorNode(nodeData);
-			nodeData = censorResponse.node;
+			// maybe cache the session data to avoid a round trip on every added node
+			const sessionData = await pb.collection("Session").getOne(nodeData.session, {expand: ['scenario']});
+			let censorResponse: typeof nodeData | null = null;
+			if (sessionData.expand.scenario.ai) {
+			  censorResponse = await censorNode(nodeData);
+			  nodeData = censorResponse.node;
+			}
 
 			const node = await createNode(
 				pb,
@@ -51,24 +56,25 @@ export const actions: Actions = {
 					audio: nodeData.audio
 				}
 			);
+			if (censorResponse) {
+			  if (censorResponse?.triggerEvent && censorResponse.events) {
+				  try {
+					  await createNewEvents(pb, nodeData.session, censorResponse.events, node);
+				  } catch (e) {
+					  // TODO: Handle error
+					  console.error(e);
+				  }
+			  }
 
-			if (censorResponse.triggerEvent && censorResponse.events) {
-				try {
-					await createNewEvents(pb, nodeData.session, censorResponse.events, node);
-				} catch (e) {
-					// TODO: Handle error
-					console.error(e);
-				}
+			  if (censorResponse?.triggerEnd) {
+				  try {
+					  await triggerEnd(pb, nodeData.session, censorResponse.triggerEnd);
+				  } catch (e) {
+					  console.error(e);
+				  }
+			  }
 			}
-
-			if (censorResponse.triggerEnd) {
-				try {
-					await triggerEnd(pb, nodeData.session, censorResponse.triggerEnd);
-				} catch (e) {
-					console.error(e);
-				}
-			}
-
+			
 			return {
 				status: 200,
 				success: true,

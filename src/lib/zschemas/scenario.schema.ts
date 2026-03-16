@@ -45,7 +45,7 @@ export const scenarioSchema = z.object({
 	prologue: z
 		.string()
 		.min(3, { message: 'Scenario prologue must be at least 3 characters long' })
-		.max(500, { message: 'Scenario prologue must be at most 500 characters long' }),
+		.max(5000, { message: 'Scenario prologue must be at most 5000 characters long' }),
 	lang: z.enum([...availableLocales], { message: 'Invalid scenario language' }),
 	ai: z.boolean().optional()
 });
