@@ -2,7 +2,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import Button from '$components/Button.svelte';
 	import { Pause, Play, Volume1, Volume2, VolumeOff } from 'lucide-svelte';
-	import { onMount } from "svelte";
+	import { onMount } from 'svelte';
 
 	interface Props {
 		audioPath: string;
@@ -17,13 +17,13 @@
 	let volume = $state(1);
 
 	function onVolumeChange() {
-	  localStorage.setItem("audioVolume", String(volume));
+		localStorage.setItem('audioVolume', String(volume));
 	}
 	onMount(() => {
-	  const audioVolume = localStorage.getItem("audioVolume");
-	  if (!audioVolume) return;
+		const audioVolume = localStorage.getItem('audioVolume');
+		if (!audioVolume) return;
 
-	  volume = Number(audioVolume);
+		volume = Number(audioVolume);
 	});
 </script>
 

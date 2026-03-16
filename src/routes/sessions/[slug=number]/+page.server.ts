@@ -36,11 +36,11 @@ export const actions: Actions = {
 			}
 
 			// maybe cache the session data to avoid a round trip on every added node
-			const sessionData = await pb.collection("Session").getOne(nodeData.session, {expand: ['scenario']});
-			let censorResponse: typeof nodeData | null = null;
-			if (sessionData.expand.scenario.ai) {
-			  censorResponse = await censorNode(nodeData);
-			  nodeData = censorResponse.node;
+			const sessionData = await pb.collection('Session').getOne(nodeData.session, {expand: 'scenario'});
+			let censorResponse: Awaited<ReturnType<typeof censorNode>> | null = null;
+			if (sessionData.expand?.scenario.ai) {
+				censorResponse = await censorNode(nodeData);
+				nodeData = { ...nodeData, ...censorResponse.node };
 			}
 
 			const node = await createNode(
