@@ -12,13 +12,13 @@ IA_SERVER_URL=http://localhost:8000
 
 ## Lancer l'ia
 
-Une IA **placeholder** en RUST est déjà présente dans le fichier ./ai/. On peut la lancer avec la commande suivante :
+Le serveur IA est écrit en **Go** et se trouve dans `./ia_server/`. On peut le lancer avec la commande suivante :
 
 ```sh
-bun run ia
+pnpm run ia
 ```
 
-> Note: Il faut avoir installé RUST sur sa machine pour pouvoir lancer l'IA.
+> Note: Il faut avoir installé [Go](https://go.dev/) sur sa machine pour pouvoir lancer l'IA.
 
 ## Tester l'IA
 
