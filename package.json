@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ./build/index.js",
     "start:remote": "node --env-file=.env.prod ./build/index.js",
-    "ia": "cd ./ia_server && cargo run",
+    "ia": "cd ./ia_server && go run ./cmd/lauchServer/",
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",

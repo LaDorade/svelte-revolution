@@ -1,5 +1,7 @@
 import adapterNode from '@sveltejs/adapter-node';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local', override: true });
+dotenv.config();
 
 const checkOrigin = process.env.CSRF_CHECK_ORIGIN === 'true';
 
