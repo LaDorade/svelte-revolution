@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-ARG PB_VERSION=0.26.6
+ARG PB_VERSION=0.36.5
 
 WORKDIR /app
 
