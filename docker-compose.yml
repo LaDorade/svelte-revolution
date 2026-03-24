@@ -13,6 +13,14 @@ services:
         volumes:
             - ia-server-data:/data
 
+    pocketbase:
+        build: ./db
+        container_name: pocketbase_c
+        ports:
+            - '8090:8090'
+        volumes:
+            - pocketbase-data:/app/pb_data
+
 volumes:
     pocketbase-data:
     pocketbase-migration:

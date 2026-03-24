@@ -57,7 +57,7 @@ export async function createSession(
 		name: createData.name,
 		scenario: createData.scenario,
 		author: createData.author,
-		slug: Math.max(...sessions.map(s => s.slug || 0)) + 1,
+		slug: sessions.length ? Math.max(...sessions.map(s => s.slug || 0)) + 1 : 1,
 		public: true,
 		visible: true,
 		completed: false,

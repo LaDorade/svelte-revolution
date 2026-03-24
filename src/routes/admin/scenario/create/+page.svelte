@@ -8,6 +8,7 @@
 	import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
 	import { Sparkles, TriangleAlert } from 'lucide-svelte';
 	import { PreviewGraph } from '$stores/graph/Classes/PreviewGraph.svelte';
+	import { pb } from '$lib/client/pocketbase';
 	import type { z } from 'zod';
 	import type { ActionData } from './$types';
 	import type { PreviewNode } from '$types/pocketBase/TableTypes';
@@ -427,6 +428,8 @@
 		>
 			{$t('admin.scenario.createYourScenario')}
 		</button>
+
+		<input type="hidden" name="pb_cookie" value={pb.authStore.exportToCookie()} />
 
 		<!-- Errors -->
 		<div class="h-36 p-4 rounded-md overflow-auto">
