@@ -1,0 +1,40 @@
+{
+  "title": "The Oracle of Delphi",
+  "prologue": "You have climbed the marble steps to the Oracle's chamber. Steam hisses from a fissure in the floor. The Oracle waits, eyes closed, until someone among you names the truth she has been listening for.",
+  "lang": "en",
+  "firstNode": {
+    "title": "The Oracle waits",
+    "text": "\"Speak,\" she murmurs. \"Tell me what you know of yourselves.\"",
+    "author": "The Oracle"
+  },
+  "ai": true,
+  "sides": [
+    { "title": "Seekers" },
+    { "title": "Skeptics" }
+  ],
+  "events": [
+    {
+      "title": "The brazier flares",
+      "text": "Green flames leap from the brazier, casting long shadows.",
+      "author": "The Oracle"
+    }
+  ],
+  "ends": [
+    {
+      "title": "The truth is named",
+      "text": "The Oracle opens her eyes. \"Yes,\" she says. \"You have named it. Go now — the answer was always inside you.\" She bows her head. The chamber empties."
+    }
+  ],
+  "aiConfig": {
+    "vision": "The AI Game Master listens silently for one specific philosophical truth: a player must explicitly acknowledge that knowledge of oneself — self-knowledge — is the highest form of wisdom. Until that exact idea is voiced, nothing happens. When it is voiced, the Oracle ends the session.",
+    "capabilities": ["canEndSession"],
+    "script": {
+      "bannedWords": [],
+      "triggerRules": [],
+      "endCondition": {
+        "condition": "A player explicitly states that knowing oneself, or self-knowledge, is the highest wisdom or the most important thing to know.",
+        "endTitle": "The truth is named"
+      }
+    }
+  }
+}

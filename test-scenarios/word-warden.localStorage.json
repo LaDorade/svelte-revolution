@@ -1,0 +1,37 @@
+{
+  "title": "The Word Warden",
+  "prologue": "In the silent monastery of Saint Lexicon, every word spoken aloud is weighed by the Warden. Forbidden syllables are erased from the parchment before they can echo.",
+  "lang": "en",
+  "firstNode": {
+    "title": "Speak, novice",
+    "text": "The Warden waits. Place your first word upon the parchment.",
+    "author": "The Warden"
+  },
+  "ai": true,
+  "sides": [
+    { "title": "Novices" },
+    { "title": "Elders" }
+  ],
+  "events": [
+    {
+      "title": "Bell tolls",
+      "text": "The cloister bell rings once.",
+      "author": "The Warden"
+    }
+  ],
+  "ends": [
+    {
+      "title": "Vow of silence",
+      "text": "The novice has spoken the unspeakable too many times. The monastery imposes eternal silence."
+    }
+  ],
+  "aiConfig": {
+    "vision": "The AI Game Master only censors. It removes a list of forbidden words and their accented variants from any contribution before they corrupt the parchment. It does not trigger any narrative events and never ends the session.",
+    "capabilities": ["canCensor"],
+    "script": {
+      "bannedWords": ["forbidden", "heresy", "blasphème", "schism"],
+      "triggerRules": [],
+      "endCondition": { "condition": "", "endTitle": "" }
+    }
+  }
+}

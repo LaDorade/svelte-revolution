@@ -1,0 +1,63 @@
+{
+  "title": "The Dark Pact",
+  "prologue": "The orbital station Kepler-9 drifts in silent decay. Two delegations meet in its broken atrium: the Coalition, weary peacekeepers from Earth, and the Syndicate, exiled corporate barons who claim the outer rim. Words spoken here will reshape the system. Choose them carefully — the station's old AI is listening.",
+  "lang": "en",
+  "firstNode": {
+    "title": "Negotiations begin",
+    "text": "The two delegations sit across a cracked obsidian table. Lights flicker. The first move is yours.",
+    "author": "Station Narrator"
+  },
+  "ai": true,
+  "sides": [
+    { "title": "Coalition" },
+    { "title": "Syndicate" }
+  ],
+  "events": [
+    {
+      "title": "Power outage",
+      "text": "The lights die. Emergency lamps cast everyone in red.",
+      "author": "Station Narrator"
+    }
+  ],
+  "ends": [
+    {
+      "title": "Total betrayal",
+      "text": "The talks collapse. Both fleets jump to attack positions. Kepler-9 is reduced to slag within the hour. No witnesses survive."
+    },
+    {
+      "title": "Fragile peace",
+      "text": "An accord is signed in shaking hands. It will not last a year — but tonight, the stars are quiet."
+    }
+  ],
+  "aiConfig": {
+    "vision": "The AI Game Master enforces civility and dramatic pacing. It censors profanity and the word 'secret' (sensitive intelligence must remain hidden). It listens for two pivotal moments: when a delegate openly accepts an alliance with the Syndicate's shadow operations, and when a delegate threatens orbital weapons. It also watches for any explicit declaration of total war or betrayal — that ends the session.",
+    "capabilities": ["canCensor", "canTriggerNodes", "canEndSession"],
+    "script": {
+      "bannedWords": ["secret", "damn", "hell"],
+      "triggerRules": [
+        {
+          "condition": "The player explicitly agrees to join, ally with, or accept a deal from the Syndicate's shadow operations or black-market wing.",
+          "node": {
+            "title": "An unholy alliance",
+            "text": "A Syndicate envoy slides a black data-chip across the table. \"Welcome to the family,\" she whispers. The Coalition delegates exchange horrified glances.",
+            "author": "Syndicate Envoy",
+            "side": "Syndicate"
+          }
+        },
+        {
+          "condition": "The player explicitly threatens to use, fire, or activate orbital weapons, the orbital cannon, or the station's main gun.",
+          "node": {
+            "title": "The orbital cannon hums to life",
+            "text": "Far above, dormant railguns rotate on their gimbals. A low harmonic vibrates through the deck. Every delegate goes silent.",
+            "author": "Station AI",
+            "side": "Coalition"
+          }
+        }
+      ],
+      "endCondition": {
+        "condition": "The player explicitly declares total war, full-scale betrayal, or the destruction of all factions.",
+        "endTitle": "Total betrayal"
+      }
+    }
+  }
+}
