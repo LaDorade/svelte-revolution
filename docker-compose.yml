@@ -10,8 +10,17 @@ services:
         container_name: iaserver_c
         ports:
             - 8000:8000
+        environment:
+            - DB_URL=http://pocketbase:8090
+            - PB_BOT_EMAIL=${PB_BOT_EMAIL}
+            - PB_BOT_PASSWORD=${PB_BOT_PASSWORD}
+            - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+            - MISTRAL_MODEL=mistral-small-latest
+        depends_on:
+            - pocketbase
         volumes:
             - ia-server-data:/data
+        restart: unless-stopped
 
     pocketbase:
         build: ./db

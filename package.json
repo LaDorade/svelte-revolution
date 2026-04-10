@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ./build/index.js",
     "start:remote": "node --env-file=.env.prod ./build/index.js",
-    "ia": "cd ./ia_server && go run ./cmd/lauchServer/",
+    "ia": "cd ./ia_server && (test -d .venv || python3 -m venv .venv) && .venv/bin/pip install -q -e . && .venv/bin/uvicorn app.main:app --reload --port 8000",
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
