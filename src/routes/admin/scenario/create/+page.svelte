@@ -12,6 +12,8 @@
 	import type { z } from 'zod';
 	import type { ActionData } from './$types';
 	import type { PreviewNode } from '$types/pocketBase/TableTypes';
+	import type { AIConfig } from '$types/ai';
+	import AiGameMasterConfig from '$components/admin/AiGameMasterConfig.svelte';
 
 	interface Props {
 		form: ActionData;
@@ -53,6 +55,26 @@
 				text: ''
 			}
 		]
+	});
+
+	const aiConfig: AIConfig = $state({
+		vision: '',
+		capabilities: [],
+		script: {
+			bannedWords: [],
+			triggerRules: [],
+			endCondition: { condition: '', endTitle: '' }
+		}
+	});
+
+	const aiConfigJson = $derived(formData.ai ? JSON.stringify(aiConfig) : '');
+
+	const aiIssues = $derived.by(() => {
+		if (!formData.ai) return [];
+		const result: string[] = [];
+		if (!aiConfig.vision || aiConfig.vision.trim().length < 10) result.push('ia.visionTooShort');
+		if (aiConfig.capabilities.length === 0) result.push('ia.noCapabilities');
+		return result;
 	});
 
 	const issues = $derived.by(() => {
@@ -128,6 +150,11 @@
 			formData.sides = parsed.sides;
 			formData.events = parsed.events;
 			formData.ends = parsed.ends;
+			if (parsed.aiConfig) {
+				aiConfig.vision = parsed.aiConfig.vision ?? '';
+				aiConfig.capabilities = parsed.aiConfig.capabilities ?? [];
+				aiConfig.script = parsed.aiConfig.script ?? { bannedWords: [], triggerRules: [], endCondition: { condition: '', endTitle: '' } };
+			}
 			if (preview) {
 				generateNodes();
 			} else {
@@ -135,7 +162,7 @@
 			}
 		}
 		$effect(() => {
-			localStorage.setItem('scenario', JSON.stringify(formData));
+			localStorage.setItem('scenario', JSON.stringify({ ...formData, aiConfig }));
 			if (preview) {
 				generateNodes();
 			} else {
@@ -215,7 +242,7 @@
 		<h3 class=" text-white text-3xl text-center w-full mt-5">
 			{$t('ia.ia')}
 		</h3>
-		<div class="flex">
+		<div class="flex w-full">
 			<label class="standardLabel flex gap-4">
 				{$t('admin.scenario.useAi')}
 				<input
@@ -227,6 +254,10 @@
 				/>
 			</label>
 		</div>
+		{#if formData.ai}
+			<AiGameMasterConfig {aiConfig} sides={formData.sides} ends={formData.ends} lang={formData.lang} />
+			<input type="hidden" name="aiConfig" value={aiConfigJson} />
+		{/if}
 
 		<!-- First node -->
 		<h3 class=" text-white text-3xl text-center w-full mt-5">
@@ -424,7 +455,7 @@
 		<button
 			class="rounded-md border px-4 py-2 h-fit disabled:cursor-not-allowed disabled:text-gray-500 disabled:border-gray-500 bg-black text-gray-50"
 			type="submit"
-			disabled={Boolean(issues.length)}
+			disabled={Boolean(issues.length) || Boolean(aiIssues.length)}
 		>
 			{$t('admin.scenario.createYourScenario')}
 		</button>

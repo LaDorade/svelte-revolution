@@ -188,7 +188,27 @@
   },
   "ia": {
     "connected": "AI is connected",
-    "ia": "Artificial Intelligence"
+    "ia": "Artificial Intelligence",
+    "vision": "AI Vision",
+    "visionPlaceholder": "Describe the role you want the AI to play in your scenario...",
+    "analyzeWithMistral": "Analyze with Mistral",
+    "analyzing": "Analyzing...",
+    "analysisResult": "Analysis result",
+    "notFullySupported": "Some aspects of your vision may not be fully supported by the current platform.",
+    "analysisError": "AI analysis failed",
+    "capabilities": "AI Capabilities",
+    "canCensor": "Content moderation (block player contributions)",
+    "canTriggerNodes": "Trigger nodes in response to player actions",
+    "canEndSession": "Trigger session ending",
+    "bannedWords": "Banned words",
+    "triggerRules": "Trigger rules",
+    "triggerCondition": "Trigger condition",
+    "endCondition": "End condition",
+    "visionTooShort": "AI vision must be at least 10 characters long",
+    "noCapabilities": "Select at least one AI capability",
+    "canCensorDesc": "The AI will automatically hide or redact player contributions that contain forbidden words or topics.",
+    "canTriggerNodesDesc": "The AI will publish a pre-written story node when a player's contribution matches a defined condition.",
+    "canEndSessionDesc": "The AI will trigger one of the scenario's endings when a specific condition is met."
   },
   "misc": {
     "add": "Add",

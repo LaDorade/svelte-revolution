@@ -78,9 +78,9 @@
     "from": "De :",
     "noNodeSelected": "Aucun nœud sélectionné",
     "eventHidden": "Événement pour un autre camp",
-	"replyingTo": "Répondre à",
-	"contribute": "Contribuer",
-	"addAudio": "Ajouter un fichier audio"
+    "replyingTo": "Répondre à",
+    "contribute": "Contribuer",
+    "addAudio": "Ajouter un fichier audio"
   },
   "scenario": {
     "scenario": "Scénario",
@@ -190,7 +190,27 @@
   },
   "ia": {
     "connected": "L'IA est connectée",
-    "ia": "Inteligence Artificielle"
+    "ia": "Inteligence Artificielle",
+    "vision": "Vision de l'IA",
+    "visionPlaceholder": "Décrivez le rôle que vous souhaitez donner à l'IA dans votre scénario...",
+    "analyzeWithMistral": "Analyser avec Mistral",
+    "analyzing": "Analyse en cours...",
+    "analysisResult": "Résultat de l'analyse",
+    "notFullySupported": "Certains aspects de votre vision ne sont peut-être pas entièrement supportés par la plateforme.",
+    "analysisError": "Échec de l'analyse IA",
+    "capabilities": "Capacités de l'IA",
+    "canCensor": "Modération de contenu (bloquer des contributions)",
+    "canTriggerNodes": "Déclencher des nœuds en réponse aux actions des joueurs",
+    "canEndSession": "Déclencher la fin de la session",
+    "bannedWords": "Mots interdits",
+    "triggerRules": "Règles de déclenchement",
+    "triggerCondition": "Condition de déclenchement",
+    "endCondition": "Condition de fin",
+    "visionTooShort": "La vision de l'IA doit faire au moins 10 caractères",
+    "noCapabilities": "Sélectionnez au moins une capacité de l'IA",
+    "canCensorDesc": "L'IA masquera ou censurera automatiquement les contributions des joueurs contenant des mots ou sujets interdits.",
+    "canTriggerNodesDesc": "L'IA publiera un nœud pré-écrit lorsqu'une contribution d'un joueur correspond à une condition définie.",
+    "canEndSessionDesc": "L'IA déclenchera l'une des fins du scénario lorsqu'une condition spécifique est remplie."
   },
   "misc": {
     "add": "Ajouter",

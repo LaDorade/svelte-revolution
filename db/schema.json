@@ -881,6 +881,20 @@
         "type": "bool"
       },
       {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "aiconfig001",
+        "max": 0,
+        "min": 0,
+        "name": "aiConfig",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
         "hidden": false,
         "id": "autodate2990389176",
         "name": "created",

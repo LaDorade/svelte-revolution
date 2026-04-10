@@ -188,7 +188,27 @@
   },
   "ia": {
     "connected": "La IA está conectada",
-    "ia": "Inteligencia Artificial"
+    "ia": "Inteligencia Artificial",
+    "vision": "Visión de la IA",
+    "visionPlaceholder": "Describe el rol que quieres que la IA tenga en tu escenario...",
+    "analyzeWithMistral": "Analizar con Mistral",
+    "analyzing": "Analizando...",
+    "analysisResult": "Resultado del análisis",
+    "notFullySupported": "Algunos aspectos de tu visión pueden no ser totalmente compatibles con la plataforma.",
+    "analysisError": "El análisis de IA falló",
+    "capabilities": "Capacidades de la IA",
+    "canCensor": "Moderación de contenido (bloquear contribuciones)",
+    "canTriggerNodes": "Activar nodos en respuesta a las acciones de los jugadores",
+    "canEndSession": "Activar el fin de sesión",
+    "bannedWords": "Palabras prohibidas",
+    "triggerRules": "Reglas de activación",
+    "triggerCondition": "Condición de activación",
+    "endCondition": "Condición de fin",
+    "visionTooShort": "La visión de la IA debe tener al menos 10 caracteres",
+    "noCapabilities": "Selecciona al menos una capacidad de la IA",
+    "canCensorDesc": "La IA ocultará o censurará automáticamente las contribuciones de los jugadores que contengan palabras o temas prohibidos.",
+    "canTriggerNodesDesc": "La IA publicará un nodo pre-escrito cuando la contribución de un jugador coincida con una condición definida.",
+    "canEndSessionDesc": "La IA activará uno de los finales del escenario cuando se cumpla una condición específica."
   },
   "misc": {
     "add": "Agregar",

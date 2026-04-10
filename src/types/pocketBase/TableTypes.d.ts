@@ -25,6 +25,7 @@ export interface Scenario {
 	prologue: string;
 	lang: Lang;
 	ai?: boolean;
+	aiConfig?: string;
 	firstNodeTitle: string;
 	firstNodeText: string;
 	firstNodeAuthor: string;

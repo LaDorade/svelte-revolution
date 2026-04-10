@@ -1,19 +1,29 @@
-export type AICensorResponse = {
-	isCensored: boolean;
+export type AICapability = 'canCensor' | 'canTriggerNodes' | 'canEndSession';
+
+export interface AINodeDef {
 	title: string;
 	text: string;
-	triggerNewEvent: boolean;
-	triggerEnd?: string;
-	events?: {
-		qg: {
-			title: string;
-			text: string;
-			author: string;
-		};
-		terrain: {
-			title: string;
-			text: string;
-			author: string;
-		};
+	author: string;
+	side: string;
+}
+
+export interface AITriggerRule {
+	condition: string;
+	node: AINodeDef;
+}
+
+export interface AIConfig {
+	vision: string;
+	capabilities: AICapability[];
+	script: {
+		bannedWords?: string[];
+		triggerRules?: AITriggerRule[];
+		endCondition?: { condition: string; endTitle: string };
 	};
-};
+}
+
+export interface MistralAnalysisResponse {
+	capabilities: AICapability[];
+	explanation: string;
+	fullySupported: boolean;
+}

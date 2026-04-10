@@ -1,6 +1,7 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import { createEventsAndEnds, createScenario } from '$lib/scenario';
 import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
+import { aiConfigSchema } from '$lib/zschemas/aiConfig.schema';
 import { z } from 'zod';
 import PocketBase from 'pocketbase';
 import { DB_URL } from '$env/static/private';
@@ -35,12 +36,22 @@ export const actions = {
 				events,
 				ends
 			});
+
+			if (parsed.ai && parsed.aiConfig) {
+				try {
+					aiConfigSchema.parse(JSON.parse(parsed.aiConfig));
+				} catch {
+					return fail(400, { error: 'Invalid AI configuration' });
+				}
+			}
+
 			try {
 				const scenarioInDb = {
 					title: parsed.title,
 					prologue: parsed.prologue,
 					lang: parsed.lang,
-					ai: parsed.ai
+					ai: parsed.ai,
+					aiConfig: parsed.aiConfig
 				};
 				const firstNodeInDb = {
 					title: parsed.firstNode.title,
@@ -88,11 +99,13 @@ export const actions = {
 } satisfies Actions;
 
 function parseFormData(data: FormData) {
+	const aiConfigRaw = data.get('aiConfig')?.toString() || undefined;
 	const scenarioData = {
 		title: data.get('title')?.toString(),
 		prologue: data.get('prologue')?.toString(),
 		lang: data.get('lang')?.toString(),
-		ai: Boolean(data.get('useAi'))
+		ai: Boolean(data.get('useAi')),
+		aiConfig: aiConfigRaw
 	};
 
 	const events = data.getAll('eventTitle').map((title, index) => ({
