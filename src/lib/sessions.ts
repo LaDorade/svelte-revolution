@@ -50,7 +50,6 @@ type CreateSession = Pick<Session, 'name' | 'author' | 'scenario' | 'image' | 'u
 export async function createSession(
 	createData: CreateSession
 ) {
-	const scenario = await pb.collection('Scenario').getOne(createData.scenario);
 	const sessions = await pb.collection('Session').getFullList({ fields: 'id, slug' });
 
 	const session = await pb.collection('Session').create({
@@ -65,19 +64,8 @@ export async function createSession(
 		useAudio: createData.useAudio
 	});
 
-	if (scenario.ai) {
-		const cookies = pb.authStore.exportToCookie();
-		const result = await fetch('/api/ai/newAiSession', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ sessionId: session.id, scenarioId: createData.scenario, cookies })
-		});
-		if (!result.ok) {
-			console.error('Error creating AI session:', result);
-		}
-	}
+	// AI sessions are picked up automatically by the Python AI Game Master,
+	// which polls the Node collection — no per-session registration needed.
 
 	return session;
 }

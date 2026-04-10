@@ -44,7 +44,7 @@
 		<h1 class="text-xl font-bold text-center">BⱯBEL RËVOLUㅏION</h1>
 		<h2 class="text-lg font-bold text-center">
 			{$t('sessions.session')} :
-			{data.sessionData.name}
+			{data.session.name}
 		</h2>
 	</div>
 	<div class="print:text-black content flex-1 overflow-y-auto">

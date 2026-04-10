@@ -5,7 +5,7 @@ import { error, type ServerLoad } from '@sveltejs/kit';
 import type { Session } from '$types/pocketBase/TableTypes';
 import type { AdminInfo } from '$stores/session.svelte';
 
-export const load: ServerLoad = async ({ params, fetch }) => {
+export const load: ServerLoad = async ({ params }) => {
 	const session = await getSession(Number(params.slug));
 	const scenario = session.expand?.scenario || null;
 	if (!scenario) {
@@ -17,13 +17,10 @@ export const load: ServerLoad = async ({ params, fetch }) => {
 
 	const sides = await getSides(session.scenario);
 
-	let aiConnected = false;
-	if (session.expand?.scenario?.ai) {
-		const aiHealty = await fetch('/api/ai/health', { method: 'POST' })
-			.then((res) => res.json())
-			.then((res) => res.aiHealthy);
-		aiConnected = aiHealty && session.expand?.scenario?.ai;
-	}
+	// AI is now run by the Python ia_server which subscribes to PocketBase
+	// directly. There is no per-request health check from the frontend — we
+	// surface "connected" as soon as the scenario has AI enabled.
+	const aiConnected = !!session.expand?.scenario?.ai;
 
 	const nodes = pb
 		.collection('Node')
