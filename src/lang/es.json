@@ -208,7 +208,18 @@
     "noCapabilities": "Selecciona al menos una capacidad de la IA",
     "canCensorDesc": "La IA ocultará o censurará automáticamente las contribuciones de los jugadores que contengan palabras o temas prohibidos.",
     "canTriggerNodesDesc": "La IA publicará un nodo pre-escrito cuando la contribución de un jugador coincida con una condición definida.",
-    "canEndSessionDesc": "La IA activará uno de los finales del escenario cuando se cumpla una condición específica."
+    "canEndSessionDesc": "La IA activará uno de los finales del escenario cuando se cumpla una condición específica.",
+    "visionDesc": "Describe el rol de la IA: qué debe vigilar, aplicar y cómo debe comportarse. Esto guía todas sus capacidades.",
+    "bannedWordsDesc": "Palabras que se reemplazarán automáticamente con #### en las contribuciones de los jugadores. No distingue mayúsculas/minúsculas, funciona con acentos.",
+    "triggerRulesDesc": "Cuando la contribución de un jugador coincide con una condición, la IA publica el nodo pre-escrito como evento narrativo. Cada regla se activa como máximo una vez por sesión.",
+    "triggerConditionDesc": "Describe qué debe decir o hacer el jugador para activar este evento. Sé específico — la IA usa esto para evaluar cada contribución.",
+    "triggerNodeDesc": "El contenido del nodo de evento que aparecerá en el grafo narrativo cuando se active esta regla.",
+    "triggerSideDesc": "Para qué bando será visible este evento.",
+    "requiresFired": "Reglas requeridas",
+    "requiresFiredDesc": "Esta regla solo se activará después de que las reglas seleccionadas se hayan activado.",
+    "endConditionDesc": "La IA termina la sesión cuando la contribución de un jugador coincide con esta condición.",
+    "endConditionFieldDesc": "Describe qué debe suceder para que la sesión termine. Sé específico.",
+    "endTitleDesc": "Qué final mostrar cuando se cumpla la condición."
   },
   "misc": {
     "add": "Agregar",
@@ -226,7 +237,8 @@
     "end": "Terminar",
     "success": "Éxito",
     "or": "o",
-    "soon": "Pronto"
+    "soon": "Pronto",
+    "clearForm": "Borrar todos los campos"
   },
   "errors": {
     "returnInSafePlace": "Regresar a un lugar seguro",

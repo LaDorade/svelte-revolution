@@ -210,7 +210,18 @@
     "noCapabilities": "Sélectionnez au moins une capacité de l'IA",
     "canCensorDesc": "L'IA masquera ou censurera automatiquement les contributions des joueurs contenant des mots ou sujets interdits.",
     "canTriggerNodesDesc": "L'IA publiera un nœud pré-écrit lorsqu'une contribution d'un joueur correspond à une condition définie.",
-    "canEndSessionDesc": "L'IA déclenchera l'une des fins du scénario lorsqu'une condition spécifique est remplie."
+    "canEndSessionDesc": "L'IA déclenchera l'une des fins du scénario lorsqu'une condition spécifique est remplie.",
+    "visionDesc": "Décrivez le rôle de l'IA : ce qu'elle doit surveiller, appliquer et comment elle doit se comporter. Cela guide toutes ses capacités.",
+    "bannedWordsDesc": "Mots qui seront automatiquement remplacés par #### dans les contributions des joueurs. Insensible à la casse, fonctionne avec les accents.",
+    "triggerRulesDesc": "Lorsque la contribution d'un joueur correspond à une condition, l'IA publie le nœud pré-écrit comme événement narratif. Chaque règle ne se déclenche qu'une fois par session.",
+    "triggerConditionDesc": "Décrivez ce que le joueur doit dire ou faire pour déclencher cet événement. Soyez précis — l'IA utilise cette description pour évaluer chaque contribution.",
+    "triggerNodeDesc": "Le contenu du nœud événement qui apparaîtra dans le graphe narratif lorsque cette règle se déclenche.",
+    "triggerSideDesc": "Le camp pour lequel cet événement sera visible.",
+    "requiresFired": "Règles requises",
+    "requiresFiredDesc": "Cette règle ne s'activera qu'après le déclenchement des règles sélectionnées.",
+    "endConditionDesc": "L'IA termine la session lorsque la contribution d'un joueur correspond à cette condition.",
+    "endConditionFieldDesc": "Décrivez ce qui doit se passer pour que la session se termine. Soyez précis.",
+    "endTitleDesc": "Quelle fin afficher lorsque la condition est remplie."
   },
   "misc": {
     "add": "Ajouter",
@@ -229,6 +240,7 @@
     "success": "Succès",
     "or": "ou",
     "soon": "Bientôt",
+    "clearForm": "Réinitialiser les champs",
     "send": "Envoyer"
   },
   "errors": {

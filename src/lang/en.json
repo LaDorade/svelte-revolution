@@ -208,7 +208,18 @@
     "noCapabilities": "Select at least one AI capability",
     "canCensorDesc": "The AI will automatically hide or redact player contributions that contain forbidden words or topics.",
     "canTriggerNodesDesc": "The AI will publish a pre-written story node when a player's contribution matches a defined condition.",
-    "canEndSessionDesc": "The AI will trigger one of the scenario's endings when a specific condition is met."
+    "canEndSessionDesc": "The AI will trigger one of the scenario's endings when a specific condition is met.",
+    "visionDesc": "Describe the AI's role: what it should watch for, enforce, and how it should behave. This guides all AI capabilities.",
+    "bannedWordsDesc": "Words that will be automatically replaced with #### in player contributions. Case-insensitive, works with accented variants.",
+    "triggerRulesDesc": "When a player's contribution matches a condition, the AI publishes the pre-written node as a story event. Each rule fires at most once per session.",
+    "triggerConditionDesc": "Describe what the player must say or do to trigger this event. Be specific — the AI uses this to judge each contribution.",
+    "triggerNodeDesc": "The content of the event node that will appear in the story graph when this rule fires.",
+    "triggerSideDesc": "Which side this event will be visible to.",
+    "requiresFired": "Requires rules",
+    "requiresFiredDesc": "This rule will only activate after the selected rules have already fired.",
+    "endConditionDesc": "The AI ends the session when a player's contribution matches this condition.",
+    "endConditionFieldDesc": "Describe what must happen for the session to end. Be specific.",
+    "endTitleDesc": "Which ending to display when the condition is met."
   },
   "misc": {
     "add": "Add",
@@ -226,7 +237,8 @@
     "end": "End",
     "success": "Success",
     "or": "or",
-    "soon": "Soon"
+    "soon": "Soon",
+    "clearForm": "Clear all fields"
   },
   "errors": {
     "returnInSafePlace": "Return to a safe place",

@@ -68,8 +68,21 @@
 	function addTriggerRule() {
 		aiConfig.script.triggerRules = [
 			...(aiConfig.script.triggerRules ?? []),
-			{ condition: '', node: { title: '', text: '', author: '', side: sides[0]?.title ?? '' } }
+			{ condition: '', node: { title: '', text: '', author: '', side: sides[0]?.title ?? '' }, requiresFired: [] }
 		];
+	}
+
+	function toggleRequiresFired(ruleIndex: number, depIndex: number) {
+		const rules = aiConfig.script.triggerRules ?? [];
+		const rule = rules[ruleIndex];
+		if (!rule) return;
+		const deps = rule.requiresFired ?? [];
+		if (deps.includes(depIndex)) {
+			rule.requiresFired = deps.filter((d) => d !== depIndex);
+		} else {
+			rule.requiresFired = [...deps, depIndex];
+		}
+		aiConfig.script.triggerRules = [...rules];
 	}
 	function removeTriggerRule(i: number) {
 		aiConfig.script.triggerRules = (aiConfig.script.triggerRules ?? []).filter(
@@ -85,6 +98,7 @@
 	<div class="flex flex-col gap-2">
 		<label class="standardLabel flex flex-col gap-2">
 			<span class="text-sm text-gray-300">{$t('ia.vision')} *</span>
+			<span class="text-xs text-gray-400">{$t('ia.visionDesc')}</span>
 			<textarea
 				class="appearance-none block rounded w-full h-full p-2 bg-black/0 min-h-24"
 				placeholder={$t('ia.visionPlaceholder')}
@@ -137,6 +151,7 @@
 	{#if showCensor}
 		<div class="flex flex-col gap-3">
 			<h4 class="text-lg font-semibold">{$t('ia.bannedWords')}</h4>
+			<span class="text-xs text-gray-400">{$t('ia.bannedWordsDesc')}</span>
 			<div class="flex flex-wrap gap-2">
 				{#each aiConfig.script.bannedWords ?? [] as _, i (i)}
 					<div class="flex gap-2 items-center">
@@ -172,6 +187,7 @@
 	{#if showTrigger}
 		<div class="flex flex-col gap-3">
 			<h4 class="text-lg font-semibold">{$t('ia.triggerRules')}</h4>
+			<span class="text-xs text-gray-400">{$t('ia.triggerRulesDesc')}</span>
 			{#each aiConfig.script.triggerRules ?? [] as rule, i (i)}
 				<div class="standardLabel flex flex-col gap-3">
 					<div class="flex justify-between items-center">
@@ -186,12 +202,35 @@
 					</div>
 					<label class="standardLabel flex flex-col gap-1">
 						<span class="text-xs text-gray-400">{$t('ia.triggerCondition')}</span>
+						<span class="text-xs text-gray-500">{$t('ia.triggerConditionDesc')}</span>
 						<textarea
 							class="appearance-none block rounded w-full p-2 bg-black/0 min-h-16"
 							placeholder={$t('ia.triggerCondition')}
 							bind:value={rule.condition}
 						></textarea>
 					</label>
+					{#if i > 0 && (aiConfig.script.triggerRules ?? []).length > 1}
+						<div class="standardLabel flex flex-col gap-1">
+							<span class="text-xs text-gray-400">{$t('ia.requiresFired')}</span>
+							<span class="text-xs text-gray-500">{$t('ia.requiresFiredDesc')}</span>
+							<div class="flex flex-wrap gap-2 mt-1">
+								{#each (aiConfig.script.triggerRules ?? []).slice(0, i) as dep, di (di)}
+									<label class="flex items-center gap-1.5 cursor-pointer text-sm">
+										<input
+											type="checkbox"
+											class="rounded"
+											checked={(rule.requiresFired ?? []).includes(di)}
+											onchange={() => toggleRequiresFired(i, di)}
+										/>
+										<span class="text-gray-300">
+											{$t('ia.triggerRules')} {di + 1}{dep.node.title ? ` — ${dep.node.title}` : ''}
+										</span>
+									</label>
+								{/each}
+							</div>
+						</div>
+					{/if}
+					<span class="text-xs text-gray-500 mt-1">{$t('ia.triggerNodeDesc')}</span>
 					<label class="standardLabel flex flex-col gap-1">
 						<span class="text-xs text-gray-400">{$t('scenario.title')}</span>
 						<input
@@ -220,6 +259,7 @@
 					</label>
 					<label class="standardLabel flex flex-col gap-1">
 						<span class="text-xs text-gray-400">{$t('side.side')}</span>
+						<span class="text-xs text-gray-500">{$t('ia.triggerSideDesc')}</span>
 						<select class="rounded w-full p-2 bg-black/0" bind:value={rule.node.side}>
 							{#each sides as side, si (si)}
 								<option value={side.title}>{side.title || 'Side'}</option>
@@ -242,9 +282,11 @@
 	{#if showEnd}
 		<div class="flex flex-col gap-3">
 			<h4 class="text-lg font-semibold">{$t('ia.endCondition')}</h4>
+			<span class="text-xs text-gray-400">{$t('ia.endConditionDesc')}</span>
 			<div class="standardLabel flex flex-col gap-3">
 				<label class="standardLabel flex flex-col gap-1">
 					<span class="text-xs text-gray-400">{$t('ia.endCondition')}</span>
+					<span class="text-xs text-gray-500">{$t('ia.endConditionFieldDesc')}</span>
 					<textarea
 						class="appearance-none block rounded w-full p-2 bg-black/0 min-h-16"
 						placeholder={$t('ia.endCondition')}
@@ -253,11 +295,12 @@
 				</label>
 				<label class="standardLabel flex flex-col gap-1">
 					<span class="text-xs text-gray-400">{$t('scenario.end.end')}</span>
+					<span class="text-xs text-gray-500">{$t('ia.endTitleDesc')}</span>
 					<select
 						class="rounded w-full p-2 bg-black/0"
 						bind:value={aiConfig.script.endCondition!.endTitle}
 					>
-						{#each ends as end (end.title)}
+						{#each ends as end, ei (ei)}
 							<option value={end.title}>{end.title || 'End'}</option>
 						{/each}
 					</select>
