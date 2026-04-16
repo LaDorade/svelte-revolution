@@ -24,7 +24,8 @@ export const aiConfigSchema = z.object({
 						.string()
 						.min(3, { message: 'Trigger condition must be at least 3 characters long' })
 						.max(500),
-					node: aiNodeDefSchema
+					node: aiNodeDefSchema,
+					requiresFired: z.array(z.number().int().min(0)).optional()
 				})
 			)
 			.optional(),

@@ -17,6 +17,7 @@ class AINodeDef(BaseModel):
 class AITriggerRule(BaseModel):
 	condition: str
 	node: AINodeDef
+	requiresFired: list[int] = Field(default_factory=list)
 
 
 class AIEndCondition(BaseModel):

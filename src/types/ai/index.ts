@@ -10,6 +10,7 @@ export interface AINodeDef {
 export interface AITriggerRule {
 	condition: string;
 	node: AINodeDef;
+	requiresFired?: number[];
 }
 
 export interface AIConfig {

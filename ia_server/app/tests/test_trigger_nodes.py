@@ -108,6 +108,64 @@ async def test_already_fired_rule_is_filtered_out():
 
 
 @pytest.mark.asyncio
+async def test_rule_with_unmet_dependency_is_excluded():
+	"""Rule 1 requires rule 0 to have fired, but rule 0 hasn't → rule 1 not in prompt."""
+	pb = AsyncMock()
+	rule0 = _rule("accepts the deal")
+	rule1 = AITriggerRule(
+		condition="refuses the deal",
+		node=AINodeDef(title="Refusal", text="no", author="bot", side="QG"),
+		requiresFired=[0],
+	)
+	cfg = _cfg([rule0, rule1])
+
+	captured_prompts: list[str] = []
+
+	async def fake_chat(system: str, user: str):
+		captured_prompts.append(user)
+		return {"matched_rule_index": None, "reason": "no"}
+
+	with patch("app.capabilities.trigger_nodes.chat_json", side_effect=fake_chat):
+		await trigger_nodes.run(_node(), cfg, {}, {"id": "sc1"}, pb)
+
+	assert len(captured_prompts) == 1
+	# Rule 1 should NOT appear (dependency unmet), only rule 0
+	assert "[0]" in captured_prompts[0]
+	assert "[1]" not in captured_prompts[0]
+
+
+@pytest.mark.asyncio
+async def test_rule_with_met_dependency_is_included():
+	"""Rule 0 has fired → rule 1 (depends on 0) should appear in prompt."""
+	pb = AsyncMock()
+	pb.find_side_id.return_value = "side1"
+	pb.create_node.return_value = {"id": "newnode"}
+	rule0 = _rule("accepts the deal")
+	rule1 = AITriggerRule(
+		condition="refuses the deal",
+		node=AINodeDef(title="Refusal", text="no", author="bot", side="QG"),
+		requiresFired=[0],
+	)
+	cfg = _cfg([rule0, rule1])
+	await state.mark_fired("sess1", ("trigger", 0))
+
+	captured_prompts: list[str] = []
+
+	async def fake_chat(system: str, user: str):
+		captured_prompts.append(user)
+		return {"matched_rule_index": 1, "reason": "match"}
+
+	with patch("app.capabilities.trigger_nodes.chat_json", side_effect=fake_chat):
+		await trigger_nodes.run(_node(), cfg, {}, {"id": "sc1"}, pb)
+
+	assert len(captured_prompts) == 1
+	# Rule 0 already fired (excluded), rule 1 deps met (included)
+	assert "[1]" in captured_prompts[0]
+	assert "[0]" not in captured_prompts[0]
+	pb.create_node.assert_called_once()
+
+
+@pytest.mark.asyncio
 async def test_unknown_side_aborts():
 	pb = AsyncMock()
 	pb.find_side_id.return_value = None

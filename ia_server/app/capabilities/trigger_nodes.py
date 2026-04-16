@@ -46,12 +46,13 @@ async def run(
 	if not rules:
 		return
 
-	# Filter out rules that have already fired in this session.
+	# Filter out rules that have already fired or whose dependencies haven't fired yet.
 	already_fired = await state.fired_set(node.session)
 	pending = [
 		(i, rule)
 		for i, rule in enumerate(rules)
 		if ("trigger", i) not in already_fired
+		and all(("trigger", dep) in already_fired for dep in rule.requiresFired)
 	]
 	if not pending:
 		return

@@ -428,6 +428,88 @@ class TestDarkPact:
 		)
 		assert len(events) == 0
 
+	# -- ordering dependency: rule 2 requires rule 1 to have fired -----------
+
+	async def test_trigger_ordering_dependency(
+		self, pb_client: PBClient, bot_user_id: str, cleanup: list[tuple[str, str]],
+	):
+		"""Rule 2 (orbital cannon) requires rule 1 (Syndicate alliance) to have fired first."""
+		cfg = json.loads(_dark_pact_ai_config(bot_user_id))
+		# Add requiresFired: rule index 1 requires rule index 0
+		cfg["script"]["triggerRules"][1]["requiresFired"] = [0]
+		cfg_json = json.dumps(cfg)
+
+		scenario = await _create_scenario(
+			pb_client, cleanup,
+			title="The Dark Pact (ordered)",
+			prologue="Kepler-9...",
+			ai_config_json=cfg_json,
+		)
+		await _create_side(pb_client, cleanup, scenario["id"], "Syndicate")
+		coalition = await _create_side(pb_client, cleanup, scenario["id"], "Coalition")
+		session = await _create_session(pb_client, cleanup, scenario["id"], bot_user_id)
+
+		config = AIConfig.model_validate_json(cfg_json)
+
+		# Attempt to fire rule 1 (orbital cannon) — should be blocked because rule 0 hasn't fired
+		node1 = await _create_node(
+			pb_client, cleanup, session["id"],
+			title="A threat",
+			text="I will fire the orbital cannon.",
+		)
+		node_rec1 = _node_rec(node1["id"], session["id"], "A threat", "I will fire the orbital cannon.")
+
+		with patch(
+			"app.capabilities.trigger_nodes.chat_json",
+			AsyncMock(return_value={"matched_rule_index": 1, "reason": "threatens orbital weapons"}),
+		) as mock_chat:
+			await trigger_nodes.run(
+				node_rec1, config,
+				{"id": session["id"], "completed": False},
+				{"id": scenario["id"]},
+				pb_client,
+			)
+			# Rule 1 shouldn't even be in the prompt (dependency unmet)
+			if mock_chat.called:
+				prompt = mock_chat.call_args[0][1]
+				assert "[1]" not in prompt
+
+		events = pb_client.raw.collection("Node").get_full_list(
+			query_params={"filter": f'session = "{session["id"]}" && type = "event"'}
+		)
+		assert len(events) == 0
+
+		# Now fire rule 0 (Syndicate alliance)
+		await state.mark_fired(session["id"], ("trigger", 0))
+
+		# Retry rule 1 — should now be eligible
+		node2 = await _create_node(
+			pb_client, cleanup, session["id"],
+			title="A threat again",
+			text="I will fire the orbital cannon on your fleet.",
+		)
+		node_rec2 = _node_rec(node2["id"], session["id"], "A threat again", "I will fire the orbital cannon on your fleet.")
+
+		with patch(
+			"app.capabilities.trigger_nodes.chat_json",
+			AsyncMock(return_value={"matched_rule_index": 1, "reason": "threatens orbital weapons"}),
+		):
+			await trigger_nodes.run(
+				node_rec2, config,
+				{"id": session["id"], "completed": False},
+				{"id": scenario["id"]},
+				pb_client,
+			)
+
+		events = pb_client.raw.collection("Node").get_full_list(
+			query_params={"filter": f'session = "{session["id"]}" && type = "event"'}
+		)
+		assert len(events) == 1
+		ev = events[0]
+		cleanup.append(("Node", _record_id(ev)))
+		assert ev.title == "The orbital cannon hums to life"
+		assert ev.side == coalition["id"]
+
 	# -- prompt 5: trigger rule 2 (orbital cannon) ---------------------------
 
 	async def test_trigger_orbital_cannon(
