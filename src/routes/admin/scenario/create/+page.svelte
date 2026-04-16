@@ -6,7 +6,7 @@
 	import nProgress from 'nprogress';
 	import { availableLocales } from '$lib/i18n';
 	import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
-	import { Sparkles, TriangleAlert } from 'lucide-svelte';
+	import { Sparkles, TriangleAlert, Trash2 } from 'lucide-svelte';
 	import { PreviewGraph } from '$stores/graph/Classes/PreviewGraph.svelte';
 	import { pb } from '$lib/client/pocketbase';
 	import type { z } from 'zod';
@@ -138,6 +138,21 @@
 		});
 	}
 
+	function clearForm() {
+		formData.title = '';
+		formData.prologue = '';
+		formData.lang = 'fr';
+		formData.firstNode = { title: '', text: '', author: '' };
+		formData.ai = false;
+		formData.sides = [{ title: '' }, { title: '' }];
+		formData.events = [{ title: '', text: '', author: '' }];
+		formData.ends = [{ title: '', text: '' }];
+		aiConfig.vision = '';
+		aiConfig.capabilities = [];
+		aiConfig.script = { bannedWords: [], triggerRules: [], endCondition: { condition: '', endTitle: '' } };
+		localStorage.removeItem('scenario');
+	}
+
 	onMount(() => {
 		const data = localStorage.getItem('scenario');
 		if (data) {
@@ -179,6 +194,14 @@
 
 <div class="flex flex-col items-center text-white pb-5">
 	<h1 class="p-4 text-3xl font-bold">{$t('admin.scenario.newScenario')}</h1>
+	<button
+		class="rounded-md border px-4 py-2 mb-2 text-sm flex items-center gap-2 bg-black text-gray-50 hover:bg-gray-900"
+		type="button"
+		onclick={clearForm}
+	>
+		<Trash2 class="w-4 h-4" />
+		{$t('misc.clearForm')}
+	</button>
 	<form
 		method="POST"
 		use:enhance={() => {
