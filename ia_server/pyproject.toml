@@ -22,6 +22,10 @@ dev = [
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["app/tests"]
+markers = [
+    "integration: requires a running PocketBase instance",
+    "llm: requires a valid MISTRAL_API_KEY (real LLM calls)",
+]
 
 [build-system]
 requires = ["hatchling"]
