@@ -4,7 +4,8 @@ import { fullScenarioSchema } from '$lib/zschemas/scenario.schema';
 import { aiConfigSchema } from '$lib/zschemas/aiConfig.schema';
 import { z } from 'zod';
 import PocketBase from 'pocketbase';
-import { DB_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
+const DB_URL = env.DB_URL;
 
 // TODO: Refacto to use zod schema, errors and translations
 export const actions = {

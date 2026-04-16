@@ -1,7 +1,8 @@
 import { createNode } from '$lib/nodes';
 import { addNodeSchema } from '$lib/zschemas/addNode.schema';
 import PocketBase from 'pocketbase';
-import { DB_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
+const DB_URL = env.DB_URL;
 import { ClientResponseError } from 'pocketbase';
 import type { GraphNode } from '$types/pocketBase/TableTypes';
 import { type Actions, fail } from '@sveltejs/kit';

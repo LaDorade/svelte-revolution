@@ -3,13 +3,11 @@ services:
         build: .
         container_name: sveltekit_c
         ports:
-            - '8080:8080'
+            - '127.0.0.1:8080:8080'
 
     iaserver:
         build: ./ia_server
         container_name: iaserver_c
-        ports:
-            - 8000:8000
         environment:
             - DB_URL=http://pocketbase:8090
             - PB_BOT_EMAIL=${PB_BOT_EMAIL}
@@ -26,7 +24,7 @@ services:
         build: ./db
         container_name: pocketbase_c
         ports:
-            - '8090:8090'
+            - '127.0.0.1:8090:8090'
         volumes:
             - pocketbase-data:/app/pb_data
 

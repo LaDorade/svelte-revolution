@@ -18,7 +18,8 @@ const config = {
 			trustedOrigins: checkOrigin ? [
 				'https://new.babel-revolution.fr',
 				'https://svelte-revolution.vercel.app',
-				'http://localhost:5173'
+				'http://localhost:5173',
+				'https://babel-revolution.ebjrstl.com'
 			] : []
 		},
 	},
