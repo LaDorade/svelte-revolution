@@ -37,14 +37,15 @@
 			{/if}
 		</span>
 		<input
-			class={[
-				'ml-auto',
-				'focus:border-gray-100 focus:outline-none',
-				'appearance-none'
-			]}
 			type="checkbox"
 			bind:checked
 			{...rest}
+			class={[
+				'ml-auto',
+				'focus:border-gray-100 focus:outline-none',
+				'appearance-none',
+				rest.class
+			]}
 		/>
 	</div>
 </Base>

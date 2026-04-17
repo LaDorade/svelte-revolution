@@ -12,6 +12,8 @@
 	import type { z } from 'zod';
 	import type { ActionData } from './$types';
 	import type { PreviewNode } from '$types/pocketBase/TableTypes';
+	import Checkbox from '$components/form/Checkbox.svelte';
+    import Button from '$components/Button.svelte';
 
 	interface Props {
 		form: ActionData;
@@ -421,32 +423,36 @@
 				{$t('misc.add')}
 			</button>
 		</div>
-		<button
-			class="rounded-md border px-4 py-2 h-fit disabled:cursor-not-allowed disabled:text-gray-500 disabled:border-gray-500 bg-black text-gray-50"
+
+		<Button
+			class='text-lg'
+			variant='primary'
 			type="submit"
 			disabled={Boolean(issues.length)}
 		>
 			{$t('admin.scenario.createYourScenario')}
-		</button>
+		</Button>
 
 		<input type="hidden" name="pb_cookie" value={pb.authStore.exportToCookie()} />
 
 		<!-- Errors -->
-		<div class="h-36 p-4 rounded-md overflow-auto">
+		<div class="h-fit overflow-auto text-gray-100">
 			{#if issues.length > 0}
-				<div class="bg-black flex flex-col items-center gap-4">
-					<h3 class=" font-semibold text-xl flex items-center gap-2 k">
+				<div class="bg-gray-900 rounded border border-gray-800 p-4 flex flex-col items-center gap-4">
+					<h3 class="text-xl flex items-center gap-2">
 						<TriangleAlert class="w-8 h-8" />
 						{$t('errors.scenario.notValid')}
 						<TriangleAlert class="w-8 h-8" />
 					</h3>
+
 					<div class=" grid grid-cols-2 grid-flow-row w-full gap-4 justify-center items-center">
 						{#each issues as issue (issue)}
-							<div class="bg-red-500 grow p-2 rounded-md flex flex-col items-center gap-2">
-								<div>{$t(issue.message)}</div>
+							<div class="bg-red-500 h-full py-1 px-0.5 rounded">
+								{issue.message}
 							</div>
 						{/each}
 					</div>
+
 				</div>
 			{:else}
 				<div class="bg-green-500 w-full p-4 rounded-md flex flex-col justify-center items-center mt-5">
@@ -461,14 +467,14 @@
 	</form>
 
 	<!-- Session preview -->
-	<h3 class=" text-white text-3xl mt-10 mb-4 text-center w-full">
-		{$t('admin.session.preview')}
-	</h3>
-	<label class="rounded-md border px-4 py-2 bg-black text-gray-50">
-		{$t('admin.session.preview')}
-		<input type="checkbox" class="ml-1" bind:checked={preview} />
-	</label>
-	<div class=" text-gray-200 relative w-fit h-fit p-0 m-4">
+	<div>
+		<Checkbox
+			label={$t('admin.session.preview')}
+			bind:checked={preview}
+			labelClass='bg-black'
+		/>
+	</div>
+	<div class="bg-black text-gray-200 relative w-fit h-fit p-0 m-4">
 		<svg
 			bind:this={svg}
 			width="500"
@@ -476,24 +482,30 @@
 			class="relative bg-dotted-gray bg-dotted-40 border border-white/20 rounded-md"
 		>
 		</svg>
-		<div class=" absolute top-2 left-2 border border-white/20 bg-black p-2 rounded-md">
-			{$t('scenario.title')} :
-			<span class=" text-white font-bold">
-				{formData.title}
-			</span>
-		</div>
-		<div class="absolute left-2 bottom-2 border border-white/20 bg-black p-2 rounded-md">
-			{$t('admin.scenario.language')} :
-			<span class=" text-white font-bold">
-				{formData.lang?.toUpperCase()}
-			</span>
-		</div>
-		<div class="absolute right-2 bottom-2 border border-white/20 bg-black p-2 rounded-md">
-			{$t('ia.ia')} :
-			<span class=" text-white font-semibold">
-				{formData.ai ? $t('misc.yes') : $t('misc.no')}
-			</span>
-		</div>
+		{#if preview}
+			<div class=" absolute top-2 left-2 border border-white/20 bg-black p-2 rounded-md">
+				{$t('scenario.title')} :
+				<span class=" text-white font-bold">
+					{formData.title}
+				</span>
+			</div>
+			<div class="absolute left-2 bottom-2 border border-white/20 bg-black p-2 rounded-md">
+				{$t('admin.scenario.language')} :
+				<span class=" text-white font-bold">
+					{formData.lang?.toUpperCase()}
+				</span>
+			</div>
+			<div class="absolute right-2 bottom-2 border border-white/20 bg-black p-2 rounded-md">
+				{$t('ia.ia')} :
+				<span class=" text-white font-semibold">
+					{formData.ai ? $t('misc.yes') : $t('misc.no')}
+				</span>
+			</div>
+		{:else}
+			<div class=" absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 border border-white/20 p-2 rounded-md">
+				{$t('scenario.previewDeactivated')}
+			</div>
+		{/if}
 	</div>
 </div>
 

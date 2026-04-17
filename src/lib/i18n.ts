@@ -7,7 +7,7 @@ register('jp-JP', () => import('../lang/jp.json'));
 
 export const availableLocales = ['fr', 'en', 'es', 'jp'] as const;
 
-init({
+await init({
 	fallbackLocale: 'fr-FR',
 	initialLocale: getLocaleFromNavigator()
 });
